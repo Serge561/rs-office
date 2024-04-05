@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .pagination {
+    @apply relative inline-flex items-center py-2 border border-gray-300 bg-white text-sm leading-5 font-medium focus:z-10 hover:text-gray-400 focus:outline-none focus:border-blue-300 transition ease-in-out duration-150;
+  }
+  .pagination-internal {
+    @apply -ml-px px-4 text-blue-700 active:bg-gray-200 active:text-gray-700 hover:bg-gray-200;
+  }
+  .pagination-lateral {
+    @apply px-2 text-gray-500 active:bg-gray-200 active:text-gray-500;
+  }
+  .breadcrumbs {
+    @apply text-lg opacity-60 transition-all duration-300 hover:text-blue-600;
+  }
+}

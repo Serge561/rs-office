@@ -1,0 +1,108 @@
+{% extends 'main.html' %}
+<!-- prettier-ignore -->
+{% block content %}
+<!-- breadcrumbs -->
+{% block breadcrumbs %}
+<div>
+  {% block crumbs %}
+  <span class="breadcrumbs">
+    <!-- prettier-ignore -->
+    {% if title %} {{ title }} {% endif %}
+  </span>
+  <!-- prettier-ignore -->
+  {% endblock%}
+</div>
+{% endblock %}
+<!-- end of breadcrumbs -->
+<div class="my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 pr-10 lg:px-8">
+  <!-- search block -->
+  {% comment %}
+  <div
+    class="align-middle inline-block w-full py-4 overflow-hidden bg-white px-12"
+  >
+    <div class="flex justify-between">
+      <form role="search" method="get" action="{% url 'search' %}">
+        {% csrf_token %}
+        <input
+          type="search"
+          class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-4 p-2"
+          placeholder="Поиск по компаниям..."
+          name="do"
+          autocomplete="off"
+          id="search"
+        />
+      </form>
+    </div>
+  </div>
+  {% endcomment %}
+  <!-- table block -->
+  <div class="align-middle inline-block min-w-full overflow-hidden bg-white">
+    <table class="min-w-full">
+      <thead>
+        <tr>
+          <th
+            class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+          >
+            Название компании
+          </th>
+          <th
+            class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+          >
+            Подразделение
+          </th>
+          <th
+            class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+          >
+            Дата создания карточки
+          </th>
+          <th class="px-6 py-3 border-b-2 border-gray-300"></th>
+        </tr>
+      </thead>
+      <tbody class="bg-white">
+        {% for company in companies %}
+        <tr>
+          <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
+            <div class="text-sm leading-5 text-blue-900">
+              {{ company.name }}
+            </div>
+          </td>
+          <td
+            class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
+          >
+            {% for rs_office in company.responsible_offices.all %}
+            <span
+              class="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight"
+            >
+              <span
+                aria-hidden
+                class="absolute inset-0 bg-green-200 opacity-50 rounded-full"
+              ></span>
+              <span class="relative text-xs">
+                <p>{{ rs_office.number }}</p>
+              </span>
+            </span>
+            {% endfor %}
+          </td>
+          <td
+            class="px-6 py-4 whitespace-no-wrap border-b border-gray-500 text-blue-900 text-sm leading-5"
+          >
+            {{ company.created_at|date:'SHORT_DATE_FORMAT' }}
+          </td>
+          <td
+            class="px-6 py-4 whitespace-no-wrap text-right border-b border-gray-500 text-sm leading-5"
+          >
+            <a
+              href="{{ company.get_absolute_url }}"
+              class="px-5 py-2 border-blue-500 border text-blue-500 rounded transition duration-300 hover:bg-blue-700 hover:text-white focus:outline-none"
+            >
+              Подробнее
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% include 'pagination.html' %}
+  </div>
+  {% endblock %}
+</div>

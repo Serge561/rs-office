@@ -1,0 +1,98 @@
+{% extends 'main.html' %}
+<!-- prettier-ignore -->
+{% block content %}
+<!-- breadcrumbs -->
+{% block breadcrumbs %}
+<div>
+  <a href="{% url 'home' %}" class="breadcrumbs font-medium">Главная</a>
+  <a
+    href="{% url 'company_detail' document.application.company.slug %}"
+    class="breadcrumbs font-medium"
+  >
+    &rsaquo; {{ document.application.company.name|truncatechars:50 }}</a
+  >
+  <a
+    href="{% url 'company_application_list' document.application.company.slug %}"
+    class="breadcrumbs font-medium"
+  >
+    &rsaquo; {{ "Список заявок компании" }}</a
+  >
+  <a
+    href="{% url 'application_detail' document.application.company.slug document.application.pk %}"
+    class="breadcrumbs font-medium"
+  >
+    &rsaquo; Заявка № {{ document.application.number }} от
+    <!-- prettier-ignore -->
+    {{ document.application.date|date:'SHORT_DATE_FORMAT' }}</a
+  >
+  <a
+    href="{% url 'document_list' document.application.company.slug document.application.pk %}"
+    class="breadcrumbs font-medium"
+  >
+    &rsaquo; {{ "Перечень документов" }}</a
+  >
+  {% block crumbs %}
+  <span class="breadcrumbs">
+    <!-- prettier-ignore -->
+    {% if title %} &rsaquo; {{ title }} {% endif %}
+  </span>
+  <!-- prettier-ignore -->
+  {% endblock%}
+</div>
+{% endblock %}
+<!-- end of breadcrumbs -->
+{% comment %} grid grid-flow-col auto-cols-max {% endcomment %}
+<div class="flex space-x-2 items-center justify-center px-4">
+    <div class="max-w-4xl bg-white rounded-lg shadow-xl">
+        <div class="p-4 border-b">
+            <h2 class="text-2xl ">
+                Детали документа № {{ document }}
+            </h2>
+        </div>
+        <div>
+            <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-2 p-4 border-b">
+                <p class="text-gray-600">
+                  Номер документа или письма об одобрении
+                </p>
+                <p class="px-4">
+                    {{ document.number }}
+                </p>
+            </div>
+            <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-2 p-4 border-b">
+                <p class="text-gray-600">
+                  Вид и номер формы
+                </p>
+                <p class="px-4">
+                    {{ document.form }}
+                </p>
+            </div>
+            <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b">
+                <p class="text-gray-600">
+                  Детали документа (для материалов и изделий)
+                </p>
+                <p class="px-4">
+                    {{ document.item_particulars }}
+                </p>
+            </div>
+        </div>
+        <div class="md:col-span-4 text-right px-4 py-3">
+            <div class="inline-flex items-end gap-4">
+              {% comment %} <a
+                href="{% url "application_delete" company.slug %}"
+                type="button"
+                class="mr-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Удалить доп. инфо
+              </a> {% endcomment %}
+              <a
+                href="{% url "document_update" document.application.company.slug document.application.id document.id %}"
+                type="button"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Обновить документ
+              </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

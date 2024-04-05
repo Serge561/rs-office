@@ -1,0 +1,140 @@
+{% extends 'main.html' %}
+<!-- prettier-ignore -->
+{% block content %}
+<!-- breadcrumbs -->
+{% block breadcrumbs %}
+<div>
+  <a href="{% url 'home' %}" class="breadcrumbs font-medium">Главная</a>
+  {% block crumbs %}
+  <span class="breadcrumbs">
+    <!-- prettier-ignore -->
+    {% if title %} &rsaquo; {{ title }} {% endif %}
+  </span>
+  <!-- prettier-ignore -->
+  {% endblock%}
+</div>
+{% endblock %}
+<!-- end of breadcrumbs -->
+<!-- data section -->
+<section>
+  <div
+    class="bg-white sm:grid grid-cols-5 grid-rows-2 px-4 py-6 sm:gap-4"
+  >
+    <div class="max-h-full col-span-4 bg-white rounded-md flex items-center">
+      <div class="max-w-4xl bg-white">
+        <div class="p-4 border-b">
+          <h2 class="text-2xl">{{ company.name }}</h2>
+        </div>
+        <div>
+          <div
+            class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b"
+          >
+            <p class="text-gray-600">Телефон</p>
+            <p>{{ company.phone_number }}</p>
+          </div>
+          <div
+            class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b"
+          >
+            <p class="text-gray-600">Email</p>
+            <p>{{ company.email }}</p>
+          </div>
+          <div
+            class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b"
+          >
+            <p class="text-gray-600">ИНН</p>
+            <p>{{ company.inn }}</p>
+          </div>
+          <div
+            class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b"
+          >
+            <p class="text-gray-600">КПП</p>
+            <p>{{ company.kpp }}</p>
+          </div>
+          <div
+            class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b"
+          >
+            <p class="text-gray-600">ОГРН</p>
+            <p>{{ company.ogrn }}</p>
+          </div>
+          <div
+            class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b"
+          >
+            <p class="text-gray-600">Зона деятельности</p>
+            {% for rs_office in company.responsible_offices.all %}
+            <p>{{ rs_office.name }}</p>
+            <p>{% endfor %}</p>
+          </div>
+          <div
+            class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4"
+          >
+            <p class="text-gray-600">Дополнительная информация</p>
+            <p>{{ company.extra_info }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="max-h-full col-span-1">
+      <div
+        class="bg-white py-3 px-4 rounded-lg flex justify-around items-center"
+      >
+        <input
+          type="text"
+          placeholder="Поиск..."
+          class="bg-gray-100 rounded-md outline-none pl-2 ring-indigo-700 w-full mr-2 p-2"
+        />
+        <span
+          ><svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor "
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            /></svg
+        ></span>
+      </div>
+      <div class="bg-white rounded-md">
+        <h1
+          class="text-center text-xl my-4 bg-gray-100 py-6 rounded-md border-b-2 cursor-pointer text-gray-600"
+        >
+          <a href="{% url "company_update" company.slug %}" type="button" class="list-none hover:text-indigo-600">
+              Показать заявки</a
+          >
+        </h1>
+        <div class="bg-white rounded-md list-none text-center">
+          <li class= "py-3 bg-gray-100 rounded-md border-b-2">
+            <a href="{% url "company_address_list" company.slug %}" type="button" class="list-none hover:text-indigo-600"
+              >Показать адреса</a
+            >
+          </li>
+          <li class="py-3 mt-1 bg-gray-100 rounded-md border-b-2">
+            <a href="{% url "company_employee_list" company.slug %}" type="button" class="list-none hover:text-indigo-600"
+              >Показать персонал</a
+            >
+          </li>
+          <li class="py-3 mt-1 bg-gray-100 rounded-md border-b-2">
+            <a href="{% url "company_bankaccount_list" company.slug %}" type="button" class="list-none hover:text-indigo-600"
+              >Показать банковские реквизиты</a
+            >
+          </li>
+          <li class="py-3 mt-4 bg-gray-100 rounded-md border-b-2">
+            <a href="{% url "company_update" company.slug %}" type="button" class="list-none border-b-2 hover:text-indigo-600 text-gray-400"
+              >Обновить карточку</a
+            >
+          </li>
+          <li class="py-3 mt-1 bg-gray-100 rounded-md border-b-2">
+            <a href="{% url "company_delete" company.slug %}" type="button" class="list-none border-b-2 hover:text-indigo-600 text-gray-400"
+              >Удалить карточку</a
+            >
+          </li>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

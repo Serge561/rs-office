@@ -1,0 +1,136 @@
+{% extends 'main.html' %}
+<!-- prettier-ignore -->
+{% block content %}
+<!-- breadcrumbs -->
+{% block breadcrumbs %}
+<div>
+  <a href="{% url 'home' %}" class="breadcrumbs font-medium">Главная</a>
+  <a
+    href="{% url 'company_detail' employee.company.slug %}"
+    class="breadcrumbs font-medium"
+  >
+    &rsaquo; {{ employee.company.name|truncatechars:50 }}</a
+  >
+  <a
+    href="{% url 'company_employee_list' employee.company.slug %}"
+    class="breadcrumbs font-medium"
+  >
+    &rsaquo; {{ "Список работников компании" }}</a
+  >
+  {% block crumbs %}
+  <span class="breadcrumbs">
+    <!-- prettier-ignore -->
+    {% if title %} &rsaquo; {{ title }} {% endif %}
+  </span>
+  <!-- prettier-ignore -->
+  {% endblock%}
+</div>
+{% endblock %}
+<!-- end of breadcrumbs -->
+{% comment %} grid grid-flow-col auto-cols-max {% endcomment %}
+<div class="flex space-x-2 items-center justify-center px-4">
+    <!-- prettier-ignore -->
+    <div class="max-w-4xl bg-white rounded-lg shadow-xl">
+        <div class="p-4 border-b">
+            <h2 class="text-2xl ">
+                {{ employee }}
+            </h2>
+        </div>
+        <div>
+            <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b">
+                <p class="text-gray-600">
+                    Должность
+                </p>
+                <p class="px-4">
+                    {{ employee.position }}
+                </p>
+            </div>
+            <div class="inline-flex items-end">
+                <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b">
+                    <p class="text-gray-600">
+                        Телефон
+                    </p>
+                    <p>
+                        {{ employee.phone_number }}
+                    </p>
+                </div>
+                <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-2 p-4 border-b">
+                    <p class="text-gray-600">
+                        Доб.
+                    </p>
+                    <p class="px-1">
+                        {{ employee.extra_number }}
+                    </p>
+                </div>
+            </div>
+            <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b">
+                <p class="text-gray-600">
+                   Email
+                </p>
+                <p class="px-4">
+                    {{ employee.email }}
+                </p>
+            </div>
+            <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b">
+                <p class="text-gray-600">
+                   Действующий на основании
+                </p>
+                <p class="px-4">
+                  {{ employee.get_proxy_type_display }}
+                </p>
+            </div>
+            <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b">
+                <p class="text-gray-600">
+                    Номер доверенности
+                </p>
+                <p class="px-4">
+                    {{ employee.proxy_number }}
+                </p>
+            </div>
+            <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b">
+              <p class="text-gray-600">
+                  Дата доверенности
+              </p>
+              <p class="px-4">
+                <!-- prettier-ignore --> 
+                {% if employee.proxy_date %}
+                <!-- prettier-ignore -->
+                {{ employee.proxy_date|date:'SHORT_DATE_FORMAT'}}
+                <!-- prettier-ignore -->
+                {% else %}
+                <!-- prettier-ignore -->
+                {{ "" }}
+                <!-- prettier-ignore -->
+                {% endif %}
+              </p>
+          </div>
+            <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b">
+                <p class="text-gray-600">
+                    Дополнительная информация
+                </p>
+                <p class="px-4">
+                  {{ employee.extra_info}}
+                </p>
+            </div>
+        </div>
+        <div class="md:col-span-4 text-right px-4 py-3">
+            <div class="inline-flex items-end">
+              {% comment %} <a
+                href="{% url "employee_delete" company.slug %}"
+                type="button"
+                class="mr-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Удалить карточку
+              </a> {% endcomment %}
+              <a
+                href="{% url "employee_update" employee.company.slug employee.id %}"
+                type="button"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Обновить профиль
+              </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

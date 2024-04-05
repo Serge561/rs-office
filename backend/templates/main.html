@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ru" class="dark">
+  {% load static tailwind_tags %}
+  <head>
+    <meta charset="UTF-8" />
+    <title>{{ title }}</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    {% comment %}
+    <link rel="icon" href="data:;base64,=" />
+    {% endcomment %}
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="data:image/png;base64,
+      iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IA
+      rs4c6QAAAe9JREFUOE+lk7trU2EYh58v55wkTSIhiDbFIVrrDUEsRVux
+      Th2KQkE7KMWMLmLBP0B0kSyiuDgU6iI6tAoF8VIVRBEHFSPFpTalxIDF
+      1kJCk5PbuX2SU5sIESHkXd/f97y/9/KJ2GTuKsgrQuCjhZCSKoiEiE1m
+      K60+3qxTg4idd7OyhcJNUhfQu01hV1hxk7aUZPIOc2t2XawIGI5p7Iko
+      LOZsUjkbS8L3vIMLSBwPAJL5rENN3B9V8atw4VURB5gYCpBed/jw06Kv
+      U+VMj5c7cxWmU0YD8O6HycuMWa86dSrErWTZdXP/ZIjhmUI9d62/g4Wc
+      /X/AxFCQB/NVPq9avD0b5tJrneSvjbZCWs0vFE0aDr5lLd4vWygeOBpV
+      Ob/fx+iTAlUbjkUVEoNBVksO0wtVnqZNrFpv/AXoDnsomZKBLo3bX8o8
+      TBnkjcaCBBvgsX1e9kYU4i90shXZPIN7w0Fm0yZTKcOtEPYKIn7hTnwz
+      Lvf60TxwM1lpBkQDgpmRLYw918kUHAa6VMYP+4nP6nXAaI+Xg1sVrn8s
+      /3sLp3drxA/4OPdM50hU5caJAF/XLB4tGq6ji4f8jL8psrT+5w76tius
+      lCTLesPmSLfGpxULKaEz6KFDgcEdGkVT8njJcPX1IbZ1ym1/pna/828D
+      6ACYqw/rCwAAAABJRU5ErkJggg=="
+    />
+    <!-- INCLUDE CSS -->
+    {% comment %} <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script> {% endcomment %}
+    {% comment %} <script
+    src="https://code.jquery.com/jquery-3.7.1.slim.min.js"
+    integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8="
+    crossorigin="anonymous"></script> {% endcomment %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/themes/smoothness/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+    {% tailwind_css %}
+  </head>
+  {% comment %} <body class="bg-white dark:bg-slate-900"> {% endcomment %}
+  {% comment %} <body class="bg-white"> {% endcomment %}
+    <body>
+    {% comment %} <div class="max-w-screen-xl mx-auto h-screen grid grid-rows-layout"> {% endcomment %}
+    <div class="max-w-screen-xl mx-auto h-screen">
+      {% include 'header.html' %}
+      <!-- prettier-ignore -->
+      {% block content %}
+      
+      <!-- prettier-ignore -->
+      {% endblock %}
+    </div>
+   <script>
+      setTimeout(function(){
+        if ($('#msg').length > 0) {
+          $('#msg').remove();
+        }
+      }, 2000)
+    </script>
+    <script>
+      $('#btn').click(function(){
+        $('#msg').remove();
+      });
+    </script>
+    <script>
+      $('#datepicker').datepicker(
+      {
+        dateFormat: 'dd.mm.yy',
+        firstDay: 1,
+        monthNames: [ "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь" ],
+        dayNamesMin: [ "Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб" ],
+        duration: "slow",
+        showOn: "both",
+        buttonText: "Выбрать"
+      }).attr("autocomplete", "off");
+    </script>
+    <script>
+      $('#datepicker2').datepicker(
+      {
+        dateFormat: 'dd.mm.yy',
+        firstDay: 1,
+        monthNames: [ "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь" ],
+        dayNamesMin: [ "Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб" ],
+        duration: "slow",
+        showOn: "both",
+        buttonText: "Выбрать"
+      }).attr("autocomplete", "off");
+    </script>
+    <script>
+      $('#datepicker3').datepicker(
+      {
+        dateFormat: 'dd.mm.yy',
+        firstDay: 1,
+        monthNames: [ "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь" ],
+        dayNamesMin: [ "Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб" ],
+        duration: "slow",
+        showOn: "both",
+        buttonText: "Выбрать"
+      }).attr("autocomplete", "off");
+    </script>
+    <script>
+      $('#datepicker4').datepicker(
+      {
+        dateFormat: 'dd.mm.yy',
+        firstDay: 1,
+        monthNames: [ "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь" ],
+        dayNamesMin: [ "Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб" ],
+        duration: "slow",
+        showOn: "both",
+        buttonText: "Выбрать"
+      }).attr("autocomplete", "off");
+    </script>
+    {% comment %} <script>
+      $(function() {
+
+        $("#search").autocomplete({
+          source: "{% url 'autosuggest' %}"
+        });
+      });
+      </script> {% endcomment %}
+    {% comment %} <script>
+      $(document).ready(function () {
+        $('#city').select2({
+          ajax: {
+            url: '{% url 'autosuggest' %}',
+            dataType: 'json',
+            processResults: function (data) {
+              return {
+                results: $.map(data, function (item) {
+                  return {id: item.id, text: item.name};
+                })
+              };
+            }
+          },
+          minimumInputLength: 1
+        });
+      });
+    </script> {% endcomment %}
+    <script>
+      (function($) {
+          $('#add-form').click(function() {
+              var index = $('#id_inline_test_models-TOTAL_FORMS').val()
+              var newTable = $('#id_inline_test_models-__prefix__-DELETE').parents('table').clone()
+              newTable.find(':input').each(function() {
+                  for (attr of ['name', 'id'])
+                      $(this).attr(
+                          attr,
+                          $(this).attr(attr).replace('__prefix__', index)
+                      )
+              })
+              newTable.insertBefore($(this))
+              $('#id_inline_test_models-TOTAL_FORMS').val(
+                  parseInt($('#id_inline_test_models-TOTAL_FORMS').val()) + 1
+              )
+              newTable.slideDown()
+          })
+      })($)
+      </script>
+  </body>
+</html>

@@ -1,0 +1,126 @@
+{% extends 'main.html' %}
+<!-- prettier-ignore -->
+{% block content %}
+<!-- breadcrumbs -->
+{% block breadcrumbs %}
+<div>
+  <a href="{% url 'home' %}" class="breadcrumbs font-medium">Главная</a>
+  <a
+    href="{% url 'company_detail' company.slug %}"
+    class="breadcrumbs font-medium"
+  >
+    &rsaquo; {{ company.name|truncatechars:50 }}</a
+  >
+  {% block crumbs %}
+  <span class="breadcrumbs">
+    <!-- prettier-ignore -->
+    {% if title %} &rsaquo; {{ title }} {% endif %}
+  </span>
+  <!-- prettier-ignore -->
+  {% endblock%}
+</div>
+{% endblock %}
+<!-- end of breadcrumbs -->
+<div class="flex space-x-2 items-center justify-center px-4">
+
+  {% if addresses %}
+
+  {% for address in addresses %}
+    <div class="max-w-md bg-white rounded-lg shadow-xl">
+    <!-- Заголовок -->
+    <div class="p-4 border-b">
+      <h2 class="text-xl ">
+          {% if address.address_type == "PO" %}
+          {{ "Почтовый адрес" }}
+          {% else %}
+          {{ "Юридический адрес" }}
+          {% endif %}
+      </h2>
+      <p class="text-sm text-gray-500">
+        {{ address.company }}.
+      </p>
+    </div>
+    <!-- Тело -->
+    <div>
+        <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b">
+            <p class="text-gray-600">
+              Индекс
+            </p>
+            <p>
+                {{ address.postal_code }}
+            </p>
+        </div>
+        <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b">
+            <p class="text-gray-600">
+              Город
+            </p>
+            <p>
+              {{ address.city }}
+            </p>
+        </div>
+        <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b">
+            <p class="text-gray-600">
+              Адрес
+            </p>
+            <p>
+              {{ address.address_line }}
+            </p>
+        </div>
+        <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b">
+            <p class="text-gray-600">
+              Фактический адрес совпадает <br> с юридическим
+            </p>
+            {% if address.is_same == True %}
+            <p><input type="checkbox" checked disabled/></p>
+            {% else %}
+            <p><input type="checkbox" disabled/></p>
+            {% endif %}
+        </div>
+    </div>
+    <!-- Футер -->
+    <div class="md:col-span-4 text-right px-4 py-1">
+        <div class="inline-flex items-end">
+          <a
+            href="{% url "address_delete" company.slug address.id %}"
+            type="button"
+            class="mr-4 bg-red-500 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded"
+          >
+            Удалить адрес
+          </a>
+          <a
+            href="{% url "address_update" company.slug address.id %}"
+            type="button"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
+          >
+            Редактировать
+          </a>
+        </div>
+    </div>
+    </div>
+      {% if address.is_same == False and addresses|length < 2 %}
+        <!-- Кнопка Добавить -->
+        <div class="pl-10">
+          <a
+            href="{% url "address_create" company.slug %}"
+            type="button"
+            class="m-4 bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
+          >
+            Добавить адрес
+          </a>
+        </div>
+      {% endif %}
+  {% endfor %}
+  {% else %}
+    <!-- Кнопка Добавить -->
+    <div>
+      <a
+        href="{% url "address_create" company.slug %}"
+        type="button"
+        class="m-4 bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
+      >
+        Добавить адрес
+      </a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

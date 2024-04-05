@@ -1,0 +1,126 @@
+<header>
+  <!-- navbar and menu -->
+  <nav class="border-b">
+    <div class="flex justify-between items-center py-6 container mx-auto">
+      <div>
+        <a href="/">
+          <h1
+            class="text-2xl font-bold bg-gradient-to-tr from-indigo-600 to-green-600 bg-clip-text text-transparent hover:cursor-pointer"
+          >
+            Офис РС
+          </h1>
+        </a>
+      </div>
+      <div class="flex items-center gap-1">
+        <div>
+          <form role="search" method="get" action="{% url 'search' %}">
+            {% csrf_token %}
+          <input
+            type="search"
+            class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-4 p-2"
+            placeholder="Поиск по компаниям..."
+            name="do"
+            autocomplete="off"
+            id="search"
+          />
+          </form>
+        </div>
+        <div>
+          <form role="search" method="get" action="{% url 'search' %}">
+            {% csrf_token %}
+          <input
+            type="search"
+            class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-4 p-2"
+            placeholder="Поиск по судам..."
+            name="do"
+            autocomplete="off"
+            id="search_vessel"
+          />
+          </form>
+        </div>
+        <div>
+          <form role="search" method="get" action="{% url 'search_employee' %}">
+            {% csrf_token %}
+          <input
+            type="search"
+            class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-4 p-2"
+            placeholder="Найти работника..."
+            name="do"
+            autocomplete="off"
+            id="search_employee"
+          />
+          </form>
+        </div>
+      </div>
+      <div>
+        <div class="hover:cursor-pointer sm:hidden">
+          <span
+            class="h-1 rounded-full block w-8 mb-1 bg-gradient-to-tr from-indigo-600 to-green-600"
+          ></span>
+          <span
+            class="h-1 rounded-full block w-8 mb-1 bg-gradient-to-tr from-indigo-600 to-green-600"
+          ></span>
+          <span
+            class="h-1 rounded-full block w-8 mb-1 bg-gradient-to-tr from-indigo-600 to-green-600"
+          ></span>
+        </div>
+
+        <div class="flex items-center">
+          <ul class="sm:flex space-x-4 hidden items-center">
+            <li>
+              <a href="{% url "home" %}" class="text-gray-700 hover:text-indigo-600 text-md"
+                >Показать отчёты</a
+              >
+            </li>
+            <li>
+              <a href="{% url "company_create" %}" class="text-gray-700 hover:text-indigo-600 text-md"
+                >Добавить карточку</a
+              >
+            </li>
+          </ul>
+          {% if request.user.is_authenticated %}
+          <div class="md:flex items-center hidden space-x-4 ml-8 lg:ml-12">
+            <a href="{% url "profile_detail" request.user.slug %}" type="button">
+            <h1
+              class="font-bold text-gray-600 py-2 hover:cursor-pointer hover:text-indigo-600"
+            >
+            {{ request.user.username }}
+            </h1>
+            </a>
+            <form>
+              {% csrf_token %}
+            <a href="{% url 'logout' %}" type="button">
+            <h1
+              class="py-2 hover:cursor-pointer px-4 rounded text-white bg-gradient-to-tr from-indigo-600 to-green-600 hover:shadow-lg"
+            >
+              Деавторизация
+            </h1>
+
+            </a>
+          </form>
+          </div>
+          {% else %}
+          <div class="md:flex items-center hidden space-x-4 ml-8 lg:ml-12">
+            <a href="{% url "login" %}" type="button">
+            <h1
+              class="py-2 hover:cursor-pointer hover:text-indigo-600"
+            >
+              Авторизация
+            </h1>
+            </a>
+            <a href="{% url "register" %}" type="button">
+
+            <h1
+              class="py-2 hover:cursor-pointer px-4 rounded text-white bg-gradient-to-tr from-indigo-600 to-green-600 hover:shadow-lg"
+            >
+              Регистрация
+            </h1>
+            </a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </nav>
+  {% include 'includes/messages.html' %}
+</header>

@@ -1,0 +1,79 @@
+{% extends 'main.html' %}
+<!-- prettier-ignore -->
+{% block content %}
+<div class="p-6 flex items-center justify-center">
+  <div class="container max-w-screen-lg mx-auto">
+    <div>
+      <div class="bg-white rounded shadow-lg p-4 px-4 md:p-8 mb-6">
+        <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
+          <div class="text-gray-600">
+            <p class="font-medium text-lg">{{ profile }}</p>
+          </div>
+          <div class="lg:col-span-2">
+            <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-5">
+              <div class="md:col-span-2">
+                <label for="username">Никнейм</label>
+                <input
+                  type="text"
+                  name="username"
+                  id="username"
+                  class="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
+                  value="{{user.username}}"
+                  placeholder=""
+                />
+              </div>
+
+              <div class="md:col-span-3">
+                <label for="full_name">Имя и фамилия</label>
+                <input
+                  type="text"
+                  name="full_name"
+                  id="full_name"
+                  class="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
+                  value="{{ user.get_full_name }}"
+                  placeholder=""
+                />
+              </div>
+
+              <div class="md:col-span-2">
+                <label for="last_login">Заходил</label>
+                <input
+                  type="text"
+                  name="last_login"
+                  id="last_login"
+                  class="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
+                  value="{{ user.last_login }}"
+                  placeholder=""
+                />
+              </div>
+
+              <div class="md:col-span-3">
+                <label for="position">Должность</label>
+                <input
+                  type="text"
+                  name="position"
+                  id="position"
+                  class="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
+                  value="{{ user.position }}"
+                  placeholder=""
+                />
+              </div>
+
+              <div class="md:col-span-5 text-right">
+                <div class="inline-flex items-end">
+                  <a
+                    href="{% url 'profile_edit' %}"
+                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 mt-4 px-4 rounded"
+                  >
+                    Редактировать профиль
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

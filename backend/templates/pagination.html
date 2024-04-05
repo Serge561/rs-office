@@ -1,0 +1,189 @@
+<div
+  class="sm:flex-1 sm:flex sm:items-center sm:justify-between mt-4 work-sans"
+>
+  {% if is_paginated %}
+  <!-- статистика -->
+  <div>
+    <p class="text-sm leading-5 text-blue-700">
+      Показано от
+      <span class="font-medium">{{ page_obj.start_index }}</span>
+      до
+      <span class="font-medium">{{ page_obj.end_index }}</span>
+      из
+      <span class="font-medium">{{ page_obj.paginator.count }}</span>
+      результатов
+    </p>
+  </div>
+  <!-- блок страниц -->
+  <div>
+    <nav class="relative z-0 inline-flex shadow-sm">
+      <!-- if has_previous -->
+      {% comment %} {% if page_obj.has_previous %}
+      <div class="pagination pagination-lateral rounded-l-md">
+        <a href="?page={{ page_obj.previous_page_number }}">
+          <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path
+              fill-rule="evenodd"
+              d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </a>
+      </div>
+
+      {% if page_obj.number > 3 %}
+      <div class="pagination pagination-internal">
+        <a href="?page=1"> {{ "1" }} </a>
+      </div>
+      {% if page_obj.number > 4 %}
+      <div class="pagination pagination-internal">
+        <a href="#"> {{ page_obj.paginator.ELLIPSIS }} </a>
+      </div>
+      {% endif %}
+      <!-- prettier-ignore -->
+      {% endif %}
+      <!-- prettier-ignore -->
+      {% endif %}
+
+      <!-- central block -->
+      {% for num in page_obj.paginator.page_range %}
+      <!-- prettier-ignore -->
+      {% if page_obj.number == num %}
+      <div class="pagination pagination-internal">{{ num }}</div>
+
+      <!-- prettier-ignore -->
+      {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+      <div class="pagination pagination-internal">
+        <a href="?page={{ num }}"> {{ num }} </a>
+      </div>
+      {% endif %}
+      <!-- prettier-ignore -->
+      {% endfor %}
+
+      <!-- if has_next -->
+      {% if page_obj.has_next %}
+      <div>
+        {% if page_obj.number < page_obj.paginator.num_pages|add:'-3' %}
+        <div class="pagination pagination-internal">
+          <a href="#"> {{ page_obj.paginator.ELLIPSIS }} </a>
+        </div>
+        <div class="pagination pagination-internal">
+          <a href="?page={{ page_obj.paginator.num_pages }}">
+            {{ page_obj.paginator.num_pages }}
+          </a>
+        </div>
+        {% elif page_obj.number < page_obj.paginator.num_pages|add:'-2' %}
+        <div class="pagination pagination-internal">
+          <a href="?page={{ page_obj.paginator.num_pages }}">
+            {{ page_obj.paginator.num_pages }}
+          </a>
+        </div>
+        {% endif %}
+
+        <div class="pagination pagination-lateral rounded-r-md -ml-px">
+          <a href="?page={{ page_obj.next_page_number }}">
+            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path
+                fill-rule="evenodd"
+                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </a>
+        </div>
+      </div>
+      {% endif %} {% endcomment %}
+      <!-- prettier-ignore -->
+      {% if page_obj.has_previous %}
+      <div>
+        <a
+          href="?page={{ page_obj.previous_page_number }}"
+          class="pagination pagination-lateral rounded-l-md"
+        >
+          <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path
+              fill-rule="evenodd"
+              d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </a>
+      </div>
+      {% endif %}
+
+      <div>
+        {% if page_obj.has_previous %}
+        <!-- prettier-ignore -->
+        {% if page_obj.number > 3 %}
+        <a href="?page=1" class="pagination pagination-internal"> {{ "1" }} </a>
+        {% if page_obj.number > 4 %}
+        <a href="#" class="pagination pagination-internal">
+          {{ page_obj.paginator.ELLIPSIS }}
+        </a>
+        {% endif %}
+        <!-- prettier-ignore -->
+        {% endif %}
+        <!-- prettier-ignore -->
+        {% endif %}
+
+        <!-- central block -->
+        {% for num in page_obj.paginator.page_range %}
+        <!-- prettier-ignore -->
+        {% if page_obj.number == num %}
+        <a class="pagination pagination-internal bg-slate-200 text-gray-500"
+          >{{ num }}</a
+        >
+        <!-- prettier-ignore -->
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+        <a href="?page={{ num }}" class="pagination pagination-internal">
+          {{ num }}
+        </a>
+        {% endif %}
+        <!-- prettier-ignore -->
+        {% endfor %}
+        <!-- end of cb -->
+
+        {% if page_obj.has_next %}
+        <!-- prettier-ignore -->
+        {% if page_obj.number < page_obj.paginator.num_pages|add:'-3' %}
+        <a href="#" class="pagination pagination-internal">
+          {{ page_obj.paginator.ELLIPSIS }}
+        </a>
+        <a
+          href="?page={{ page_obj.paginator.num_pages }}"
+          class="pagination pagination-internal"
+        >
+          {{ page_obj.paginator.num_pages }}
+        </a>
+        {% elif page_obj.number < page_obj.paginator.num_pages|add:'-2' %}
+        <a
+          href="?page={{ page_obj.paginator.num_pages }}"
+          class="pagination pagination-internal"
+        >
+          {{ page_obj.paginator.num_pages }}
+        </a>
+        {% endif %}
+        <!-- prettier-ignore -->
+        {% endif %}
+      </div>
+
+      {% if page_obj.has_next %}
+      <div>
+        <a
+          href="?page={{ page_obj.next_page_number }}"
+          class="pagination pagination-lateral -ml-px rounded-r-md"
+        >
+          <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path
+              fill-rule="evenodd"
+              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </a>
+      </div>
+      {% endif %}
+    </nav>
+  </div>
+  {% endif %}
+</div>

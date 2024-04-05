@@ -1,0 +1,152 @@
+{% extends 'main.html' %}
+<!-- prettier-ignore -->
+{% block content %}
+{% comment %} grid grid-flow-col auto-cols-max {% endcomment %}
+<div class="flex space-x-2 items-center justify-center px-4">
+    <!-- prettier-ignore -->
+    <div class="max-w-4xl bg-white rounded-lg shadow-xl">
+        <div class="p-4 border-b">
+            <h2 class="text-2xl ">
+                {{ company.name }}
+            </h2>
+            {% comment %} <p class="text-sm text-gray-500">
+                Дата создания: {{ company.time_create }}. Дата обновления: {{ company.time_update }}. Добавил: {{ company.creator.get_full_name }}.
+            </p> {% endcomment %}
+        </div>
+        <div>
+            <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b">
+                <p class="text-gray-600">
+                    Телефон
+                </p>
+                <p>
+                    {{ company.phone_number }}
+                </p>
+            </div>
+            <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b">
+                <p class="text-gray-600">
+                    Email
+                </p>
+                <p>
+                    {{ company.email }}
+                </p>
+            </div>
+            <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b">
+                <p class="text-gray-600">
+                    ИНН
+                </p>
+                <p>
+                    {{ company.inn }}
+                </p>
+            </div>
+            <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b">
+                <p class="text-gray-600">
+                    КПП
+                </p>
+                <p>
+                    {{ company.kpp }}
+                </p>
+            </div>
+            <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b">
+                <p class="text-gray-600">
+                    ОГРН
+                </p>
+                <p>
+                    {{ company.ogrn }}
+                </p>
+            </div>
+            <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b">
+                <p class="text-gray-600">
+                    Зона деятельности
+                </p>
+                    {% for rs_office in company.responsible_offices.all %}
+                    <p>{{ rs_office.name }}<p>
+                    {% endfor %}
+            </div>
+            <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4">
+                <p class="text-gray-600">
+                    Дополнительная информация
+                </p>
+                <p>
+                    {{ company.extra_info }} 
+                </p>
+            </div>
+        </div>
+        <div class="md:col-span-4 text-right px-4 py-1">
+            {% comment %} <div class="inline-flex items-end">
+              <a
+                href="{% url "company_delete" company.slug %}"
+                type="button"
+                class="mr-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Удалить карточку
+              </a>
+              <a
+                href="{% url "company_update" company.slug %}"
+                type="button"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Обновить карточку
+              </a>
+            </div> {% endcomment %}
+        </div>
+    </div>
+    <div class="max-w-xs bg-white rounded-lg shadow-xl">
+        <div>
+            <div class="md:grid md:space-y-0 space-y-1 px-4 py-2">
+              <a
+                href="{% url "company_address_list" company.slug %}"
+                type="button"
+                class="bg-blue-500 hover:bg-blue-700 text-white text-center font-semibold py-2 px-4 rounded"
+              >
+                Показать адрес
+              </a>
+            </div>
+            <div class="md:grid md:space-y-0 space-y-1 px-4 py-2">
+              <a
+                href="{% url "company_employee_list" company.slug %}"
+                type="button"
+                class="bg-blue-500 hover:bg-blue-700 text-white text-center font-semibold py-2 px-4 rounded"
+              >
+                Показать персонал
+              </a>
+            </div>
+            <div class="md:grid md:space-y-0 space-y-1 px-4 py-2">
+              <a
+                href="{% url "company_bankaccount_list" company.slug %}"
+                type="button"
+                class="bg-blue-500 hover:bg-blue-700 text-white text-center font-semibold py-2 px-4 rounded"
+              > 
+                Показать банк. рекв.
+              </a>
+            </div>
+            <div class="md:grid md:space-y-0 space-y-1 px-4 pt-2 pb-4 border-b">
+              <a
+                href="{% url "company_update" company.slug %}"
+                type="button"
+                class="bg-blue-500 hover:bg-blue-700 text-white text-center font-semibold p-4 rounded"
+              >
+                Показать заявки
+              </a>
+            </div>
+            <div class="md:grid md:space-y-0 space-y-1 px-4 pt-4 pb-4">
+              <a
+                href="{% url "company_update" company.slug %}"
+                type="button"
+                class="bg-green-500 hover:bg-green-700 text-white text-center font-semibold py-2 px-4 rounded"
+              >
+                Обновить карточку
+              </a>
+            </div>
+            <div class="md:grid md:space-y-0 space-y-1 px-4 pt-0 pb-4">
+                <a
+                href="{% url "company_delete" company.slug %}"
+                type="button"
+                class="bg-red-500 hover:bg-red-700 text-white text-center font-semibold py-2 px-4 rounded"
+              >
+                Удалить карточку
+              </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

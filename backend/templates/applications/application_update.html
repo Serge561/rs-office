@@ -1,0 +1,80 @@
+{% extends 'main.html' %}
+<!-- prettier-ignore -->
+{% block content %}
+<!-- breadcrumbs -->
+{% block breadcrumbs %}
+<div>
+  <a href="{% url 'home' %}" class="breadcrumbs font-medium">Главная</a>
+  <a
+    href="{% url 'company_detail' application.company.slug %}"
+    class="breadcrumbs font-medium"
+  >
+    &rsaquo; {{ application.company.name|truncatechars:50 }}</a
+  >
+  <a
+    href="{% url 'company_application_list' application.company.slug %}"
+    class="breadcrumbs font-medium"
+  >
+    &rsaquo; {{ "Список заявок компании" }}</a
+  >
+  <a
+    href="{% url 'application_detail' application.company.slug application.id %}"
+    class="breadcrumbs font-medium"
+  >
+    &rsaquo; {{ application.number }}</a
+  >
+  {% block crumbs %}
+  <span class="breadcrumbs">
+    <!-- prettier-ignore -->
+    {% if title %} &rsaquo; {{ title }} {% endif %}
+  </span>
+  <!-- prettier-ignore -->
+  {% endblock%}
+</div>
+{% endblock %}
+<!-- end of breadcrumbs -->
+<div class="flex items-center justify-center px-4">
+  <div class="max-w-4xl bg-white w-full rounded-lg shadow-xl">
+    <div class="p-4 border-b">
+      <h2 class="text-2xl">Редактирование заявки № {{ application }}</h2>
+    </div>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div>
+        {% for field in form %}
+        <div
+          class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 py-2 px-4 border-b"
+        >
+          <p class="text-gray-600 pt-2">{{field.label_tag}}</p>
+          <p>{{field}}</p>
+          {% if field.errors %}
+          <!-- prettier-ignore -->
+          {% for error in field.errors %}
+          <div
+            class="bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-4"
+            role="alert"
+          >
+            <p class="font-bold">Ошибка!</p>
+            <p>{{error}}</p>
+          </div>
+          {% endfor %}
+          <!-- prettier-ignore -->
+          {% endif %}
+        </div>
+        {% endfor %}
+        <div class="md:col-span-4 text-right p-4">
+          <div class="inline-flex items-end">
+            <button
+              type="submit"
+              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Обновить заявку
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+    {{ form.media }}
+  </div>
+</div>
+{% endblock %}

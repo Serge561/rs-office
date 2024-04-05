@@ -1,0 +1,104 @@
+<!-- details -->
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'home' %}">Главная</a>
+  {% block crumbs %} {% if title %} &rsaquo; {{ title }}{% endif %} {% endblock
+  %}
+</div>
+{% endblock %}
+
+<!-- lists -->
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'home' %}">Главная</a>
+  <a href="{% url 'company_detail' company.slug %}">> {{ company.name }}</a>
+  {% block crumbs %} {% if title %} &rsaquo; {{ title }}{% endif %} {% endblock
+  %}
+</div>
+{% endblock %}
+
+<!-- breadcrumbs -->
+{% include 'includes/breadcrumbs/bc_list.html' %}
+<!-- end of breadcrumbs -->
+
+<!-- breadcrumbs -->
+{% block breadcrumbs %}
+<div>
+  <a href="{% url 'home' %}" class="breadcrumbs font-medium">Главная</a>
+  {% block crumbs %}
+  <span class="breadcrumbs"> {% if title %} &rsaquo; {{ title }} </span>
+  <!-- prettier-ignore -->
+  {% endif %}
+  <!-- prettier-ignore -->
+  {% endblock%}
+</div>
+{% endblock %}
+<!-- end of breadcrumbs -->
+
+<!-- breadcrumbs -->
+{% block breadcrumbs %}
+<div>
+  <a href="{% url 'home' %}" class="breadcrumbs font-medium">Главная</a>
+  {% block crumbs %}
+  <span class="breadcrumbs">
+    <!-- prettier-ignore -->
+    {% if title %} &rsaquo; {{ title }} {% endif %}
+  </span>
+  <!-- prettier-ignore -->
+  {% endblock%}
+</div>
+{% endblock %}
+<!-- end of breadcrumbs -->
+
+<!-- breadcrumbs -->
+{% block breadcrumbs %}
+<div>
+  <a href="{% url 'home' %}" class="breadcrumbs font-medium">Главная</a>
+  <a
+    href="{% url 'company_detail' company.slug %}"
+    class="breadcrumbs font-medium"
+  >
+    &rsaquo; {{ company.name|truncatechars:50 }}</a
+  >
+  <a
+    href="{% url 'company_address_list' company.slug %}"
+    class="breadcrumbs font-medium"
+  >
+    &rsaquo; {{ "Список адресов" }}</a
+  >
+  {% block crumbs %}
+  <span class="breadcrumbs">
+    <!-- prettier-ignore -->
+    {% if title %} &rsaquo; {{ title }} {% endif %}
+  </span>
+  <!-- prettier-ignore -->
+  {% endblock%}
+</div>
+{% endblock %}
+<!-- end of breadcrumbs -->
+<!-- breadcrumbs -->
+{% block breadcrumbs %}
+<div>
+  <a href="{% url 'home' %}" class="breadcrumbs font-medium">Главная</a>
+  <a
+    href="{% url 'company_detail' company.slug %}"
+    class="breadcrumbs font-medium"
+  >
+    &rsaquo; {{ company.name|truncatechars:50 }}</a
+  >
+  <a
+    href="{% url 'company_address_list' company.slug %}"
+    class="breadcrumbs font-medium"
+  >
+    &rsaquo; {{ "Список адресов" }}</a
+  >
+  {% block crumbs %}
+  <span class="breadcrumbs">
+    <!-- prettier-ignore -->
+    {% if title %} &rsaquo; {{ title }} {% endif %}
+  </span>
+  <!-- prettier-ignore -->
+  {% endblock%}
+</div>
+{% endblock %}
+<!-- end of breadcrumbs -->
