@@ -120,11 +120,18 @@
         <div class="md:col-span-4 text-right px-4 py-3">
             <div class="inline-flex items-end gap-4">
               <a
+                href="{% url "account_detail" application.company.slug application.id %}"
+                type="button"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 mr-4 px-4 rounded"
+              >
+                Показать стоим. услуги
+              </a>
+              <a
                 href="{% url "document_list" application.company.slug application.id %}"
                 type="button"
-                class="bg-gray-100 hover:bg-gray-500 text-gray-700 font-bold py-2 mr-4 px-4 rounded"
+                class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
               >
-                Показать список выданных докум.
+                Показать выданные докум.
               </a>
               <a
                 href="{% url "vesselextrainfo_detail" application.company.slug application.id %}"
@@ -145,7 +152,7 @@
                 type="button"
                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
               >
-                Редактировать заявку
+                Редакт. заявку
               </a>
             </div>
         </div>

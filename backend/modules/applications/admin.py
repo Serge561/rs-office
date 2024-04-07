@@ -1,27 +1,20 @@
 """Админ-панель модели заявок."""
 
 from django.contrib import admin
-from .models import Application, Vessel, VesselExtraInfo, Form, Document
+from .models import (
+    Application,
+    Vessel,
+    VesselExtraInfo,
+    Form,
+    Document,
+    Account,
+)  # noqa: E501
 
 
 class ApplicationAdmin(admin.ModelAdmin):
     """Админ-панель заявок."""
 
     model = Application
-    # company
-    # number
-    # date
-    # completion_date
-    # survey_code
-    # survey_type
-    # survey_scope
-    # survey_object
-    # vessel
-    # register_signer
-    # applicant_signer
-    # authorized_person
-    # assigned_surveyors
-    # completion_expected_date
     list_display = [
         "id",
         "company",
@@ -92,17 +85,11 @@ class VesselExtraInfoAdmin(admin.ModelAdmin):
 
     model = VesselExtraInfo
     list_display = [
-        # "id",
         "application",
         "class_status",
         "due_date",
-        # "city",
-        # "previous_survey_date",
-        # "last_psc_inspection_date",
-        # "last_psc_inspection_result",
         "completion_expected_date",
     ]
-    # readonly_fields = ("id",)
     search_fields = ("application",)
     list_display_links = (
         # "id",
@@ -133,7 +120,7 @@ class FormAdmin(admin.ModelAdmin):
         "id",
         "number",
     )
-    # list_select_related = ["created_by", "updated_by"]
+    list_select_related = ["created_by", "updated_by"]
 
 
 class DocumentAdmin(admin.ModelAdmin):
@@ -160,8 +147,26 @@ class DocumentAdmin(admin.ModelAdmin):
     list_select_related = ["form", "application"]
 
 
+class AccountAdmin(admin.ModelAdmin):
+    """Админ-панель стоимости услуги."""
+
+    model = Account
+    list_display = [
+        "application",
+        "service_cost",
+        "extra_info",
+    ]
+    search_fields = ("application",)
+    list_display_links = ("application",)
+    autocomplete_fields = [
+        "application",
+    ]
+    list_select_related = ["application"]
+
+
 admin.site.register(Application, ApplicationAdmin)
 admin.site.register(Vessel, VesselAdmin)
 admin.site.register(VesselExtraInfo, VesselExtraInfoAdmin)
 admin.site.register(Form, FormAdmin)
 admin.site.register(Document, DocumentAdmin)
+admin.site.register(Account, AccountAdmin)

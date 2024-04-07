@@ -19,6 +19,8 @@ from .views import (
     DocumentCreateView,
     DocumentUpdateView,
     FormAutocomplete,
+    AccountDetailView,
+    AccountUpdateView,
 )
 
 urlpatterns = [
@@ -97,5 +99,16 @@ urlpatterns = [
         "companies/<str:slug>/applications/<int:pk>/documents/<int:id>/update/",  # noqa: E501
         DocumentUpdateView.as_view(),
         name="document_update",
+    ),
+    # ================ account =================
+    path(
+        "companies/<str:slug>/applications/<int:pk>/account/",
+        AccountDetailView.as_view(),
+        name="account_detail",
+    ),
+    path(
+        "companies/<str:slug>/applications/<int:pk>/account/update/",
+        AccountUpdateView.as_view(),
+        name="account_update",
     ),
 ]

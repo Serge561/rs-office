@@ -14,6 +14,7 @@ from .models import (
     Employee,
     Form,
     Document,
+    Account,
 )  # , Company # noqa: E501
 
 User = get_user_model()
@@ -372,6 +373,34 @@ class DocumentUpdateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         """Обновление стилей формы под Tailwind."""
         super().__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update(
+                {
+                    "class": "h-7 border-none mt-0 rounded px-4 w-full bg-gray-50",  # noqa: E501
+                    "autocomplete": "off",
+                }
+            )
+
+
+# ======================= Account ==========================
+
+
+class AccountUpdateForm(forms.ModelForm):
+    """Форма обновления стоимости услуги."""
+
+    class Meta:
+        """Мета формы обновления стоимости услуги."""
+
+        model = Account
+        fields = (
+            "service_cost",
+            "extra_info",
+        )
+
+    def __init__(self, *args, **kwargs):
+        """Обновление стилей формы под Tailwind."""
+        super().__init__(*args, **kwargs)
+        self.fields["extra_info"].widget.attrs["rows"] = 2
         for field in self.fields:
             self.fields[field].widget.attrs.update(
                 {

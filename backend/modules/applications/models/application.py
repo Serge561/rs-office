@@ -407,13 +407,13 @@ class VesselExtraInfo(PlaceMixin):
     class Meta:
         """ЧЧИ."""
 
-        verbose_name = "Дополнительные данные по судну и заявке"
-        verbose_name_plural = "Дополнительные данные по судам и заявкам"
+        verbose_name = "Дополнительные сведения по судну и заявке"
+        verbose_name_plural = "Дополнительные сведения по судам и заявкам"
 
     def __str__(self):
         """Возвращение строки."""
         return f"{self.last_psc_inspection_date}, {self.last_psc_inspection_result}"  # noqa: E501
 
     def get_absolute_url(self):
-        """Полный URL профиля работника фирмы."""
+        """Полный URL доп. данных по судну и заявке."""
         return reverse("vesselextrainfo_detail", kwargs={"slug": self.application.company.slug, "pk": self.application.id})  # type: ignore # noqa: E501

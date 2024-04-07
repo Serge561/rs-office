@@ -30,6 +30,7 @@ from .models import (
     VesselExtraInfo,
     Form,
     Document,
+    Account,
 )
 
 
@@ -44,6 +45,7 @@ from .forms import (
     FormCreateForm,
     DocumentCreateForm,
     DocumentUpdateForm,
+    AccountUpdateForm,
 )
 
 User = get_user_model()
@@ -475,6 +477,56 @@ class DocumentUpdateView(
     def form_valid(self, form):
         form.instance.application = get_object_or_404(  # type: ignore
             Application, pk=self.kwargs["pk"]
+        )  # noqa: E501
+        form.save()  # type: ignore
+        return super().form_valid(form)
+
+
+# =================== функционал Account ===================
+
+
+class AccountDetailView(DetailView):
+    """Представление для вывода стоимости услуги."""
+
+    model = Account
+    template_name = "applications/accounts/account_detail.html"
+    context_object_name = "account"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "Стоимость услуги"  # type: ignore # noqa: E501
+        return context
+
+
+class AccountUpdateView(
+    LoginRequiredMixin, SuccessMessageMixin, UpdateView
+):  # noqa: E501
+    """Представление редактирования стоимости услуги."""
+
+    model = Account
+    template_name = "applications/accounts/account_update.html"
+    context_object_name = "account"
+    form_class = AccountUpdateForm
+    login_url = "login"
+    success_message = "Стоимость услуги была успешно обновлена"
+
+    # def get_initial(self):
+    #     user = self.request.user
+    #     branch_number = user.office_number.number[0:3]  # type: ignore
+    #     initial = {"branch_number": branch_number}
+    #     return initial
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["company"] = get_object_or_404(
+            Company, slug=self.kwargs["slug"]
+        )  # noqa: E501
+        context["title"] = "Обновить расчёт стоимости"
+        return context
+
+    def form_valid(self, form):
+        form.instance.company = get_object_or_404(  # type: ignore
+            Company, slug=self.kwargs["slug"]
         )  # noqa: E501
         form.save()  # type: ignore
         return super().form_valid(form)
