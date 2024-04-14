@@ -1,26 +1,27 @@
+# pylint: disable=line-too-long
 """Маршруты приложения application."""
 
 from django.urls import path
 from django.urls import re_path as url
 
-
 from .views import (
-    ApplicationListView,
-    ApplicationDetailView,
+    AccountDetailView,
+    AccountUpdateView,
     ApplicationCreateView,
+    ApplicationDetailView,
+    ApplicationListView,
     ApplicationUpdateView,
+    DocumentCreateView,
+    DocumentDetailView,
+    DocumentListView,
+    DocumentUpdateView,
+    FormAutocomplete,
+    FormCreateView,
     VesselAutocomplete,
     VesselCreateView,
     VesselExtraInfoDetailView,
     VesselExtraInfoUpdateView,
-    FormCreateView,
-    DocumentListView,
-    DocumentDetailView,
-    DocumentCreateView,
-    DocumentUpdateView,
-    FormAutocomplete,
-    AccountDetailView,
-    AccountUpdateView,
+    print_docs,
 )
 
 urlpatterns = [
@@ -110,5 +111,12 @@ urlpatterns = [
         "companies/<str:slug>/applications/<int:pk>/account/update/",
         AccountUpdateView.as_view(),
         name="account_update",
+    ),
+    # =============== print docx ===============
+    path(
+        # "companies/aktsionernoe-obshchestvo-arkticheskie-morskie-inzhenerno-geologicheskie-ekspeditsii/applications/1/account/print/",  # noqa: E501
+        "companies/<str:slug>/applications/<int:pk>/account/print/",
+        print_docs,
+        name="print_doc",
     ),
 ]

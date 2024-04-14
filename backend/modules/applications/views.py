@@ -1,10 +1,15 @@
-# pylint: disable=line-too-long, unused-argument, too-many-ancestors
+# pylint: disable=line-too-long, unused-argument, too-many-ancestors, too-few-public-methods # noqa: E501
 """Представления для модели applications."""
-from dal import autocomplete
-from django.shortcuts import get_object_or_404  # , redirect, render
 
+import io
+from dal import autocomplete
+from docxtpl import DocxTemplate
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404  # , redirect, render
 from django.contrib.auth import get_user_model
 from django.urls import reverse_lazy
+
+# from django.views import View
 from django.views.generic import (
     ListView,
     DetailView,
@@ -530,3 +535,37 @@ class AccountUpdateView(
         )  # noqa: E501
         form.save()  # type: ignore
         return super().form_valid(form)
+
+
+def print_docs(request, **kwargs):
+    """Функция печати документов."""
+
+    doc = DocxTemplate("templates/docx/810_1_1_template.docx")
+
+    company = get_object_or_404(Company, slug=kwargs["slug"])
+    application = get_object_or_404(Application, id=kwargs["pk"])
+
+    context = {
+        "company": company,
+        "service_cost": application.account.service_cost,  # type: ignore
+    }  # noqa: E501
+
+    doc.render(context)
+    doc.save("templates/docx/810_1_1.docx")
+
+    doc_io = io.BytesIO()  # create a file-like object
+    doc.save(doc_io)  # save data to file-like object
+    doc_io.seek(0)  # go to the beginning of the file-like object
+
+    response = HttpResponse(doc_io.read())
+
+    # Content-Disposition header makes a file downloadable
+    response["Content-Disposition"] = (
+        "attachment; filename=810_1_1_printed.docx"  # noqa: E501
+    )
+
+    # Set the appropriate Content-Type for docx file
+    response["Content-Type"] = (
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"  # noqa: E501
+    )
+    return response

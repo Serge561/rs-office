@@ -69,6 +69,13 @@
                 Удалить доп. инфо
               </a> {% endcomment %}
               <a
+                href="{% url "print_doc" account.application.company.slug account.application.id %}"
+                type="button"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Вывод на печать
+              </a>
+              <a
                 href="{% url "account_update" account.application.company.slug account.application.id %}"
                 type="button"
                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
