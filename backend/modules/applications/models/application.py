@@ -412,7 +412,7 @@ class VesselExtraInfo(PlaceMixin):
 
     def __str__(self):
         """Возвращение строки."""
-        return f"{self.last_psc_inspection_date}, {self.last_psc_inspection_result}"  # noqa: E501
+        return f"{self.last_psc_inspection_date.strftime("%d.%m.%Y")}, {self.last_psc_inspection_result}"  # type: ignore # noqa: E501
 
     def get_absolute_url(self):
         """Полный URL доп. данных по судну и заявке."""

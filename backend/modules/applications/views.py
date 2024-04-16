@@ -3,24 +3,33 @@
 
 import io
 from dal import autocomplete
-from docxtpl import DocxTemplate
+from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404  # , redirect, render
-from django.contrib.auth import get_user_model
 from django.urls import reverse_lazy
+from django.utils import dateformat
 
-# from django.views import View
 from django.views.generic import (
-    ListView,
-    DetailView,
     CreateView,
+    DetailView,
+    ListView,
     UpdateView,
-    # DeleteView,
 )
-from django.contrib.auth.mixins import LoginRequiredMixin
+from docxtpl import DocxTemplate
 
-from django.contrib.messages.views import SuccessMessageMixin
-
+from .forms import (
+    AccountUpdateForm,
+    ApplicationCreateForm,
+    ApplicationUpdateForm,
+    DocumentCreateForm,
+    DocumentUpdateForm,
+    FormCreateForm,
+    VesselCreateForm,
+    VesselExtraInfoUpdateForm,
+)
 
 # from django.contrib.postgres.search import (
 #     SearchVector,
@@ -29,29 +38,15 @@ from django.contrib.messages.views import SuccessMessageMixin
 # )  # noqa: E501
 # from django.urls import reverse_lazy
 from .models import (
+    Account,
     Application,
     Company,
+    Document,
+    Form,
     Vessel,
     VesselExtraInfo,
-    Form,
-    Document,
-    Account,
 )
 
-
-# from ..services.mixins import AdminRequiredMixin
-
-from .forms import (
-    ApplicationCreateForm,
-    ApplicationUpdateForm,
-    VesselCreateForm,
-    # VesselExtraInfoCreateForm,
-    VesselExtraInfoUpdateForm,
-    FormCreateForm,
-    DocumentCreateForm,
-    DocumentUpdateForm,
-    AccountUpdateForm,
-)
 
 User = get_user_model()
 
@@ -546,8 +541,50 @@ def print_docs(request, **kwargs):
     application = get_object_or_404(Application, id=kwargs["pk"])
 
     context = {
+        "application": application,
+        "day": application.date.strftime("%d"),  # type: ignore
+        "month": dateformat.format(application.date, settings.DATE_FORMAT),
+        "year": application.date.strftime("%y"),  # type: ignore
+        "vessel": f'"{application.vessel.name}"',  # type: ignore
+        "rs_number": application.vessel.rs_number,  # type: ignore
+        "imo_number": application.vessel.imo_number,  # type: ignore
+        "survey_scope": f"{application.get_survey_scope_display()} освидетельствование",  # type: ignore # noqa: E501
+        "survey_object": application.get_survey_object_display(),  # type: ignore # noqa: E501
+        "city": application.city,
+        "date": application.date.strftime("%d.%m.%Y"),
         "company": company,
-        "service_cost": application.account.service_cost,  # type: ignore
+        # more logic needed regarding genitive case of position and last_name of an applicant # noqa: E501
+        "applicant": f"{application.applicant_signer.position} {application.applicant_signer}",  # type: ignore # noqa: E501
+        # more logic needed regarding genitive case of type of proxy and take into account None when there is no proxy date and number # noqa: E501
+        "applicant_proxy": f"{application.applicant_signer.get_proxy_type_display()} № {application.applicant_signer.proxy_number} от {application.applicant_signer.proxy_date.strftime("%d.%m.%Y")}",  # type: ignore # noqa: E501
+        "authorized_person": f"{application.authorized_person}, {application.authorized_person.phone_number}, {application.authorized_person.email}",  # type: ignore # noqa: E501
+        "previous_survey_place": application.vesselextrainfo.city,  # type: ignore # noqa: E501
+        "previous_survey_date": application.vesselextrainfo.previous_survey_date.strftime("%d.%m.%Y"),  # type: ignore # noqa: E501
+        "last_psc_inspection": application.vesselextrainfo,  # type: ignore # noqa: E501
+        "postal_address_rs": company.addresses.first(),  # type: ignore # noqa: E501
+        # logic needed
+        # "legal_address_rs": company.addresses.second(),  # type: ignore # noqa: E501
+        "inn_rs": company.inn,
+        "kpp_rs": company.kpp,
+        "ogrn_rs": company.ogrn,
+        "phone_number_rs": company.phone_number,
+        "email_rs": company.email,
+        "payment_account_rs": company.bank_accounts.first(),  # type: ignore # noqa: E501
+        # logic needed
+        "postal_address": company.addresses.first(),  # type: ignore # noqa: E501
+        "legal_address": company.addresses.first(),  # type: ignore # noqa: E501
+        "inn": company.inn,
+        "kpp": company.kpp,
+        "ogrn": company.ogrn,
+        "phone_number": company.phone_number,
+        "email": company.email,
+        # perhaps some logic needed
+        "payment_account": company.bank_accounts.first(),  # type: ignore # noqa: E501
+        "register_signer_position": application.register_signer.position,  # type: ignore # noqa: E501
+        "register_signer_proxy": f"Доверенности № {application.register_signer.proxy_number} от {application.register_signer.proxy_date.strftime("%d.%m.%Y")}",  # type: ignore # noqa: E501
+        "register_signer": f"{application.register_signer.first_name[0]}. {application.register_signer.patronymic_name[0]}.  {application.register_signer.last_name}",  # type: ignore # noqa: E501
+        "applicant_signer": f"{application.applicant_signer.first_name[0]}. {application.applicant_signer.patronymic_name[0]}. {application.applicant_signer.second_name}",  # type: ignore # noqa: E501
+        # "service_cost": application.account.service_cost,  # type: ignore
     }  # noqa: E501
 
     doc.render(context)
