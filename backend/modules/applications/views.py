@@ -2,6 +2,9 @@
 """Представления для модели applications."""
 
 import io
+import pymorphy3
+from petrovich.main import Petrovich
+from petrovich.enums import Case
 from dal import autocomplete
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -532,6 +535,76 @@ class AccountUpdateView(
         return super().form_valid(form)
 
 
+# -------- Функционал вывода на печать документов --------
+
+
+def get_genitive_case(phrase):
+    """Функция перевода слов в родительный падеж."""
+    # whole sentence with removing conjunctions, prepositions and punctuation
+    # import pymorphy3
+    # import string
+    # text = "первое число месяца, дня и года".translate(str.maketrans('', '', string.punctuation)) # noqa: E501
+    # morph = pymorphy3.MorphAnalyzer()
+    # words = text.split()
+    # conjunctions = [word for word in words if morph.parse(word)[0].tag.POS == 'CONJ'] # noqa: E501
+    # sentence = [word for word in words if word not in conjunctions]
+    # st = (' '.join(sentence))
+    # status = ' '.join(morph.parse(word)[0].inflect({'gent'}).word for word in st.split()) # noqa: E501
+    # print(status)
+
+    # with one word
+    # morph = pymorphy3.MorphAnalyzer()
+    # theword = morph.parse(phrase)[0]
+    # gent = theword.inflect({'gent'})  # type: ignore
+    # return gent.word  # type: ignore
+
+    # parse a phrase with several words without punctuation, conj and prepos
+    morph = pymorphy3.MorphAnalyzer()
+    result = ' '.join(morph.parse(word)[0].inflect({'gent'}).word for word in phrase.split())  # type: ignore # noqa: E501
+    return result
+
+
+def get_genitive_case_lastname(lastname):
+    """Функция перевода фамилий в родительный падеж через Petrovicha."""
+    # -------------------------------------------------------
+    # Исправление бага с фамилией для питона 3+
+    # https://github.com/damirazo/Petrovich/issues/8
+    # в petrovich -> main.py
+    # with open(rules_path, 'r') as fp:
+    #     self.data = json.load(fp)
+    # Заменяем их на эти:
+    # try:
+    #     with open(rules_path, 'r', encoding='utf8') as fp:
+    #         self.data = json.load(fp)
+    # except:
+    #     with open(rules_path, 'r') as fp:
+    #         self.data = json.load(fp)
+    # в lastname заменить str на None в значении по умолчанию
+    # -------------------------------------------------------
+    p = Petrovich()
+    cased_lname = p.lastname(lastname, Case.GENITIVE)
+    return cased_lname
+
+
+def get_genitive_case_proxy(proxy):
+    """Функция перевода названий документов,
+       на основании которых действует заявитель,
+       в родительный падеж."""
+    match proxy:
+        case "Устав":
+            return "Устава"
+        case "Кодекс торгового мореплавания (КТМ РФ)":
+            return "Кодекса торгового мореплавания (КТМ РФ)"
+        case "Доверенность":
+            return "Доверенности"
+        case "Приказ":
+            return "Приказа"
+        case "Свидетельство о регистрации":
+            return "Свидетельства о регистрации"
+        case _:
+            return proxy
+
+
 def print_docs(request, **kwargs):
     """Функция печати документов."""
 
@@ -553,10 +626,9 @@ def print_docs(request, **kwargs):
         "city": application.city,
         "date": application.date.strftime("%d.%m.%Y"),
         "company": company,
-        # more logic needed regarding genitive case of position and last_name of an applicant # noqa: E501
-        "applicant": f"{application.applicant_signer.position} {application.applicant_signer}",  # type: ignore # noqa: E501
-        # more logic needed regarding genitive case of type of proxy and take into account None when there is no proxy date and number # noqa: E501
-        "applicant_proxy": f"{application.applicant_signer.get_proxy_type_display()} № {application.applicant_signer.proxy_number} от {application.applicant_signer.proxy_date.strftime("%d.%m.%Y")}",  # type: ignore # noqa: E501
+        "applicant": f"{get_genitive_case(application.applicant_signer.position)} {get_genitive_case_lastname(application.applicant_signer.second_name)} {application.applicant_signer.first_name[0]}. {application.applicant_signer.patronymic_name[0]}.",  # type: ignore # noqa: E501
+        # more logic needed taking into account None when there is no proxy date and number # noqa: E501
+        "applicant_proxy": f"{get_genitive_case_proxy(application.applicant_signer.get_proxy_type_display())} № {application.applicant_signer.proxy_number} от {application.applicant_signer.proxy_date.strftime("%d.%m.%Y")}",  # type: ignore # noqa: E501
         "authorized_person": f"{application.authorized_person}, {application.authorized_person.phone_number}, {application.authorized_person.email}",  # type: ignore # noqa: E501
         "previous_survey_place": application.vesselextrainfo.city,  # type: ignore # noqa: E501
         "previous_survey_date": application.vesselextrainfo.previous_survey_date.strftime("%d.%m.%Y"),  # type: ignore # noqa: E501
@@ -582,7 +654,7 @@ def print_docs(request, **kwargs):
         "payment_account": company.bank_accounts.first(),  # type: ignore # noqa: E501
         "register_signer_position": application.register_signer.position,  # type: ignore # noqa: E501
         "register_signer_proxy": f"Доверенности № {application.register_signer.proxy_number} от {application.register_signer.proxy_date.strftime("%d.%m.%Y")}",  # type: ignore # noqa: E501
-        "register_signer": f"{application.register_signer.first_name[0]}. {application.register_signer.patronymic_name[0]}.  {application.register_signer.last_name}",  # type: ignore # noqa: E501
+        "register_signer": f"{application.register_signer.first_name[0]}. {application.register_signer.patronymic_name[0]}. {application.register_signer.last_name}",  # type: ignore # noqa: E501
         "applicant_signer": f"{application.applicant_signer.first_name[0]}. {application.applicant_signer.patronymic_name[0]}. {application.applicant_signer.second_name}",  # type: ignore # noqa: E501
         # "service_cost": application.account.service_cost,  # type: ignore
     }  # noqa: E501
@@ -606,3 +678,5 @@ def print_docs(request, **kwargs):
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document"  # noqa: E501
     )
     return response
+
+# ========================================================
