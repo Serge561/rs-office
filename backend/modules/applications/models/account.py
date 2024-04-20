@@ -32,6 +32,7 @@ class Account(models.Model):
         decimal_places=2,
         validators=[MinValueValidator(0.00), MaxValueValidator(99999999.99)],
         null=True,
+        blank=True,
     )
     extra_info = models.TextField(
         "Дополнительная информация", max_length=255, blank=True

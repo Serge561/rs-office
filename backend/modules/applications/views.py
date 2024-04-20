@@ -565,7 +565,7 @@ def get_genitive_case(phrase):
 
 
 def get_genitive_case_lastname(lastname):
-    """Функция перевода фамилий в родительный падеж через Petrovicha."""
+    """Функция перевода фамилий в родительный падеж."""
     # -------------------------------------------------------
     # Исправление бага с фамилией для питона 3+
     # https://github.com/damirazo/Petrovich/issues/8
@@ -612,6 +612,12 @@ def print_docs(request, **kwargs):
 
     company = get_object_or_404(Company, slug=kwargs["slug"])
     application = get_object_or_404(Application, id=kwargs["pk"])
+    branch_number = application.register_signer.office_number.number[0:3]  # type: ignore # noqa: E501
+    rs_branch = (
+        Company.objects.filter(name__icontains="РС,").filter(
+            responsible_offices__number__icontains=branch_number
+        )  # noqa: E501
+    ).first()
 
     context = {
         "application": application,
@@ -633,15 +639,15 @@ def print_docs(request, **kwargs):
         "previous_survey_place": application.vesselextrainfo.city,  # type: ignore # noqa: E501
         "previous_survey_date": application.vesselextrainfo.previous_survey_date.strftime("%d.%m.%Y"),  # type: ignore # noqa: E501
         "last_psc_inspection": application.vesselextrainfo,  # type: ignore # noqa: E501
-        "postal_address_rs": company.addresses.first(),  # type: ignore # noqa: E501
+        "postal_address_rs": rs_branch.addresses.first(),  # type: ignore # noqa: E501
         # logic needed
-        # "legal_address_rs": company.addresses.second(),  # type: ignore # noqa: E501
-        "inn_rs": company.inn,
-        "kpp_rs": company.kpp,
-        "ogrn_rs": company.ogrn,
-        "phone_number_rs": company.phone_number,
-        "email_rs": company.email,
-        "payment_account_rs": company.bank_accounts.first(),  # type: ignore # noqa: E501
+        "legal_address_rs": rs_branch.addresses.first(),  # type: ignore # noqa: E501
+        "inn_rs": rs_branch.inn,  # type: ignore
+        "kpp_rs": rs_branch.kpp,  # type: ignore
+        "ogrn_rs": rs_branch.ogrn,  # type: ignore
+        "phone_number_rs": rs_branch.phone_number,  # type: ignore
+        "email_rs": rs_branch.email,  # type: ignore
+        "payment_account_rs": rs_branch.bank_accounts.first(),  # type: ignore # noqa: E501
         # logic needed
         "postal_address": company.addresses.first(),  # type: ignore # noqa: E501
         "legal_address": company.addresses.first(),  # type: ignore # noqa: E501
