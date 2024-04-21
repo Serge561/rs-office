@@ -605,6 +605,20 @@ def get_genitive_case_proxy(proxy):
             return proxy
 
 
+def is_none(value):
+    """Проверка значений на None."""
+    if value is not None:
+        return value
+    return ""
+
+
+def is_legal_address_same(is_same_check, postal_address, legal_address=None):
+    """Проверка на совпадение почтового и юридического адресов."""
+    if is_same_check is True:
+        return postal_address
+    return legal_address
+
+
 def print_docs(request, **kwargs):
     """Функция печати документов."""
 
@@ -621,6 +635,7 @@ def print_docs(request, **kwargs):
 
     context = {
         "application": application,
+        "app_in_page_header": application,
         "day": application.date.strftime("%d"),  # type: ignore
         "month": dateformat.format(application.date, settings.DATE_FORMAT),
         "year": application.date.strftime("%y"),  # type: ignore
@@ -640,17 +655,15 @@ def print_docs(request, **kwargs):
         "previous_survey_date": application.vesselextrainfo.previous_survey_date.strftime("%d.%m.%Y"),  # type: ignore # noqa: E501
         "last_psc_inspection": application.vesselextrainfo,  # type: ignore # noqa: E501
         "postal_address_rs": rs_branch.addresses.first(),  # type: ignore # noqa: E501
-        # logic needed
-        "legal_address_rs": rs_branch.addresses.first(),  # type: ignore # noqa: E501
+        "legal_address_rs": is_legal_address_same(rs_branch.addresses.first().is_same, rs_branch.addresses.first(), rs_branch.addresses.last()),  # type: ignore # noqa: E501
         "inn_rs": rs_branch.inn,  # type: ignore
         "kpp_rs": rs_branch.kpp,  # type: ignore
         "ogrn_rs": rs_branch.ogrn,  # type: ignore
         "phone_number_rs": rs_branch.phone_number,  # type: ignore
         "email_rs": rs_branch.email,  # type: ignore
         "payment_account_rs": rs_branch.bank_accounts.first(),  # type: ignore # noqa: E501
-        # logic needed
         "postal_address": company.addresses.first(),  # type: ignore # noqa: E501
-        "legal_address": company.addresses.first(),  # type: ignore # noqa: E501
+        "legal_address": is_legal_address_same(company.addresses.first().is_same, company.addresses.first(), company.addresses.last()),  # type: ignore # noqa: E501
         "inn": company.inn,
         "kpp": company.kpp,
         "ogrn": company.ogrn,
@@ -662,7 +675,8 @@ def print_docs(request, **kwargs):
         "register_signer_proxy": f"Доверенности № {application.register_signer.proxy_number} от {application.register_signer.proxy_date.strftime("%d.%m.%Y")}",  # type: ignore # noqa: E501
         "register_signer": f"{application.register_signer.first_name[0]}. {application.register_signer.patronymic_name[0]}. {application.register_signer.last_name}",  # type: ignore # noqa: E501
         "applicant_signer": f"{application.applicant_signer.first_name[0]}. {application.applicant_signer.patronymic_name[0]}. {application.applicant_signer.second_name}",  # type: ignore # noqa: E501
-        # "service_cost": application.account.service_cost,  # type: ignore
+        # for reports on acceptance-delivery services
+        "service_cost": application.account.service_cost,  # type: ignore
     }  # noqa: E501
 
     doc.render(context)

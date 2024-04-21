@@ -227,7 +227,7 @@ class Address(PlaceMixin, UpdaterMixin):
 
     def __str__(self):
         """Возвращение строки."""
-        return f"{self.address_line} {self.city} {self.postal_code}"  # noqa: E501
+        return f"{self.address_line}, {self.city} {self.postal_code}"  # noqa: E501
 
     def get_absolute_url(self):
         """Полный URL адресов компании."""
