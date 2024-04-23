@@ -333,12 +333,13 @@ class BankAccount(UpdaterMixin):
         # blank=True,
     )  # noqa: E501
     account_currency = models.CharField(
-        "Валюта расчётного счёта.",
+        "Валюта расчётного счёта",
         max_length=3,
         choices=Currency.choices,
         default=Currency.RUB,
         blank=True,
     )
+    current_bankaccount = models.BooleanField("Текущий счёт", default=True)
 
     objects = BankAccountManager()
 

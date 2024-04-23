@@ -586,7 +586,7 @@ def get_genitive_case_lastname(lastname):
     return cased_lname
 
 
-def get_genitive_case_proxy(proxy):
+def get_genitive_case_proxy(proxy, number=None, date=None):
     """Функция перевода названий документов,
        на основании которых действует заявитель,
        в родительный падеж."""
@@ -596,7 +596,7 @@ def get_genitive_case_proxy(proxy):
         case "Кодекс торгового мореплавания (КТМ РФ)":
             return "Кодекса торгового мореплавания (КТМ РФ)"
         case "Доверенность":
-            return "Доверенности"
+            return f"Доверенности № {number} от {date.strftime("%d.%m.%Y")}"  # type: ignore # noqa: E501
         case "Приказ":
             return "Приказа"
         case "Свидетельство о регистрации":
@@ -609,7 +609,7 @@ def is_none(value):
     """Проверка значений на None."""
     if value is not None:
         return value
-    return ""
+    return "--"
 
 
 def is_legal_address_same(is_same_check, postal_address, legal_address=None):
@@ -634,6 +634,7 @@ def print_docs(request, **kwargs):
     ).first()
 
     context = {
+        # for agreement-applications
         "application": application,
         "app_in_page_header": application,
         "day": application.date.strftime("%d"),  # type: ignore
@@ -641,36 +642,35 @@ def print_docs(request, **kwargs):
         "year": application.date.strftime("%y"),  # type: ignore
         "vessel": f'"{application.vessel.name}"',  # type: ignore
         "rs_number": application.vessel.rs_number,  # type: ignore
-        "imo_number": application.vessel.imo_number,  # type: ignore
+        "imo_number": is_none(application.vessel.imo_number),  # type: ignore
         "survey_scope": f"{application.get_survey_scope_display()} освидетельствование",  # type: ignore # noqa: E501
         "survey_object": application.get_survey_object_display(),  # type: ignore # noqa: E501
         "city": application.city,
         "date": application.date.strftime("%d.%m.%Y"),
         "company": company,
         "applicant": f"{get_genitive_case(application.applicant_signer.position)} {get_genitive_case_lastname(application.applicant_signer.second_name)} {application.applicant_signer.first_name[0]}. {application.applicant_signer.patronymic_name[0]}.",  # type: ignore # noqa: E501
-        # more logic needed taking into account None when there is no proxy date and number # noqa: E501
-        "applicant_proxy": f"{get_genitive_case_proxy(application.applicant_signer.get_proxy_type_display())} № {application.applicant_signer.proxy_number} от {application.applicant_signer.proxy_date.strftime("%d.%m.%Y")}",  # type: ignore # noqa: E501
+        "applicant_proxy": get_genitive_case_proxy(application.applicant_signer.get_proxy_type_display(), application.applicant_signer.proxy_number, application.applicant_signer.proxy_date),  # type: ignore # noqa: E501
         "authorized_person": f"{application.authorized_person}, {application.authorized_person.phone_number}, {application.authorized_person.email}",  # type: ignore # noqa: E501
         "previous_survey_place": application.vesselextrainfo.city,  # type: ignore # noqa: E501
         "previous_survey_date": application.vesselextrainfo.previous_survey_date.strftime("%d.%m.%Y"),  # type: ignore # noqa: E501
-        "last_psc_inspection": application.vesselextrainfo,  # type: ignore # noqa: E501
+        "last_psc_inspection": is_none(application.vesselextrainfo),  # type: ignore # noqa: E501
+        "currency": company.bank_accounts.filter(current_bankaccount=True).first().account_currency,  # type: ignore # noqa: E501
         "postal_address_rs": rs_branch.addresses.first(),  # type: ignore # noqa: E501
         "legal_address_rs": is_legal_address_same(rs_branch.addresses.first().is_same, rs_branch.addresses.first(), rs_branch.addresses.last()),  # type: ignore # noqa: E501
-        "inn_rs": rs_branch.inn,  # type: ignore
-        "kpp_rs": rs_branch.kpp,  # type: ignore
-        "ogrn_rs": rs_branch.ogrn,  # type: ignore
-        "phone_number_rs": rs_branch.phone_number,  # type: ignore
-        "email_rs": rs_branch.email,  # type: ignore
+        "inn_rs": is_none(rs_branch.inn),  # type: ignore
+        "kpp_rs": is_none(rs_branch.kpp),  # type: ignore
+        "ogrn_rs": is_none(rs_branch.ogrn),  # type: ignore
+        "phone_number_rs": is_none(rs_branch.phone_number),  # type: ignore
+        "email_rs": is_none(rs_branch.email),  # type: ignore
         "payment_account_rs": rs_branch.bank_accounts.first(),  # type: ignore # noqa: E501
         "postal_address": company.addresses.first(),  # type: ignore # noqa: E501
         "legal_address": is_legal_address_same(company.addresses.first().is_same, company.addresses.first(), company.addresses.last()),  # type: ignore # noqa: E501
-        "inn": company.inn,
-        "kpp": company.kpp,
-        "ogrn": company.ogrn,
-        "phone_number": company.phone_number,
-        "email": company.email,
-        # perhaps some logic needed
-        "payment_account": company.bank_accounts.first(),  # type: ignore # noqa: E501
+        "inn": is_none(company.inn),
+        "kpp": is_none(company.kpp),
+        "ogrn": is_none(company.ogrn),
+        "phone_number": is_none(company.phone_number),
+        "email": is_none(company.email),
+        "payment_account": company.bank_accounts.filter(current_bankaccount=True).first(),  # type: ignore # noqa: E501
         "register_signer_position": application.register_signer.position,  # type: ignore # noqa: E501
         "register_signer_proxy": f"Доверенности № {application.register_signer.proxy_number} от {application.register_signer.proxy_date.strftime("%d.%m.%Y")}",  # type: ignore # noqa: E501
         "register_signer": f"{application.register_signer.first_name[0]}. {application.register_signer.patronymic_name[0]}. {application.register_signer.last_name}",  # type: ignore # noqa: E501

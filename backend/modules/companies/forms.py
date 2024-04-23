@@ -207,6 +207,12 @@ class BankAccountCreateForm(forms.ModelForm):
                     "autocomplete": "off",
                 }
             )
+            self.fields["current_bankaccount"].widget.attrs.update(
+                {
+                    "class": "",
+                    "autocomplete": "off",
+                }
+            )
 
 
 class BankAccountUpdateForm(BankAccountCreateForm):
@@ -220,6 +226,7 @@ class BankAccountUpdateForm(BankAccountCreateForm):
             "bank",
             "bank_account",
             "account_currency",
+            "current_bankaccount",
         )
         widgets = {
             "bank": autocomplete.ModelSelect2(url="bank-autocomplete")  # noqa: E501
@@ -232,6 +239,12 @@ class BankAccountUpdateForm(BankAccountCreateForm):
             self.fields[field].widget.attrs.update(
                 {
                     "class": "h-7 border-none mt-0 rounded px-4 w-full bg-gray-50",  # noqa: E501
+                    "autocomplete": "off",
+                }
+            )
+            self.fields["current_bankaccount"].widget.attrs.update(
+                {
+                    "class": "",
                     "autocomplete": "off",
                 }
             )
