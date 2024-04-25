@@ -619,10 +619,20 @@ def is_legal_address_same(is_same_check, postal_address, legal_address=None):
     return legal_address
 
 
+def sum_in_figures_and_words(summa):
+    """Сумма со знаком валюты расчёта и прописью."""
+    words = "одна тысяча девятьсот одинадцать"
+    currency_sign = "р."
+    currency_corr = "рублей"
+    currency_cent_in_word = "копеек"
+    return f"{summa}{currency_sign} ({words} {currency_corr} 00 {currency_cent_in_word})"  # noqa: E501
+
+
 def print_docs(request, **kwargs):
     """Функция печати документов."""
 
-    doc = DocxTemplate("templates/docx/810_1_1_template.docx")
+    # doc = DocxTemplate("templates/docx/810_1_1_template.docx")
+    doc = DocxTemplate("templates/docx/430_3_4_template.docx")
 
     company = get_object_or_404(Company, slug=kwargs["slug"])
     application = get_object_or_404(Application, id=kwargs["pk"])
@@ -641,7 +651,7 @@ def print_docs(request, **kwargs):
         "month": dateformat.format(application.date, settings.DATE_FORMAT),
         "year": application.date.strftime("%y"),  # type: ignore
         "vessel": f'"{application.vessel.name}"',  # type: ignore
-        "rs_number": application.vessel.rs_number,  # type: ignore
+        "rs_number": is_none(application.vessel.rs_number),  # type: ignore
         "imo_number": is_none(application.vessel.imo_number),  # type: ignore
         "survey_scope": f"{application.get_survey_scope_display()} освидетельствование",  # type: ignore # noqa: E501
         "survey_object": application.get_survey_object_display(),  # type: ignore # noqa: E501
@@ -676,11 +686,17 @@ def print_docs(request, **kwargs):
         "register_signer": f"{application.register_signer.first_name[0]}. {application.register_signer.patronymic_name[0]}. {application.register_signer.last_name}",  # type: ignore # noqa: E501
         "applicant_signer": f"{application.applicant_signer.first_name[0]}. {application.applicant_signer.patronymic_name[0]}. {application.applicant_signer.second_name}",  # type: ignore # noqa: E501
         # for reports on acceptance-delivery services
-        "service_cost": application.account.service_cost,  # type: ignore
+        "surveyor": f"{request.user.position} {request.user.last_name} {request.user.first_name[0]}. {request.user.patronymic_name[0]}.",  # noqa: E501
+        "surveyor_proxy": f"Доверенности № {request.user.proxy_number} от {request.user.proxy_date.strftime("%d.%m.%Y")}",  # type: ignore # noqa: E501
+        "applicant_nominative": f"{application.applicant_signer.position} {application.applicant_signer.second_name} {application.applicant_signer.first_name[0]}. {application.applicant_signer.patronymic_name[0]}.",  # type: ignore # noqa: E501
+        "issued_docs": "blah",
+        "service_cost": sum_in_figures_and_words(application.account.service_cost),  # type: ignore # noqa: E501
+        "surveyor_signer": f"{request.user.first_name[0]}. {request.user.patronymic_name[0]}. {request.user.last_name}",  # type: ignore # noqa: E501
     }  # noqa: E501
 
     doc.render(context)
-    doc.save("templates/docx/810_1_1.docx")
+    # doc.save("templates/docx/saved/810_1_1.docx")
+    doc.save("templates/docx/saved/430_3_4.docx")
 
     doc_io = io.BytesIO()  # create a file-like object
     doc.save(doc_io)  # save data to file-like object
@@ -690,7 +706,8 @@ def print_docs(request, **kwargs):
 
     # Content-Disposition header makes a file downloadable
     response["Content-Disposition"] = (
-        "attachment; filename=810_1_1_printed.docx"  # noqa: E501
+        # "attachment; filename=810_1_1.docx"  # noqa: E501
+        "attachment; filename=430_3_4.docx"  # noqa: E501
     )
 
     # Set the appropriate Content-Type for docx file
@@ -699,4 +716,4 @@ def print_docs(request, **kwargs):
     )
     return response
 
-# ========================================================
+# --- конец функционала вывода на печать документов ---
