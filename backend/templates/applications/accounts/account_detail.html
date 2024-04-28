@@ -69,11 +69,18 @@
                 Удалить доп. инфо
               </a> {% endcomment %}
               <a
-                href="{% url "print_doc" account.application.company.slug account.application.id %}"
+                href="{% url "print_doc" account.application.company.slug account.application.id %}?name=acceptance"
                 type="button"
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
               >
-                Вывод на печать
+                Скачать акт сдачи
+              </a>
+              <a
+                href="{% url "print_doc" account.application.company.slug account.application.id %}?name=agreement"
+                type="button"
+                class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Скачать договор
               </a>
               <a
                 href="{% url "account_update" account.application.company.slug account.application.id %}"

@@ -1,10 +1,11 @@
-# pylint: disable=line-too-long, unused-argument, too-many-ancestors, too-few-public-methods # noqa: E501
+# pylint: disable=line-too-long, unused-argument, too-many-ancestors, too-few-public-methods, too-many-return-statements # noqa: E501
 """Представления для модели applications."""
 
 import io
 import pymorphy3
 from petrovich.main import Petrovich
 from petrovich.enums import Case
+from num2words import num2words
 from dal import autocomplete
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -537,6 +538,23 @@ class AccountUpdateView(
 
 # -------- Функционал вывода на печать документов --------
 
+def get_docx_template(survey_code, report_type):
+    """Получить определённый шаблон docx в зависимости
+       от кода услуги."""
+    # report_type is certificate on AGREEMENT-application or
+    # ACCEPTANCE of delivery service report
+    match survey_code:
+        case "00001" | "00011":
+            if report_type == "agreement":
+                return "810_1_1.docx"
+            return "430_3_4.docx"
+        case "00002":
+            if report_type == "agreement":
+                return "810_1_1.docx"
+            return "430_3_4.docx"
+        case _:
+            return "404_page.docx"
+
 
 def get_genitive_case(phrase):
     """Функция перевода слов в родительный падеж."""
@@ -619,20 +637,36 @@ def is_legal_address_same(is_same_check, postal_address, legal_address=None):
     return legal_address
 
 
-def sum_in_figures_and_words(summa):
-    """Сумма со знаком валюты расчёта и прописью."""
-    words = "одна тысяча девятьсот одинадцать"
-    currency_sign = "р."
-    currency_corr = "рублей"
-    currency_cent_in_word = "копеек"
-    return f"{summa}{currency_sign} ({words} {currency_corr} 00 {currency_cent_in_word})"  # noqa: E501
+def get_issued_docs(document_qs, document_date=None, survey_code=None):
+    """Выданные документы в зависимости от кода услуги."""
+    if document_date is None:
+        documents = f"{document_qs.first().form} № {document_qs.first()}"  # noqa: E501
+    else:
+        documents = f"{document_qs.first().form} № {document_qs.first()} от {document_date.strftime("%d.%m.%Y")}"  # type: ignore # noqa: E501
+    return documents
+
+
+def get_sum_in_words(summa, curr_code):
+    """Сумма со знаком валюты расчёта и прописью:
+       российский рубль, евро, доллар США, китайский юань,
+       белорусский рубль."""
+    match curr_code:
+        case "RUB":
+            return f"{summa} p. ({num2words(summa, lang='ru', to='currency', separator='', cents=False, currency='RUB')})"  # noqa: E501
+        case "EUR":
+            return f"€{summa} ({num2words(summa, to='currency', separator=' and', cents=False)})"  # noqa: E501
+        case "USD":
+            return f"${summa} ({num2words(summa, lang='en', to='currency', separator=' and', cents=False, currency='USD')})"  # noqa: E501
+        case "CNY":
+            return f"¥{summa} ({num2words(summa, to='currency', separator=' and', cents=False)})"  # noqa: E501
+        case "BYN":
+            return f"{summa} pуб. ({num2words(summa, lang='ru', to='currency', separator='', cents=False, currency='RUB')}"  # noqa: E501
+        case _:
+            return summa
 
 
 def print_docs(request, **kwargs):
     """Функция печати документов."""
-
-    # doc = DocxTemplate("templates/docx/810_1_1_template.docx")
-    doc = DocxTemplate("templates/docx/430_3_4_template.docx")
 
     company = get_object_or_404(Company, slug=kwargs["slug"])
     application = get_object_or_404(Application, id=kwargs["pk"])
@@ -643,10 +677,14 @@ def print_docs(request, **kwargs):
         )  # noqa: E501
     ).first()
 
+    button_name = request.GET.get('name')
+    docx_template = get_docx_template(application.survey_code, button_name)
+    doc = DocxTemplate(f"templates/docx/{docx_template}")
+
     context = {
         # for agreement-applications
         "application": application,
-        "app_in_page_header": application,
+        # "app_in_page_header": application,
         "day": application.date.strftime("%d"),  # type: ignore
         "month": dateformat.format(application.date, settings.DATE_FORMAT),
         "year": application.date.strftime("%y"),  # type: ignore
@@ -689,14 +727,13 @@ def print_docs(request, **kwargs):
         "surveyor": f"{request.user.position} {request.user.last_name} {request.user.first_name[0]}. {request.user.patronymic_name[0]}.",  # noqa: E501
         "surveyor_proxy": f"Доверенности № {request.user.proxy_number} от {request.user.proxy_date.strftime("%d.%m.%Y")}",  # type: ignore # noqa: E501
         "applicant_nominative": f"{application.applicant_signer.position} {application.applicant_signer.second_name} {application.applicant_signer.first_name[0]}. {application.applicant_signer.patronymic_name[0]}.",  # type: ignore # noqa: E501
-        "issued_docs": "blah",
-        "service_cost": sum_in_figures_and_words(application.account.service_cost),  # type: ignore # noqa: E501
+        "issued_docs": get_issued_docs(application.documents, application.completion_date, application.survey_code),  # type: ignore # noqa: E501
+        "service_cost": get_sum_in_words(application.account.service_cost, company.bank_accounts.filter(current_bankaccount=True).first().account_currency),  # type: ignore # noqa: E501
         "surveyor_signer": f"{request.user.first_name[0]}. {request.user.patronymic_name[0]}. {request.user.last_name}",  # type: ignore # noqa: E501
     }  # noqa: E501
 
     doc.render(context)
-    # doc.save("templates/docx/saved/810_1_1.docx")
-    doc.save("templates/docx/saved/430_3_4.docx")
+    doc.save(f"templates/docx/saved/{docx_template}")
 
     doc_io = io.BytesIO()  # create a file-like object
     doc.save(doc_io)  # save data to file-like object
@@ -707,7 +744,7 @@ def print_docs(request, **kwargs):
     # Content-Disposition header makes a file downloadable
     response["Content-Disposition"] = (
         # "attachment; filename=810_1_1.docx"  # noqa: E501
-        "attachment; filename=430_3_4.docx"  # noqa: E501
+        f"attachment; filename={docx_template}"  # noqa: E501
     )
 
     # Set the appropriate Content-Type for docx file
