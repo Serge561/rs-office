@@ -1,4 +1,4 @@
-# pylint: disable=too-few-public-methods, too-many-ancestors, line-too-long, import-error, no-member # noqa: E501
+# pylint: disable=too-few-public-methods, too-many-ancestors, line-too-long, import-error, no-member, invalid-name # noqa: E501
 """ОРМ модели application."""
 
 from django.db import models
@@ -119,8 +119,8 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
             "DII",
             "Рассмотрение II части Декларации о соответствии трудовым нормам в морском судоходстве",  # noqa: E501
         )
-        # EXPAND = "EXP", "Расширение сферы деятельности"
-        # CHANGE = "CHA", "Изменение содержания свидетельства"
+        EXPAND = "EXP", "Расширение сферы деятельности"
+        CHANGE = "CHA", "Изменение содержания свидетельства"
         WELDER = "WAC", "Квалификационные испытания сварщиков"
         WELDPS = "WPS", "Технологические процессы сварки"
 
@@ -239,7 +239,19 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
 
     def __str__(self):
         """Возвращение строки."""
-        return f"{self.number}"
+        SURVEY = "освидетельствование"
+        survey_code_string = self.get_survey_code_display()  # type: ignore
+        survey_type_string = self.get_survey_type_display()  # type: ignore
+        survey_scope_string = self.get_survey_scope_display()  # type: ignore
+        result = ""
+        match self.survey_code:
+            case "00001":
+                result = f"{survey_scope_string} {SURVEY}"  # type: ignore # noqa: E501
+            case "00002" | "00003":
+                result = survey_code_string
+            case "00011":
+                result = f"{survey_scope_string} {SURVEY} {survey_type_string[0].lower()}{survey_type_string[1:]}"  # noqa: E501
+        return result
 
     def get_absolute_url(self):
         """Полный URL заявки фирмы."""

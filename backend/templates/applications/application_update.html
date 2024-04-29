@@ -36,7 +36,7 @@
 <div class="flex items-center justify-center px-4">
   <div class="max-w-4xl bg-white w-full rounded-lg shadow-xl">
     <div class="p-4 border-b">
-      <h2 class="text-2xl">Редактирование заявки № {{ application }}</h2>
+      <h2 class="text-2xl">Редактирование заявки № {{ application.number }}</h2>
     </div>
     <form method="post" enctype="multipart/form-data">
       {% csrf_token %}

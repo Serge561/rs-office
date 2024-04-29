@@ -544,7 +544,7 @@ def get_docx_template(survey_code, report_type):
     # report_type is certificate on AGREEMENT-application or
     # ACCEPTANCE of delivery service report
     match survey_code:
-        case "00001" | "00011":
+        case "00001" | "00003" | "00011":
             if report_type == "agreement":
                 return "810_1_1.docx"
             return "430_3_4.docx"
@@ -683,15 +683,15 @@ def print_docs(request, **kwargs):
 
     context = {
         # for agreement-applications
-        "application": application,
-        # "app_in_page_header": application,
+        "application": application.number,
         "day": application.date.strftime("%d"),  # type: ignore
         "month": dateformat.format(application.date, settings.DATE_FORMAT),
         "year": application.date.strftime("%y"),  # type: ignore
         "vessel": f'"{application.vessel.name}"',  # type: ignore
         "rs_number": is_none(application.vessel.rs_number),  # type: ignore
         "imo_number": is_none(application.vessel.imo_number),  # type: ignore
-        "survey_scope": f"{application.get_survey_scope_display()} освидетельствование",  # type: ignore # noqa: E501
+        # "survey_scope": f"{application.get_survey_scope_display()} освидетельствование",  # type: ignore # noqa: E501
+        "survey_scope": application,
         "survey_object": application.get_survey_object_display(),  # type: ignore # noqa: E501
         "city": application.city,
         "date": application.date.strftime("%d.%m.%Y"),
