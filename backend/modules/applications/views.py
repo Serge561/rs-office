@@ -553,6 +553,10 @@ def get_docx_template(survey_code, report_type):
             if report_type == "agreement":
                 return "810_1_11.docx"
             return "430_3_1.docx"
+        case "00101":
+            if report_type == "agreement":
+                return "810_1_2_w.docx"
+            return "430_3_1.docx"
         case _:
             return "404_page.docx"
 
@@ -653,6 +657,12 @@ def get_issued_docs(document_qs, survey_code, document_date=None,):
                 documents = f"{document_qs.first().form} {document_qs.first()}"  # noqa: E501
             else:
                 documents = f"{document_qs.first().form} {document_qs.first()} от {document_date.strftime("%d.%m.%Y")}"  # type: ignore # noqa: E501
+        # add logic for several issued docums and then to merge with 00001
+        case "00101":
+            if document_date is None:
+                documents = f"{document_qs.first().form} № {document_qs.first()}"  # noqa: E501
+            else:
+                documents = f"{document_qs.first().form} № {document_qs.first()} от {document_date.strftime("%d.%m.%Y")}"  # type: ignore # noqa: E501
         case _:
             return "404_page.docx"
     return documents

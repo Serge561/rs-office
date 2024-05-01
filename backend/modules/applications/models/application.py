@@ -89,7 +89,7 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
         QMANAGESYS = "00100", "Сертификация систем менеджмента качества"
         WELDING = (
             "00101",
-            "Квалификационные испытания сварщиков и одобрение технологических процессов сварки (СДС, СПС)",  # noqa: E501
+            "Квалификационные испытания сварщиков и одобрение технологических процессов сварки (СОДС, СОТПС)",  # noqa: E501
         )
         GOSTRPROD = "00102", "Сертификация продукции в системе ГОСТ Р"
         COMPANYRUREG = (
@@ -131,13 +131,14 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
         ANNUAL = "A", "Ежегодное"
         INTERMEDIATE = "IN", "Промежуточное"
         SPECIAL = "S", "Очередное"
-        BOTTON = "D", "Подводной части судна"
         RENEWAL = "R", "Возобновляющее"
-        CONTINUOUS = "C", "Непрерывное"
+        BOTTOM = "D", "Подводной части судна"
         OCCASIONAL = "O", "Внеочередное"
-        # PERIODICAL = "P", "Периодическое"
+        CONTINUOUS = "C", "Непрерывное"
         INTERIM = "INT", "Временное (МКУБ/ОСПС/КТМС)"
         ADDITIONAL = "ADD", "Дополнительное (МКУБ/ОСПС/КТМС)"
+        PRIMARY = "PR", "Первичное (СОДС/СОТПС)"
+        PERIODICAL = "PL", "Периодическое (СОДС/СОТПС)"
 
     class SurveyObject(models.TextChoices):
         """Выбор объекта освидетельствования."""
@@ -240,6 +241,7 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
     def __str__(self):
         """Возвращение строки."""
         SURVEY = "освидетельствование"
+        QUALIFICATION = "аттестация"
         survey_code_string = self.get_survey_code_display()  # type: ignore
         survey_type_string = self.get_survey_type_display()  # type: ignore
         survey_scope_string = self.get_survey_scope_display()  # type: ignore
@@ -259,6 +261,17 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
                     result = f"{survey_scope_string} {SURVEY} {survey_type_string[0].lower()}{survey_type_string[1:]}"  # noqa: E501
                 else:
                     result = f"{survey_scope_string.split()[0]} {SURVEY} {survey_type_string[0].lower()}{survey_type_string[1:]}"  # noqa: E501
+            case "00101":
+                if self.survey_type == "WAC":
+                    if self.survey_scope == "PR":
+                        result = f"Первичная {QUALIFICATION} сваршиков - {self.occasional_cause} чел."  # noqa: E501
+                    else:
+                        result = f"Периодическая {QUALIFICATION} сварщиков без проведения практических испытаний - {self.occasional_cause} чел."  # noqa: E501
+                else:
+                    if self.survey_scope == "PR":
+                        result = f"Одобрение технологического процесса сварки - {self.occasional_cause} шт."  # noqa: E501
+                    else:
+                        result = f"Подтверждение Свидетельства об одобрении технологического процесса сварки (без испытаний) - {self.occasional_cause} шт."  # noqa: E501
         return result
 
     def get_absolute_url(self):
