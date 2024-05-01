@@ -33,7 +33,7 @@ class Form(CreatorMixin, UpdaterMixin):
         REG = "REG", "Регистровая книга"
         REC = "REC", "Журнал"
         RPT = "RPT", "Отчёт"
-        LET = "LET", "Письмо"
+        LET = "LET", "Письмо об одобрении"
         MIN = "MIN", "Протокол"
         QUR = "QUR", "Сообщение"
         ATL = "ATL", "Согласно перечню"
@@ -60,7 +60,9 @@ class Form(CreatorMixin, UpdaterMixin):
         verbose_name_plural = "Формы документов"
 
     def __str__(self):
-        return f"{self.get_form_type_display()} ф. {self.number}"  # type: ignore # noqa: E501
+        if self.number != "№":
+            return f"{self.get_form_type_display()} ф. {self.number}"  # type: ignore # noqa: E501
+        return f"{self.get_form_type_display()} {self.number}"  # type: ignore # noqa: E501
 
 
 class Document(models.Model):

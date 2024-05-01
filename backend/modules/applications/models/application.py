@@ -136,7 +136,7 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
         CONTINUOUS = "C", "Непрерывное"
         OCCASIONAL = "O", "Внеочередное"
         # PERIODICAL = "P", "Периодическое"
-        INTERNAL = "INT", "Временное (МКУБ/ОСПС/КТМС)"
+        INTERIM = "INT", "Временное (МКУБ/ОСПС/КТМС)"
         ADDITIONAL = "ADD", "Дополнительное (МКУБ/ОСПС/КТМС)"
 
     class SurveyObject(models.TextChoices):
@@ -183,7 +183,7 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
         blank=True,
     )
     occasional_cause = models.TextField(
-        "Причина внеочередного освидетельствования и уточнение информации по другим кодам",  # noqa: E501
+        "Уточнение сведений об услуге",  # noqa: E501
         max_length=127,
         blank=True,  # noqa: E501
     )
@@ -246,11 +246,19 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
         result = ""
         match self.survey_code:
             case "00001":
-                result = f"{survey_scope_string} {SURVEY}"  # type: ignore # noqa: E501
+                if self.survey_scope not in ["O", "C"]:
+                    result = f"{survey_scope_string} {SURVEY}"  # type: ignore # noqa: E501
+                else:
+                    result = f"{survey_scope_string} {SURVEY} {self.occasional_cause}"  # type: ignore # noqa: E501
             case "00002" | "00003":
                 result = survey_code_string
+            case "00006":
+                result = f"{survey_code_string} {self.occasional_cause}"  # type: ignore # noqa: E501
             case "00011":
-                result = f"{survey_scope_string} {SURVEY} {survey_type_string[0].lower()}{survey_type_string[1:]}"  # noqa: E501
+                if self.survey_scope not in ["ADD", "INT"]:
+                    result = f"{survey_scope_string} {SURVEY} {survey_type_string[0].lower()}{survey_type_string[1:]}"  # noqa: E501
+                else:
+                    result = f"{survey_scope_string.split()[0]} {SURVEY} {survey_type_string[0].lower()}{survey_type_string[1:]}"  # noqa: E501
         return result
 
     def get_absolute_url(self):

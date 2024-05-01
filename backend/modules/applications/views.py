@@ -1,7 +1,8 @@
-# pylint: disable=line-too-long, unused-argument, too-many-ancestors, too-few-public-methods, too-many-return-statements # noqa: E501
+# pylint: disable=line-too-long, unused-argument, too-many-ancestors, too-few-public-methods, invalid-name, too-many-branches, unused-variable, redefined-builtin, too-many-arguments, too-many-locals, too-many-statements  # noqa: E501
 """Представления для модели applications."""
 
 import io
+from decimal import Decimal
 import pymorphy3
 from petrovich.main import Petrovich
 from petrovich.enums import Case
@@ -12,7 +13,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404  # , redirect, render
+from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils import dateformat
 
@@ -97,7 +98,7 @@ class ApplicationDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["title"] = f"Заявка № {self.object} от {self.object.date:%d.%m.%Y}"  # type: ignore # noqa: E501
+        context["title"] = f"Заявка № {self.object.number} от {self.object.date:%d.%m.%Y}"  # type: ignore # noqa: E501
         return context
 
 
@@ -548,10 +549,10 @@ def get_docx_template(survey_code, report_type):
             if report_type == "agreement":
                 return "810_1_1.docx"
             return "430_3_4.docx"
-        case "00002":
+        case "00006":
             if report_type == "agreement":
-                return "810_1_1.docx"
-            return "430_3_4.docx"
+                return "810_1_11.docx"
+            return "430_3_1.docx"
         case _:
             return "404_page.docx"
 
@@ -608,19 +609,21 @@ def get_genitive_case_proxy(proxy, number=None, date=None):
     """Функция перевода названий документов,
        на основании которых действует заявитель,
        в родительный падеж."""
+    # power_of_attoney_gen = ""
     match proxy:
         case "Устав":
-            return "Устава"
+            power_of_attoney_gen = "Устава"
         case "Кодекс торгового мореплавания (КТМ РФ)":
-            return "Кодекса торгового мореплавания (КТМ РФ)"
+            power_of_attoney_gen = "Кодекса торгового мореплавания (КТМ РФ)"
         case "Доверенность":
-            return f"Доверенности № {number} от {date.strftime("%d.%m.%Y")}"  # type: ignore # noqa: E501
+            power_of_attoney_gen = f"Доверенности № {number} от {date.strftime("%d.%m.%Y")}"  # type: ignore # noqa: E501
         case "Приказ":
-            return "Приказа"
+            power_of_attoney_gen = "Приказа"
         case "Свидетельство о регистрации":
-            return "Свидетельства о регистрации"
+            power_of_attoney_gen = "Свидетельства о регистрации"
         case _:
-            return proxy
+            power_of_attoney_gen = proxy
+    return power_of_attoney_gen
 
 
 def is_none(value):
@@ -637,32 +640,138 @@ def is_legal_address_same(is_same_check, postal_address, legal_address=None):
     return legal_address
 
 
-def get_issued_docs(document_qs, document_date=None, survey_code=None):
+def get_issued_docs(document_qs, survey_code, document_date=None,):
     """Выданные документы в зависимости от кода услуги."""
-    if document_date is None:
-        documents = f"{document_qs.first().form} № {document_qs.first()}"  # noqa: E501
-    else:
-        documents = f"{document_qs.first().form} № {document_qs.first()} от {document_date.strftime("%d.%m.%Y")}"  # type: ignore # noqa: E501
+    match survey_code:
+        case "00001" | "00003" | "00011":
+            if document_date is None:
+                documents = f"{document_qs.first().form} № {document_qs.first()}"  # noqa: E501
+            else:
+                documents = f"{document_qs.first().form} № {document_qs.first()} от {document_date.strftime("%d.%m.%Y")}"  # type: ignore # noqa: E501
+        case "00006":
+            if document_date is None:
+                documents = f"{document_qs.first().form} {document_qs.first()}"  # noqa: E501
+            else:
+                documents = f"{document_qs.first().form} {document_qs.first()} от {document_date.strftime("%d.%m.%Y")}"  # type: ignore # noqa: E501
+        case _:
+            return "404_page.docx"
     return documents
 
 
-def get_sum_in_words(summa, curr_code):
-    """Сумма со знаком валюты расчёта и прописью:
-       российский рубль, евро, доллар США, китайский юань,
-       белорусский рубль."""
-    match curr_code:
+def moneyfmt(value, places=2, curr='', sep=',', dp='.',
+             pos='', neg='-', trailneg=''):
+    """Convert Decimal to a money formatted string.
+
+    places:  required number of places after the decimal point
+    curr:    optional currency symbol before the sign (may be blank)
+    sep:     optional grouping separator (comma, period, space, or blank)
+    dp:      decimal point indicator (comma or period)
+             only specify as blank when places is zero
+    pos:     optional sign for positive numbers: '+', space or blank
+    neg:     optional sign for negative numbers: '-', '(', space or blank
+    trailneg:optional trailing minus indicator:  '-', ')', space or blank
+
+    >>> d = Decimal('-1234567.8901')
+    >>> moneyfmt(d, curr='$')
+    '-$1,234,567.89'
+    >>> moneyfmt(d, places=0, sep='.', dp='', neg='', trailneg='-')
+    '1.234.568-'
+    >>> moneyfmt(d, curr='$', neg='(', trailneg=')')
+    '($1,234,567.89)'
+    >>> moneyfmt(Decimal(123456789), sep=' ')
+    '123 456 789.00'
+    >>> moneyfmt(Decimal('-0.02'), neg='<', trailneg='>')
+    '<0.02>'
+
+    """
+    # taken from https://docs.python.org/3/library/decimal.html
+
+    q = Decimal(10) ** -places      # 2 places --> '0.01'
+    sign, digits, exp = value.quantize(q).as_tuple()
+    result = []
+    digits = list(map(str, digits))
+    build, next = result.append, digits.pop
+    if sign:
+        build(trailneg)
+    for i in range(places):
+        build(next() if digits else '0')
+    if places:
+        build(dp)
+    if not digits:
+        build('0')
+    i = 0
+    while digits:
+        build(next())
+        i += 1
+        if i == 3 and digits:
+            i = 0
+            build(sep)
+    build(curr)
+    build(neg if sign else pos)
+    return ''.join(reversed(result))
+
+
+def get_sum_in_words(netto: Decimal, currency_code, tax=None):
+    """Сумма прописью: российский рубль, евро, доллар США,
+       китайский юань, белорусский рубль."""
+    VAT_RATE = 0.2
+    vat = round(netto * Decimal(VAT_RATE), 2)
+    brutto = round(netto + vat, 2)
+    match currency_code:
         case "RUB":
-            return f"{summa} p. ({num2words(summa, lang='ru', to='currency', separator='', cents=False, currency='RUB')})"  # noqa: E501
+            netto_formatted = moneyfmt(netto, sep=' ', dp=',')
+            vat_formatted = moneyfmt(vat, sep=' ', dp=',')
+            brutto_formatted = moneyfmt(brutto, sep=' ', dp=',')
+            if tax is None:
+                result = f"{netto_formatted} p. ({num2words(netto, lang='ru', to='currency', separator='', cents=False, currency='RUB')})"  # noqa: E501
+            elif tax == "vat":
+                result = f"{vat_formatted} p. ({num2words(vat, lang='ru', to='currency', separator='', cents=False, currency='RUB')})"  # noqa: E501
+            else:
+                result = f"{brutto_formatted} p. ({num2words(brutto, lang='ru', to='currency', separator='', cents=False, currency='RUB')})"  # noqa: E501
         case "EUR":
-            return f"€{summa} ({num2words(summa, to='currency', separator=' and', cents=False)})"  # noqa: E501
+            netto_formatted = moneyfmt(netto, curr='€', sep=' ', dp=',')
+            vat_formatted = moneyfmt(vat, curr='€', sep=' ', dp=',')
+            brutto_formatted = moneyfmt(brutto, curr='€', sep=' ', dp=',')
+            if tax is None:
+                result = f"{netto_formatted} ({num2words(netto, to='currency', separator=' and', cents=False)})"  # noqa: E501
+            elif tax == "vat":
+                result = f"{vat_formatted} ({num2words(vat, to='currency', separator=' and', cents=False)})"  # noqa: E501
+            else:
+                result = f"{brutto_formatted} ({num2words(brutto, to='currency', separator=' and', cents=False)})"  # noqa: E501
         case "USD":
-            return f"${summa} ({num2words(summa, lang='en', to='currency', separator=' and', cents=False, currency='USD')})"  # noqa: E501
+            netto_formatted = moneyfmt(netto, curr='$', sep=' ')
+            vat_formatted = moneyfmt(vat, curr='$', sep=' ')
+            brutto_formatted = moneyfmt(brutto, curr='$', sep=' ')
+            if tax is None:
+                result = f"{netto_formatted} ({num2words(netto, lang='en', to='currency', separator=' and', cents=False, currency='USD')})"  # noqa: E501
+            elif tax == "vat":
+                result = f"{vat_formatted} ({num2words(vat, lang='en', to='currency', separator=' and', cents=False, currency='USD')})"  # noqa: E501
+            else:
+                result = f"{brutto_formatted} ({num2words(brutto, lang='en', to='currency', separator=' and', cents=False, currency='USD')})"  # noqa: E501
         case "CNY":
-            return f"¥{summa} ({num2words(summa, to='currency', separator=' and', cents=False)})"  # noqa: E501
+            netto_formatted = moneyfmt(netto, curr='¥', sep=' ')
+            vat_formatted = moneyfmt(vat, curr='¥', sep=' ')
+            brutto_formatted = moneyfmt(brutto, curr='¥', sep=' ')
+            if tax is None:
+                result = f"{netto} ({num2words(netto, to='currency', separator=' and', cents=False)})"  # noqa: E501
+            elif tax == "vat":
+                result = f"{vat} ({num2words(vat, to='currency', separator=' and', cents=False)})"  # noqa: E501
+            else:
+                result = f"{brutto} ({num2words(brutto, to='currency', separator=' and', cents=False)})"  # noqa: E501
         case "BYN":
-            return f"{summa} pуб. ({num2words(summa, lang='ru', to='currency', separator='', cents=False, currency='RUB')}"  # noqa: E501
+            netto_formatted = moneyfmt(netto, sep=' ', dp=',')
+            vat_formatted = moneyfmt(vat, sep=' ', dp=',')
+            brutto_formatted = moneyfmt(brutto, sep=' ', dp=',')
+            if tax is None:
+                result = f"{netto_formatted} pуб. ({num2words(netto, lang='ru', to='currency', separator='', cents=False, currency='RUB')}"  # noqa: E501
+            elif tax == "vat":
+                result = f"{vat_formatted} pуб. ({num2words(vat, lang='ru', to='currency', separator='', cents=False, currency='RUB')}"  # noqa: E501
+            else:
+                result = f"{brutto_formatted} pуб. ({num2words(brutto, lang='ru', to='currency', separator='', cents=False, currency='RUB')}"  # noqa: E501
         case _:
-            return summa
+            if tax is None:
+                result = f"{netto}"
+    return result
 
 
 def print_docs(request, **kwargs):
@@ -690,7 +799,6 @@ def print_docs(request, **kwargs):
         "vessel": f'"{application.vessel.name}"',  # type: ignore
         "rs_number": is_none(application.vessel.rs_number),  # type: ignore
         "imo_number": is_none(application.vessel.imo_number),  # type: ignore
-        # "survey_scope": f"{application.get_survey_scope_display()} освидетельствование",  # type: ignore # noqa: E501
         "survey_scope": application,
         "survey_object": application.get_survey_object_display(),  # type: ignore # noqa: E501
         "city": application.city,
@@ -719,6 +827,7 @@ def print_docs(request, **kwargs):
         "phone_number": is_none(company.phone_number),
         "email": is_none(company.email),
         "payment_account": company.bank_accounts.filter(current_bankaccount=True).first(),  # type: ignore # noqa: E501
+        "register": f"{get_genitive_case(application.register_signer.position.name)} {get_genitive_case_lastname(application.register_signer.last_name)} {application.register_signer.first_name[0]}. {application.register_signer.patronymic_name[0]}.",  # type: ignore # noqa: E501
         "register_signer_position": application.register_signer.position,  # type: ignore # noqa: E501
         "register_signer_proxy": f"Доверенности № {application.register_signer.proxy_number} от {application.register_signer.proxy_date.strftime("%d.%m.%Y")}",  # type: ignore # noqa: E501
         "register_signer": f"{application.register_signer.first_name[0]}. {application.register_signer.patronymic_name[0]}. {application.register_signer.last_name}",  # type: ignore # noqa: E501
@@ -727,8 +836,10 @@ def print_docs(request, **kwargs):
         "surveyor": f"{request.user.position} {request.user.last_name} {request.user.first_name[0]}. {request.user.patronymic_name[0]}.",  # noqa: E501
         "surveyor_proxy": f"Доверенности № {request.user.proxy_number} от {request.user.proxy_date.strftime("%d.%m.%Y")}",  # type: ignore # noqa: E501
         "applicant_nominative": f"{application.applicant_signer.position} {application.applicant_signer.second_name} {application.applicant_signer.first_name[0]}. {application.applicant_signer.patronymic_name[0]}.",  # type: ignore # noqa: E501
-        "issued_docs": get_issued_docs(application.documents, application.completion_date, application.survey_code),  # type: ignore # noqa: E501
+        "issued_docs": get_issued_docs(application.documents, application.survey_code, application.completion_date),  # type: ignore # noqa: E501
         "service_cost": get_sum_in_words(application.account.service_cost, company.bank_accounts.filter(current_bankaccount=True).first().account_currency),  # type: ignore # noqa: E501
+        "tax": get_sum_in_words(application.account.service_cost, company.bank_accounts.filter(current_bankaccount=True).first().account_currency, "vat"),  # type: ignore # noqa: E501
+        "total": get_sum_in_words(application.account.service_cost, company.bank_accounts.filter(current_bankaccount=True).first().account_currency, "total"),  # type: ignore # noqa: E501
         "surveyor_signer": f"{request.user.first_name[0]}. {request.user.patronymic_name[0]}. {request.user.last_name}",  # type: ignore # noqa: E501
     }  # noqa: E501
 
