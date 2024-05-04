@@ -236,7 +236,6 @@ class VesselExtraInfoUpdateForm(forms.ModelForm):
         fields = (
             "class_status",
             "due_date",
-            # "application",
             "city",
             "previous_survey_date",
             "last_psc_inspection_date",
@@ -275,6 +274,7 @@ class VesselExtraInfoUpdateForm(forms.ModelForm):
                 "id": "datepicker4",
             }
         )
+        self.fields["city"].required = False
         self.fields["assigned_surveyors"].queryset = User.staff.surveyors().filter(  # type: ignore # noqa: E501
             office_number__number__icontains=self.initial["branch_number"]
         )

@@ -60,7 +60,7 @@ class Form(CreatorMixin, UpdaterMixin):
         verbose_name_plural = "Формы документов"
 
     def __str__(self):
-        if self.number != "№":
+        if self.form_type != "LET":
             return f"{self.get_form_type_display()} ф. {self.number}"  # type: ignore # noqa: E501
         return f"{self.get_form_type_display()} {self.number}"  # type: ignore # noqa: E501
 

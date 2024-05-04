@@ -18,7 +18,7 @@
     &rsaquo; {{ "Список заявок компании" }}</a
   >
   <a
-    href="{% url 'application_detail' application.company.slug application.id %}"
+    href="{% url 'application_detail' application.company.slug application.pk %}"
     class="breadcrumbs font-medium"
   >
     &rsaquo; Заявка № {{ application.number }} от {{ application.date|date:'SHORT_DATE_FORMAT' }} </a
@@ -150,7 +150,7 @@
         <h1
           class="text-center text-xl my-4 bg-gray-100 py-6 rounded-md border-b-2 cursor-pointer text-gray-600"
         >
-          <a href="{% url "document_create" company.slug application.id %}" type="button" class="list-none hover:text-indigo-600">
+          <a href="{% url "document_create" company.slug application.pk %}" type="button" class="list-none hover:text-indigo-600">
               Добавить документ</a
           >
         </h1>

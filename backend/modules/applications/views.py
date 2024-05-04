@@ -3,6 +3,7 @@
 
 import io
 from decimal import Decimal
+import datetime
 import pymorphy3
 from petrovich.main import Petrovich
 from petrovich.enums import Case
@@ -22,6 +23,7 @@ from django.views.generic import (
     DetailView,
     ListView,
     UpdateView,
+    DeleteView,
 )
 from docxtpl import DocxTemplate
 
@@ -380,7 +382,7 @@ class FormAutocomplete(autocomplete.Select2QuerySetView):
 
 
 class DocumentListView(LoginRequiredMixin, ListView):
-    """Представления для вывода списка работников компании."""
+    """Представления для вывода списка выданных документов по заявке."""
 
     model = Document
     template_name = "applications/documents/document_list.html"
@@ -411,6 +413,16 @@ class DocumentDetailView(DetailView):
     model = Document
     template_name = "applications/documents/document_detail.html"
     context_object_name = "document"
+    slug_url_kwarg = "pk"
+    pk_url_kwarg = "id"
+
+    # slug_field = 'isbn'
+    # slug_url_kwarg = 'isbn'
+    # def get_queryset(self):
+    # if self.request.user.is_authenticated:
+    # return Book.objects.filter(is_published=True, user=self.request.user)
+    # else:
+    # return Book.objects.none()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -462,6 +474,8 @@ class DocumentUpdateView(
     """Представление обновления документа."""
 
     model = Document
+    slug_url_kwarg = "pk"
+    pk_url_kwarg = "id"
     template_name = "applications/documents/document_update.html"
     context_object_name = "document"
     form_class = DocumentUpdateForm
@@ -485,6 +499,30 @@ class DocumentUpdateView(
         )  # noqa: E501
         form.save()  # type: ignore
         return super().form_valid(form)
+
+
+class DocumentDeleteView(LoginRequiredMixin, DeleteView):
+    """Представление удаления счёта в банке."""
+
+    model = Document
+    slug_url_kwarg = "pk"
+    pk_url_kwarg = "id"
+    login_url = "login"
+    context_object_name = "document"
+    template_name = "applications/documents/document_delete.html"
+
+    def get_success_url(self):
+        company = get_object_or_404(Company, slug=self.kwargs["slug"])
+        application = get_object_or_404(Application, pk=self.kwargs["pk"])
+        return reverse_lazy(
+            "document_list",
+            kwargs={"slug": company.slug, "pk": application.pk},  # noqa: E501
+        )  # noqa: E501
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = f"Удалить документ №: {self.object}"   # type: ignore # noqa: E501
+        return context
 
 
 # =================== функционал Account ===================
@@ -633,8 +671,23 @@ def get_genitive_case_proxy(proxy, number=None, date=None):
 def is_none(value):
     """Проверка значений на None."""
     if value is not None:
+        if isinstance(value, datetime.date):
+            return value.strftime("%d.%m.%Y")
         return value
     return "--"
+
+
+def is_vessel_None(name=None, rs=None, imo=None):
+    """Проверка судна на None для заявок в промышленности."""
+    if name is not None:
+        vessel_attribute = f'"{name.name}"'
+    elif rs is not None:
+        vessel_attribute = is_none(rs.rs_number)
+    elif imo is not None:
+        vessel_attribute = is_none(imo.imo_number)
+    else:
+        vessel_attribute = ""
+    return vessel_attribute
 
 
 def is_legal_address_same(is_same_check, postal_address, legal_address=None):
@@ -644,8 +697,10 @@ def is_legal_address_same(is_same_check, postal_address, legal_address=None):
     return legal_address
 
 
-def get_issued_docs(document_qs, survey_code, document_date=None,):
+def get_issued_docs(document_qs=None, survey_code="00001", document_date=None):
     """Выданные документы в зависимости от кода услуги."""
+    if document_qs is None:
+        return ""
     match survey_code:
         case "00001" | "00003" | "00011":
             if document_date is None:
@@ -806,9 +861,9 @@ def print_docs(request, **kwargs):
         "day": application.date.strftime("%d"),  # type: ignore
         "month": dateformat.format(application.date, settings.DATE_FORMAT),
         "year": application.date.strftime("%y"),  # type: ignore
-        "vessel": f'"{application.vessel.name}"',  # type: ignore
-        "rs_number": is_none(application.vessel.rs_number),  # type: ignore
-        "imo_number": is_none(application.vessel.imo_number),  # type: ignore
+        "vessel": is_vessel_None(application.vessel, None, None),  # type: ignore # noqa: E501
+        "rs_number": is_vessel_None(None, application.vessel, None),  # type: ignore # noqa: E501
+        "imo_number": is_vessel_None(None, None, application.vessel),  # type: ignore # noqa: E501
         "survey_scope": application,
         "survey_object": application.get_survey_object_display(),  # type: ignore # noqa: E501
         "city": application.city,
@@ -818,8 +873,8 @@ def print_docs(request, **kwargs):
         "applicant_proxy": get_genitive_case_proxy(application.applicant_signer.get_proxy_type_display(), application.applicant_signer.proxy_number, application.applicant_signer.proxy_date),  # type: ignore # noqa: E501
         "authorized_person": f"{application.authorized_person}, {application.authorized_person.phone_number}, {application.authorized_person.email}",  # type: ignore # noqa: E501
         "previous_survey_place": application.vesselextrainfo.city,  # type: ignore # noqa: E501
-        "previous_survey_date": application.vesselextrainfo.previous_survey_date.strftime("%d.%m.%Y"),  # type: ignore # noqa: E501
-        "last_psc_inspection": is_none(application.vesselextrainfo),  # type: ignore # noqa: E501
+        "previous_survey_date": is_none(application.vesselextrainfo.previous_survey_date),  # type: ignore # noqa: E501
+        "last_psc_inspection": f"{is_none(application.vesselextrainfo.last_psc_inspection_date)} {is_none(application.vesselextrainfo.last_psc_inspection_result)}",  # type: ignore # noqa: E501
         "currency": company.bank_accounts.filter(current_bankaccount=True).first().account_currency,  # type: ignore # noqa: E501
         "postal_address_rs": rs_branch.addresses.first(),  # type: ignore # noqa: E501
         "legal_address_rs": is_legal_address_same(rs_branch.addresses.first().is_same, rs_branch.addresses.first(), rs_branch.addresses.last()),  # type: ignore # noqa: E501

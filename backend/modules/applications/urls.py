@@ -12,6 +12,7 @@ from .views import (
     ApplicationListView,
     ApplicationUpdateView,
     DocumentCreateView,
+    DocumentDeleteView,
     DocumentDetailView,
     DocumentListView,
     DocumentUpdateView,
@@ -100,6 +101,11 @@ urlpatterns = [
         "companies/<str:slug>/applications/<int:pk>/documents/<int:id>/update/",  # noqa: E501
         DocumentUpdateView.as_view(),
         name="document_update",
+    ),
+    path(
+        "companies/<str:slug>/applications/<int:pk>/documents/<int:id>/delete/",  # noqa: E501
+        DocumentDeleteView.as_view(),
+        name="document_delete",
     ),
     # ================ account =================
     path(

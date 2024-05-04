@@ -77,15 +77,15 @@
         </div>
         <div class="md:col-span-4 text-right px-4 py-3">
             <div class="inline-flex items-end gap-4">
-              {% comment %} <a
-                href="{% url "application_delete" company.slug %}"
-                type="button"
-                class="mr-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-              >
-                Удалить доп. инфо
-              </a> {% endcomment %}
               <a
-                href="{% url "document_update" document.application.company.slug document.application.id document.id %}"
+                href="{% url "document_delete" document.application.company.slug document.application.pk document.id %}"
+                type="button"
+                class="mr-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Удалить документ
+              </a>
+              <a
+                href="{% url "document_update" document.application.company.slug document.application.pk document.id %}"
                 type="button"
                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
               >

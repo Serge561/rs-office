@@ -47,7 +47,7 @@
                     Стоимость услуги
                 </p>
                 <p class="px-4">
-                    {{ account.service_cost }}
+                    {{ account.service_cost|default_if_none:'' }}
                 </p>
             </div>
             <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-2 p-4 border-b">

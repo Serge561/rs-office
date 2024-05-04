@@ -135,10 +135,10 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
         BOTTOM = "D", "Подводной части судна"
         OCCASIONAL = "O", "Внеочередное"
         CONTINUOUS = "C", "Непрерывное"
-        INTERIM = "INT", "Временное (МКУБ/ОСПС/КТМС)"
-        ADDITIONAL = "ADD", "Дополнительное (МКУБ/ОСПС/КТМС)"
-        PRIMARY = "PR", "Первичное (СОДС/СОТПС)"
-        PERIODICAL = "PL", "Периодическое (СОДС/СОТПС)"
+        INTERIM = "INT", "Временное (МКУБ, ОСПС, КТМС)"
+        ADDITIONAL = "ADD", "Дополнительное (МКУБ, ОСПС, КТМС)"
+        PRIMARY = "PR", "Первичное (СОДС, СОТПС)"
+        PERIODICAL = "PL", "Периодическое (СОДС, СОТПС)"
 
     class SurveyObject(models.TextChoices):
         """Выбор объекта освидетельствования."""
@@ -201,6 +201,7 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
         on_delete=models.SET_NULL,
         related_name="applications",
         null=True,
+        blank=True,
     )
     register_signer = models.ForeignKey(
         to=User,
@@ -245,17 +246,18 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
         survey_code_string = self.get_survey_code_display()  # type: ignore
         survey_type_string = self.get_survey_type_display()  # type: ignore
         survey_scope_string = self.get_survey_scope_display()  # type: ignore
-        result = ""
         match self.survey_code:
             case "00001":
-                if self.survey_scope not in ["O", "C"]:
+                if self.survey_scope not in ["O", "C", "D"]:
                     result = f"{survey_scope_string} {SURVEY}"  # type: ignore # noqa: E501
+                elif self.survey_scope == "D":
+                    result = f"{SURVEY.capitalize()} {survey_scope_string.lower()}"  # type: ignore # noqa: E501
                 else:
                     result = f"{survey_scope_string} {SURVEY} {self.occasional_cause}"  # type: ignore # noqa: E501
             case "00002" | "00003":
                 result = survey_code_string
             case "00006":
-                result = f"{survey_code_string} {self.occasional_cause}"  # type: ignore # noqa: E501
+                result = f'{survey_code_string} {self.occasional_cause} на т/х "{self.vessel}"'  # type: ignore # noqa: E501
             case "00011":
                 if self.survey_scope not in ["ADD", "INT"]:
                     result = f"{survey_scope_string} {SURVEY} {survey_type_string[0].lower()}{survey_type_string[1:]}"  # noqa: E501
@@ -411,7 +413,6 @@ class VesselExtraInfo(PlaceMixin):
         primary_key=True,
         verbose_name="Номер заявки",
     )
-    # previous_survey_place = place mixin
     previous_survey_date = models.DateField(
         verbose_name="Дата предыдущего освидетельствования",
         null=True,
@@ -445,7 +446,7 @@ class VesselExtraInfo(PlaceMixin):
 
     def __str__(self):
         """Возвращение строки."""
-        return f"{self.last_psc_inspection_date.strftime("%d.%m.%Y")}, {self.last_psc_inspection_result}"  # type: ignore # noqa: E501
+        return f"Заявка № {self.application.number} от {self.application.date.strftime("%d.%m.%Y")}"  # type: ignore # noqa: E501
 
     def get_absolute_url(self):
         """Полный URL доп. данных по судну и заявке."""
