@@ -585,40 +585,28 @@ def get_docx_template(survey_code, report_type):
     match survey_code:
         case "00001" | "00003" | "00011":
             if report_type == "agreement":
-                return "810_1_1.docx"
-            return "430_3_4.docx"
+                template = "810_1_1.docx"
+            template = "430_3_4.docx"
         case "00006":
             if report_type == "agreement":
-                return "810_1_11.docx"
-            return "430_3_1.docx"
+                template = "810_1_11.docx"
+            template = "430_3_1.docx"
         case "00101":
             if report_type == "agreement":
-                return "810_1_2_w.docx"
-            return "430_3_1.docx"
+                template = "810_1_2_w.docx"
+            template = "430_3_1.docx"
+        case "00103":
+            if report_type == "agreement":
+                template = "810_1_2_s.docx"
+            template = "430_3_1.docx"
         case _:
-            return "404_page.docx"
+            # создать логику вывода сообщения на экран или все шаблоны сделать
+            template = "404_page.docx"
+    return template
 
 
 def get_genitive_case(phrase):
     """Функция перевода слов в родительный падеж."""
-    # whole sentence with removing conjunctions, prepositions and punctuation
-    # import pymorphy3
-    # import string
-    # text = "первое число месяца, дня и года".translate(str.maketrans('', '', string.punctuation)) # noqa: E501
-    # morph = pymorphy3.MorphAnalyzer()
-    # words = text.split()
-    # conjunctions = [word for word in words if morph.parse(word)[0].tag.POS == 'CONJ'] # noqa: E501
-    # sentence = [word for word in words if word not in conjunctions]
-    # st = (' '.join(sentence))
-    # status = ' '.join(morph.parse(word)[0].inflect({'gent'}).word for word in st.split()) # noqa: E501
-    # print(status)
-
-    # with one word
-    # morph = pymorphy3.MorphAnalyzer()
-    # theword = morph.parse(phrase)[0]
-    # gent = theword.inflect({'gent'})  # type: ignore
-    # return gent.word  # type: ignore
-
     # parse a phrase with several words without punctuation, conj and prepos
     morph = pymorphy3.MorphAnalyzer()
     result = ' '.join(morph.parse(word)[0].inflect({'gent'}).word for word in phrase.split())  # type: ignore # noqa: E501
@@ -627,21 +615,8 @@ def get_genitive_case(phrase):
 
 def get_genitive_case_lastname(lastname):
     """Функция перевода фамилий в родительный падеж."""
-    # -------------------------------------------------------
-    # Исправление бага с фамилией для питона 3+
+    # to fix the bug with a last name see link below:
     # https://github.com/damirazo/Petrovich/issues/8
-    # в petrovich -> main.py
-    # with open(rules_path, 'r') as fp:
-    #     self.data = json.load(fp)
-    # Заменяем их на эти:
-    # try:
-    #     with open(rules_path, 'r', encoding='utf8') as fp:
-    #         self.data = json.load(fp)
-    # except:
-    #     with open(rules_path, 'r') as fp:
-    #         self.data = json.load(fp)
-    # в lastname заменить str на None в значении по умолчанию
-    # -------------------------------------------------------
     p = Petrovich()
     cased_lname = p.lastname(lastname, Case.GENITIVE)
     return cased_lname
@@ -651,14 +626,13 @@ def get_genitive_case_proxy(proxy, number=None, date=None):
     """Функция перевода названий документов,
        на основании которых действует заявитель,
        в родительный падеж."""
-    # power_of_attoney_gen = ""
     match proxy:
         case "Устав":
             power_of_attoney_gen = "Устава"
         case "Кодекс торгового мореплавания (КТМ РФ)":
             power_of_attoney_gen = "Кодекса торгового мореплавания (КТМ РФ)"
         case "Доверенность":
-            power_of_attoney_gen = f"Доверенности № {number} от {date.strftime("%d.%m.%Y")}"  # type: ignore # noqa: E501
+            power_of_attoney_gen = f"Доверенности № {number} от {is_none(date)}"  # type: ignore # noqa: E501
         case "Приказ":
             power_of_attoney_gen = "Приказа"
         case "Свидетельство о регистрации":
@@ -677,7 +651,7 @@ def is_none(value):
     return "--"
 
 
-def is_vessel_None(name=None, rs=None, imo=None):
+def is_vessel_none(name=None, rs=None, imo=None):
     """Проверка судна на None для заявок в промышленности."""
     if name is not None:
         vessel_attribute = f'"{name.name}"'
@@ -688,6 +662,23 @@ def is_vessel_None(name=None, rs=None, imo=None):
     else:
         vessel_attribute = ""
     return vessel_attribute
+
+
+def is_authorized_person_none(person=None):
+    """Проверка уполномоченного лица на None."""
+    # "authorized_person": f"{application.authorized_person}, {application.authorized_person.phone_number}, {application.authorized_person.email}"   # type: ignore # noqa: E501
+    if person is not None:
+        if person.phone_number is not None and person.email is not None:  # type: ignore # noqa: E501
+            authorized_person = f"{person}, {person.phone_number}, {person.email}"  # type: ignore # noqa: E501
+        elif person.phone_number is not None and person.email is None:  # type: ignore # noqa: E501
+            authorized_person = f"{person}, {person.phone_number}"  # type: ignore # noqa: E501
+        elif person.phone_number is None and person.email is not None:  # type: ignore # noqa: E501
+            authorized_person = f"{person}, {person.email}"  # type: ignore # noqa: E501
+        else:
+            authorized_person = f"{person}"  # type: ignore
+    else:
+        authorized_person = "--"
+    return authorized_person
 
 
 def is_legal_address_same(is_same_check, postal_address, legal_address=None):
@@ -702,24 +693,15 @@ def get_issued_docs(document_qs=None, survey_code="00001", document_date=None):
     if document_qs is None:
         return ""
     match survey_code:
-        case "00001" | "00003" | "00011":
-            if document_date is None:
-                documents = f"{document_qs.first().form} № {document_qs.first()}"  # noqa: E501
+        case "00001" | "00003" | "00011" | "00101" | "00103":
+            if document_qs.count() > 1:
+                documents = f"{document_qs.first().form} №№ {document_qs.first()} - {document_qs.last()} от {is_none(document_date)}"  # noqa: E501
             else:
-                documents = f"{document_qs.first().form} № {document_qs.first()} от {document_date.strftime("%d.%m.%Y")}"  # type: ignore # noqa: E501
+                documents = f"{document_qs.first().form} № {document_qs.first()} от {is_none(document_date)}"  # noqa: E501
         case "00006":
-            if document_date is None:
-                documents = f"{document_qs.first().form} {document_qs.first()}"  # noqa: E501
-            else:
-                documents = f"{document_qs.first().form} {document_qs.first()} от {document_date.strftime("%d.%m.%Y")}"  # type: ignore # noqa: E501
-        # add logic for several issued docums and then to merge with 00001
-        case "00101":
-            if document_date is None:
-                documents = f"{document_qs.first().form} № {document_qs.first()}"  # noqa: E501
-            else:
-                documents = f"{document_qs.first().form} № {document_qs.first()} от {document_date.strftime("%d.%m.%Y")}"  # type: ignore # noqa: E501
+            documents = f"{document_qs.first().form} {document_qs.first()} от {is_none(document_date)}"  # type: ignore # noqa: E501
         case _:
-            return "404_page.docx"
+            return ""
     return documents
 
 
@@ -861,9 +843,9 @@ def print_docs(request, **kwargs):
         "day": application.date.strftime("%d"),  # type: ignore
         "month": dateformat.format(application.date, settings.DATE_FORMAT),
         "year": application.date.strftime("%y"),  # type: ignore
-        "vessel": is_vessel_None(application.vessel, None, None),  # type: ignore # noqa: E501
-        "rs_number": is_vessel_None(None, application.vessel, None),  # type: ignore # noqa: E501
-        "imo_number": is_vessel_None(None, None, application.vessel),  # type: ignore # noqa: E501
+        "vessel": is_vessel_none(application.vessel, None, None),  # type: ignore # noqa: E501
+        "rs_number": is_vessel_none(None, application.vessel, None),  # type: ignore # noqa: E501
+        "imo_number": is_vessel_none(None, None, application.vessel),  # type: ignore # noqa: E501
         "survey_scope": application,
         "survey_object": application.get_survey_object_display(),  # type: ignore # noqa: E501
         "city": application.city,
@@ -871,7 +853,8 @@ def print_docs(request, **kwargs):
         "company": company,
         "applicant": f"{get_genitive_case(application.applicant_signer.position)} {get_genitive_case_lastname(application.applicant_signer.second_name)} {application.applicant_signer.first_name[0]}. {application.applicant_signer.patronymic_name[0]}.",  # type: ignore # noqa: E501
         "applicant_proxy": get_genitive_case_proxy(application.applicant_signer.get_proxy_type_display(), application.applicant_signer.proxy_number, application.applicant_signer.proxy_date),  # type: ignore # noqa: E501
-        "authorized_person": f"{application.authorized_person}, {application.authorized_person.phone_number}, {application.authorized_person.email}",  # type: ignore # noqa: E501
+        # "authorized_person": f"{application.authorized_person}, {application.authorized_person.phone_number}, {application.authorized_person.email}",  # type: ignore # noqa: E501
+        "authorized_person": is_authorized_person_none(application.authorized_person),  # type: ignore # noqa: E501
         "previous_survey_place": application.vesselextrainfo.city,  # type: ignore # noqa: E501
         "previous_survey_date": is_none(application.vesselextrainfo.previous_survey_date),  # type: ignore # noqa: E501
         "last_psc_inspection": f"{is_none(application.vesselextrainfo.last_psc_inspection_date)} {is_none(application.vesselextrainfo.last_psc_inspection_result)}",  # type: ignore # noqa: E501

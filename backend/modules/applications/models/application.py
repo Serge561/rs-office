@@ -105,8 +105,12 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
             "Услуги по декларированию и сертификации навалочных и опасных грузов, сертификация тары",  # noqa: E501
         )
         ONREPORTVAT = (
-            "00199",
+            "00120",
             "Техническое наблюдение согласно отчёту предприятия (с НДС)",
+        )
+        SMALLCRAFTS = (
+            "00121",
+            "Классификация и освидетельствование маломерного судна",
         )
 
     class SurveyType(models.TextChoices):
@@ -257,7 +261,7 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
             case "00002" | "00003":
                 result = survey_code_string
             case "00006":
-                result = f'{survey_code_string} {self.occasional_cause} на т/х "{self.vessel}"'  # type: ignore # noqa: E501
+                result = f"{survey_code_string} {self.occasional_cause} на т/х {self.vessel}"  # type: ignore # noqa: E501
             case "00011":
                 if self.survey_scope not in ["ADD", "INT"]:
                     result = f"{survey_scope_string} {SURVEY} {survey_type_string[0].lower()}{survey_type_string[1:]}"  # noqa: E501
@@ -274,6 +278,11 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
                         result = f"Одобрение технологического процесса сварки - {self.occasional_cause} шт."  # noqa: E501
                     else:
                         result = f"Подтверждение Свидетельства об одобрении технологического процесса сварки (без испытаний) - {self.occasional_cause} шт."  # noqa: E501
+            case "00103":
+                if self.survey_type not in ["EXP", "CHA"]:
+                    result = f"{survey_scope_string} {SURVEY} {self.occasional_cause}"  # noqa: E501
+                else:
+                    result = f"{survey_scope_string} {SURVEY} в связи с {survey_type_string.split()[0].lower()}м {survey_type_string.split()[1]} {survey_type_string.split()[2]} {self.occasional_cause}"  # noqa: E501
         return result
 
     def get_absolute_url(self):

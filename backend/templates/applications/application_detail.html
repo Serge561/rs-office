@@ -121,7 +121,7 @@
                     Уполномоченное лицо
                 </p>
                 <p class="px-4">
-                    {{ application.authorized_person }}
+                    {{ application.authorized_person|default_if_none:'' }}
                 </p>
               </div>
         </div>
