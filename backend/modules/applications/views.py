@@ -586,19 +586,28 @@ def get_docx_template(survey_code, report_type):
         case "00001" | "00003" | "00011":
             if report_type == "agreement":
                 template = "810_1_1.docx"
-            template = "430_3_4.docx"
+            else:
+                template = "430_3_4.docx"
         case "00006":
             if report_type == "agreement":
                 template = "810_1_11.docx"
-            template = "430_3_1.docx"
+            else:
+                template = "430_3_1.docx"
+        case "00015":
+            if report_type == "agreement":
+                template = "810_1_2_p.docx"
+            else:
+                template = "430_3_3.docx"
         case "00101":
             if report_type == "agreement":
                 template = "810_1_2_w.docx"
-            template = "430_3_1.docx"
+            else:
+                template = "430_3_1.docx"
         case "00103":
             if report_type == "agreement":
                 template = "810_1_2_s.docx"
-            template = "430_3_1.docx"
+            else:
+                template = "430_3_1.docx"
         case _:
             # создать логику вывода сообщения на экран или все шаблоны сделать
             template = "404_page.docx"
@@ -664,9 +673,24 @@ def is_vessel_none(name=None, rs=None, imo=None):
     return vessel_attribute
 
 
+def is_product_survey(app):
+    """Функция обработки поля document с параметрами материала или
+       изделия при техническом наблюдении за их изготовлением."""
+    if app.survey_code != "00015":
+        return app
+    if app.documents is None:
+        return ""
+    if app.documents.count() == 1:
+        return f"{app} {app.documents.first().item_particulars}"
+    survey_scope = app
+    for document in list(app.documents.all()):
+        survey_scope = f"{str(survey_scope)} {document.item_particulars}, "
+    survey_scope = survey_scope[:-2]
+    return survey_scope
+
+
 def is_authorized_person_none(person=None):
     """Проверка уполномоченного лица на None."""
-    # "authorized_person": f"{application.authorized_person}, {application.authorized_person.phone_number}, {application.authorized_person.email}"   # type: ignore # noqa: E501
     if person is not None:
         if person.phone_number is not None and person.email is not None:  # type: ignore # noqa: E501
             authorized_person = f"{person}, {person.phone_number}, {person.email}"  # type: ignore # noqa: E501
@@ -693,7 +717,7 @@ def get_issued_docs(document_qs=None, survey_code="00001", document_date=None):
     if document_qs is None:
         return ""
     match survey_code:
-        case "00001" | "00003" | "00011" | "00101" | "00103":
+        case "00001" | "00003" | "00011" | "00015" | "00101" | "00103":
             if document_qs.count() > 1:
                 documents = f"{document_qs.first().form} №№ {document_qs.first()} - {document_qs.last()} от {is_none(document_date)}"  # noqa: E501
             else:
@@ -846,7 +870,7 @@ def print_docs(request, **kwargs):
         "vessel": is_vessel_none(application.vessel, None, None),  # type: ignore # noqa: E501
         "rs_number": is_vessel_none(None, application.vessel, None),  # type: ignore # noqa: E501
         "imo_number": is_vessel_none(None, None, application.vessel),  # type: ignore # noqa: E501
-        "survey_scope": application,
+        "survey_scope": is_product_survey(application),
         "survey_object": application.get_survey_object_display(),  # type: ignore # noqa: E501
         "city": application.city,
         "date": application.date.strftime("%d.%m.%Y"),

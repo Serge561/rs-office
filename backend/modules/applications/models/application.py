@@ -267,6 +267,8 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
                     result = f"{survey_scope_string} {SURVEY} {survey_type_string[0].lower()}{survey_type_string[1:]}"  # noqa: E501
                 else:
                     result = f"{survey_scope_string.split()[0]} {SURVEY} {survey_type_string[0].lower()}{survey_type_string[1:]}"  # noqa: E501
+            case "00015":
+                result = f"{SURVEY.capitalize()} объектов технаблюдения:"  # type: ignore # noqa: E501
             case "00101":
                 if self.survey_type == "WAC":
                     if self.survey_scope == "PR":
