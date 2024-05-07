@@ -577,7 +577,7 @@ class AccountUpdateView(
 
 # -------- Функционал вывода на печать документов --------
 
-def get_docx_template(survey_code, report_type):
+def get_docx_template(survey_code, report_type, survey_scope=None):
     """Получить определённый шаблон docx в зависимости
        от кода услуги."""
     # report_type is certificate on AGREEMENT-application or
@@ -608,6 +608,14 @@ def get_docx_template(survey_code, report_type):
                 template = "810_1_2_s.docx"
             else:
                 template = "430_3_1.docx"
+        case "00121":
+            if report_type == "agreement":
+                if survey_scope == "I":
+                    template = "810_1_10.docx"
+                else:
+                    template = "810_1_10_1.docx"
+            else:
+                template = "430_3_4.docx"
         case _:
             # создать логику вывода сообщения на экран или все шаблоны сделать
             template = "404_page.docx"
@@ -660,7 +668,7 @@ def is_none(value):
     return "--"
 
 
-def is_vessel_none(name=None, rs=None, imo=None):
+def is_vessel_none(name=None, rs=None, imo=None, power=None):
     """Проверка судна на None для заявок в промышленности."""
     if name is not None:
         vessel_attribute = f'"{name.name}"'
@@ -668,6 +676,8 @@ def is_vessel_none(name=None, rs=None, imo=None):
         vessel_attribute = is_none(rs.rs_number)
     elif imo is not None:
         vessel_attribute = is_none(imo.imo_number)
+    elif power is not None:
+        vessel_attribute = is_none(power.me_power)
     else:
         vessel_attribute = ""
     return vessel_attribute
@@ -717,7 +727,7 @@ def get_issued_docs(document_qs=None, survey_code="00001", document_date=None):
     if document_qs is None:
         return ""
     match survey_code:
-        case "00001" | "00003" | "00011" | "00015" | "00101" | "00103":
+        case "00001" | "00003" | "00011" | "00015" | "00101" | "00103" | "00121":  # noqa: E501
             if document_qs.count() > 1:
                 documents = f"{document_qs.first().form} №№ {document_qs.first()} - {document_qs.last()} от {is_none(document_date)}"  # noqa: E501
             else:
@@ -858,7 +868,7 @@ def print_docs(request, **kwargs):
     ).first()
 
     button_name = request.GET.get('name')
-    docx_template = get_docx_template(application.survey_code, button_name)
+    docx_template = get_docx_template(application.survey_code, button_name, application.survey_scope)  # noqa: E501
     doc = DocxTemplate(f"templates/docx/{docx_template}")
 
     context = {
@@ -867,9 +877,9 @@ def print_docs(request, **kwargs):
         "day": application.date.strftime("%d"),  # type: ignore
         "month": dateformat.format(application.date, settings.DATE_FORMAT),
         "year": application.date.strftime("%y"),  # type: ignore
-        "vessel": is_vessel_none(application.vessel, None, None),  # type: ignore # noqa: E501
-        "rs_number": is_vessel_none(None, application.vessel, None),  # type: ignore # noqa: E501
-        "imo_number": is_vessel_none(None, None, application.vessel),  # type: ignore # noqa: E501
+        "vessel": is_vessel_none(application.vessel, None, None, None),  # type: ignore # noqa: E501
+        "rs_number": is_vessel_none(None, application.vessel, None, None),  # type: ignore # noqa: E501
+        "imo_number": is_vessel_none(None, None, application.vessel, None),  # type: ignore # noqa: E501
         "survey_scope": is_product_survey(application),
         "survey_object": application.get_survey_object_display(),  # type: ignore # noqa: E501
         "city": application.city,
@@ -877,9 +887,8 @@ def print_docs(request, **kwargs):
         "company": company,
         "applicant": f"{get_genitive_case(application.applicant_signer.position)} {get_genitive_case_lastname(application.applicant_signer.second_name)} {application.applicant_signer.first_name[0]}. {application.applicant_signer.patronymic_name[0]}.",  # type: ignore # noqa: E501
         "applicant_proxy": get_genitive_case_proxy(application.applicant_signer.get_proxy_type_display(), application.applicant_signer.proxy_number, application.applicant_signer.proxy_date),  # type: ignore # noqa: E501
-        # "authorized_person": f"{application.authorized_person}, {application.authorized_person.phone_number}, {application.authorized_person.email}",  # type: ignore # noqa: E501
         "authorized_person": is_authorized_person_none(application.authorized_person),  # type: ignore # noqa: E501
-        "previous_survey_place": application.vesselextrainfo.city,  # type: ignore # noqa: E501
+        "previous_survey_place": is_none(application.vesselextrainfo.city),  # type: ignore # noqa: E501
         "previous_survey_date": is_none(application.vesselextrainfo.previous_survey_date),  # type: ignore # noqa: E501
         "last_psc_inspection": f"{is_none(application.vesselextrainfo.last_psc_inspection_date)} {is_none(application.vesselextrainfo.last_psc_inspection_result)}",  # type: ignore # noqa: E501
         "currency": company.bank_accounts.filter(current_bankaccount=True).first().account_currency,  # type: ignore # noqa: E501
@@ -904,6 +913,10 @@ def print_docs(request, **kwargs):
         "register_signer_proxy": f"Доверенности № {application.register_signer.proxy_number} от {application.register_signer.proxy_date.strftime("%d.%m.%Y")}",  # type: ignore # noqa: E501
         "register_signer": f"{application.register_signer.first_name[0]}. {application.register_signer.patronymic_name[0]}. {application.register_signer.last_name}",  # type: ignore # noqa: E501
         "applicant_signer": f"{application.applicant_signer.first_name[0]}. {application.applicant_signer.patronymic_name[0]}. {application.applicant_signer.second_name}",  # type: ignore # noqa: E501
+        # for small crafts
+        "engine_power": str(is_vessel_none(None, None, None, application.vessel)),  # type: ignore # noqa: E501
+        "vessel_departure_estimated_date": is_none(application.vesselextrainfo.completion_expected_date),  # type: ignore # noqa: E501
+        "rs_branch_city": rs_branch.addresses.first().city,  # type: ignore # noqa: E501
         # for reports on acceptance-delivery services
         "surveyor": f"{request.user.position} {request.user.last_name} {request.user.first_name[0]}. {request.user.patronymic_name[0]}.",  # noqa: E501
         "surveyor_proxy": f"Доверенности № {request.user.proxy_number} от {request.user.proxy_date.strftime("%d.%m.%Y")}",  # type: ignore # noqa: E501

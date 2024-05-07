@@ -285,6 +285,13 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
                     result = f"{survey_scope_string} {SURVEY} {self.occasional_cause}"  # noqa: E501
                 else:
                     result = f"{survey_scope_string} {SURVEY} в связи с {survey_type_string.split()[0].lower()}м {survey_type_string.split()[1]} {survey_type_string.split()[2]} {self.occasional_cause}"  # noqa: E501
+            case "00121":
+                if self.survey_scope != "O":
+                    result = f"{survey_scope_string} {SURVEY} маломерного судна"  # type: ignore # noqa: E501
+                else:
+                    result = f"{survey_scope_string} {SURVEY} маломерного судна {self.occasional_cause}"  # type: ignore # noqa: E501
+            case _:
+                result = f"Функционал с кодом'{self.survey_code}' в разработке"
         return result
 
     def get_absolute_url(self):
@@ -439,7 +446,7 @@ class VesselExtraInfo(PlaceMixin):
         blank=True,
     )
     completion_expected_date = models.DateField(
-        verbose_name="Ожидаемая дата завершения ремонта",
+        verbose_name="Ориентировочная дата завершения ремонта",
         null=True,
         blank=True,
     )
