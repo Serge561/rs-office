@@ -1,0 +1,113 @@
+{% extends 'main.html' %}
+<!-- prettier-ignore -->
+{% block content %}
+<!-- data section -->
+<section>
+  {% comment %}
+  <div class="bg-white sm:grid grid-cols-5 grid-rows-2 px-4 py-6 sm:gap-4">
+    <div class="max-h-full col-span-4 bg-white rounded-md flex items-center">
+      {% endcomment %}
+      <div
+        class="my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 pr-10 lg:px-8"
+      >
+        <div
+          class="align-middle inline-block min-w-full overflow-hidden bg-white"
+        >
+          <table class="min-w-full">
+            <thead>
+              <tr>
+                <th
+                  class="px-6 py-3 border-b-2 border-gray-300 text-left leading-4 text-blue-500 tracking-wider"
+                >
+                  Название судна
+                </th>
+                <th
+                  class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+                >
+                  РC
+                </th>
+                <th
+                  class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+                >
+                  ИМО
+                </th>
+                <th
+                  class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+                >
+                  Стат. группа
+                </th>
+                <th
+                  class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+                >
+                  Связанные компании
+                </th>
+                <th class="px-6 py-3 border-b-2 border-gray-300"></th>
+              </tr>
+            </thead>
+            <tbody class="bg-white">
+              {% for vessel in vessels %}
+              <tr>
+                <td
+                  class="px-6 py-4 whitespace-no-wrap border-b border-gray-500"
+                >
+                  <div class="flex items-center">
+                    <div>
+                      <div class="text-sm leading-5 text-gray-800">
+                        {{ vessel.name }}
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td
+                  class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
+                >
+                  {{ vessel.rs_number }}
+                </td>
+                <td
+                  class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
+                >
+                  {{ vessel.imo_number }}
+                </td>
+                <td
+                  class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
+                >
+                  {{ vessel.get_vessel_stat_group_display }}
+                </td>
+                <td
+                  class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
+                >
+                  {% for app in vessel.applications.all.order_by %}
+                  <!-- prettier-ignore -->
+                  {% ifchanged app.company|truncatechars:50 %}
+                  <p>
+                    <a
+                      href="{% url 'company_detail' app.company.slug %}"
+                      class="list-none hover:text-indigo-600"
+                      >{{ app.company|truncatechars:50 }}</a
+                    >
+                  </p>
+                  {% endifchanged %} {% endfor %}
+                </td>
+                <td
+                  class="px-6 py-4 whitespace-no-wrap text-right border-b border-gray-500 text-sm leading-5"
+                >
+                  <a
+                    href="{{ vessel.get_absolute_url }}"
+                    class="px-5 py-2 border-blue-500 border text-blue-500 rounded transition duration-300 hover:bg-blue-700 hover:text-white focus:outline-none"
+                  >
+                    Подробнее
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% include 'pagination.html' %}
+        </div>
+      </div>
+      {% comment %}
+    </div>
+  </div>
+  {% endcomment %}
+</section>
+{% endblock %}

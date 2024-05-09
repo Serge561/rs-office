@@ -13,6 +13,11 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib.postgres.search import (
+    SearchVector,
+    SearchQuery,
+    SearchRank,
+)  # noqa: E501
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -36,6 +41,7 @@ from .forms import (
     FormCreateForm,
     VesselCreateForm,
     VesselExtraInfoUpdateForm,
+    VesselUpdateForm,
 )
 
 # from django.contrib.postgres.search import (
@@ -75,7 +81,7 @@ class ApplicationListView(LoginRequiredMixin, ListView):
     template_name = "applications/application_list.html"
     login_url = "login"
     context_object_name = "applications"
-    paginate_by = 5
+    paginate_by = 10
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -219,40 +225,73 @@ class VesselCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
+class VesselSearchResultView(ListView):
+    """Реализация поиска судна на сайте."""
+
+    model = Vessel
+    context_object_name = "vessels"
+    # paginate_by = 10
+    allow_empty = True
+    template_name = "applications/vessels/vessel_search_result.html"
+
+    def get_queryset(self):
+        query = self.request.GET.get("do")
+        search_vector = SearchVector(
+            "name", weight="C"
+        ) + SearchVector(  # noqa: E501
+            "imo_number", weight="B"
+        ) + SearchVector(  # noqa: E501
+            "rs_number", weight="A"
+        )
+        search_query = SearchQuery(query)  # type: ignore
+        return (
+            self.model.objects.annotate(rank=SearchRank(search_vector, search_query))  # type: ignore # noqa: E501
+            .filter(rank__gte=0.1)
+            .order_by("-rank")
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = f'Результаты поиска: {self.request.GET.get("do")}'
+        return context
+
+
+class VesselDetailView(DetailView):
+    """Представление для вывода параметров судна."""
+
+    model = Vessel
+    template_name = "applications/vessels/vessel_detail.html"
+    context_object_name = "vessel"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = f"Характеристики судна: {self.object}"  # type: ignore # noqa: E501
+        return context
+
+
+class VesselUpdateView(
+    LoginRequiredMixin, SuccessMessageMixin, UpdateView
+):  # noqa: E501
+    """Представление обновления параметров судна."""
+
+    model = Vessel
+    template_name = "applications/vessels/vessel_update.html"
+    context_object_name = "vessel"
+    form_class = VesselUpdateForm
+    login_url = "login"
+    success_message = "Парметры судна были успешно обновлены"
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = f"Обновить параметры судна: {self.object}"  # type: ignore # noqa: E501
+        return context
+
+    def form_valid(self, form):
+        form.instance.updated_by = self.request.user  # type: ignore
+        form.save()  # type: ignore
+        return super().form_valid(form)
+
 # ================ функционал VesselExtraInfo ==================
-
-
-# class VesselExtraInfoCreateView(LoginRequiredMixin, CreateView):
-#     """Представление добавления доп. инфо по судну."""
-
-#     model = VesselExtraInfo
-#     template_name = "/applications/vessels/vesselextrainfo_create.html"
-#     form_class = VesselExtraInfoCreateForm
-#     login_url = "login"
-
-#     def get_success_url(self):
-#         company = get_object_or_404(Company, slug=self.kwargs["slug"])
-#         return reverse_lazy(
-#             "vesselextrainfo_detail", kwargs={"slug": company.slug}
-#         )  # noqa: E501
-
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context["title"] = "Добавление города"
-#         context["company"] = get_object_or_404(
-#             Company, slug=self.kwargs["slug"]
-#         )  # noqa: E501
-#         return context
-
-#     def form_valid(self, form):
-#         """Автосохранение поля company."""
-#         instance = form.save(commit=False)
-#         form.instance.created_by = self.request.user
-#         form.instance.company = get_object_or_404(
-#             Company, slug=self.kwargs["slug"]
-#         )  # noqa: E501
-#         instance.save()
-#         return super().form_valid(form)
 
 
 class VesselExtraInfoDetailView(DetailView):
@@ -271,7 +310,7 @@ class VesselExtraInfoDetailView(DetailView):
 class VesselExtraInfoUpdateView(
     LoginRequiredMixin, SuccessMessageMixin, UpdateView
 ):  # noqa: E501
-    """Представление обновления адреса."""
+    """Представление обновления доп. инфо по судну и заявке."""
 
     model = VesselExtraInfo
     template_name = "applications/vessels/vesselextrainfo_update.html"
@@ -300,35 +339,6 @@ class VesselExtraInfoUpdateView(
         )  # noqa: E501
         form.save()  # type: ignore
         return super().form_valid(form)
-
-
-# class EmployeeSearchResultView(ListView):
-#     """Реализация поиска работника на сайте."""
-
-#     model = Employee
-#     context_object_name = "employees"
-#     paginate_by = 10
-#     allow_empty = True
-#     template_name = "companies/employees/employee_search_result.html"
-
-#     def get_queryset(self):
-#         query = self.request.GET.get("do")
-#         search_vector = SearchVector(
-#             "first_name", weight="B"
-#         ) + SearchVector(  # noqa: E501
-#             "second_name", weight="A"
-#         )
-#         search_query = SearchQuery(query)  # type: ignore
-#         return (
-#             self.model.objects.annotate(rank=SearchRank(search_vector, search_query))  # type: ignore # noqa: E501
-#             .filter(rank__gte=0.3)
-#             .order_by("-rank")
-#         )
-
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context["title"] = f'Результаты поиска: {self.request.GET.get("do")}'
-#         return context
 
 # =================== функционал Document ===================
 
@@ -552,12 +562,6 @@ class AccountUpdateView(
     form_class = AccountUpdateForm
     login_url = "login"
     success_message = "Стоимость услуги была успешно обновлена"
-
-    # def get_initial(self):
-    #     user = self.request.user
-    #     branch_number = user.office_number.number[0:3]  # type: ignore
-    #     initial = {"branch_number": branch_number}
-    #     return initial
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)

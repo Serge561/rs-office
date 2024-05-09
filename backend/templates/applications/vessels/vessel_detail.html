@@ -1,0 +1,130 @@
+{% extends 'main.html' %}
+<!-- prettier-ignore -->
+{% block content %}
+<!-- breadcrumbs -->
+{% block breadcrumbs %}
+<div>
+  <a href="{% url 'home' %}" class="breadcrumbs font-medium">Главная</a>
+  {% block crumbs %}
+  <span class="breadcrumbs">
+    <!-- prettier-ignore -->
+    {% if title %} &rsaquo; {{ title }} {% endif %}
+  </span>
+  <!-- prettier-ignore -->
+  {% endblock%}
+</div>
+{% endblock %}
+<!-- end of breadcrumbs -->
+{% comment %} grid grid-flow-col auto-cols-max {% endcomment %}
+<div class="flex space-x-2 items-center justify-center px-4">
+    <div class="max-w-4xl bg-white rounded-lg shadow-xl">
+        <div class="p-4 border-b">
+            <h2 class="text-2xl ">
+                Характеристики т/х {{ vessel }}
+            </h2>
+        </div>
+        <div>
+            <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-2 p-4 border-b">
+                <p class="text-gray-600">
+                    Название судна
+                </p>
+                <p class="px-4">
+                    {{ vessel.name }}
+                </p>
+            </div>
+            <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-2 p-4 border-b">
+                <p class="text-gray-600">
+                  Транслитерация названия судна
+                </p>
+                <p class="px-4">
+                    {{ vessel.name_en }}
+                </p>
+            </div>
+            <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b">
+                <p class="text-gray-600">
+                    Номер РС
+                </p>
+                <p class="px-4">
+                    {{ vessel.rs_number }}
+                </p>
+            </div>
+            <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b">
+                <p class="text-gray-600">
+                    Номер ИМО
+                </p>
+                <p class="px-4">
+                    {{ vessel.imo_number }}
+                </p>
+            </div>
+            <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b">
+                <p class="text-gray-600">
+                    Валовая вместимость
+                </p>
+                <p class="px-4">
+                    {{ vessel.g_tonnage }}
+                </p>
+            </div>
+            <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b">
+                <p class="text-gray-600">
+                    Дата постройки
+                </p>
+                <p class="px-4">
+                    {{ vessel.build_date|date:'SHORT_DATE_FORMAT' }}
+                </p>
+            </div>
+            <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b">
+                <p class="text-gray-600">
+                   Мощность ГД
+                </p>
+                <p class="px-4">
+                  {{ vessel.me_power }}
+                </p>
+            </div>
+            <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b">
+                <p class="text-gray-600">
+                    Флаг судна
+                </p>
+                <p class="px-4">
+                  {{ vessel.get_flag_display }}
+                </p>
+            </div>
+            <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b">
+                <p class="text-gray-600">
+                    Статистическая группа судна
+                </p>
+                <p class="px-4">
+                    {{ vessel.get_vessel_stat_group_display }}
+                </p>
+            </div>
+            <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b">
+              <p class="text-gray-600">
+                  Совершает международные рейсы
+              </p>
+              {% if vessel.is_international_voyage == True %}
+              <p class="px-4"><input type="checkbox" checked disabled/></p>
+              {% else %}
+              <p class="px-4"><input type="checkbox" disabled/></p>
+              {% endif %}
+          </div>
+        </div>
+        <div class="md:col-span-4 text-right px-4 py-3">
+            <div class="inline-flex items-end gap-4">
+              {% comment %} <a
+                href="{% url "application_delete" company.slug %}"
+                type="button"
+                class="mr-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Удалить доп. инфо
+              </a> {% endcomment %}
+              <a
+                href="{% url "vessel_update" vessel.id %}"
+                type="button"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Редактировать данные
+              </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

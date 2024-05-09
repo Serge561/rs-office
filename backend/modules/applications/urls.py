@@ -20,8 +20,11 @@ from .views import (
     FormCreateView,
     VesselAutocomplete,
     VesselCreateView,
+    VesselDetailView,
+    VesselUpdateView,
     VesselExtraInfoDetailView,
     VesselExtraInfoUpdateView,
+    VesselSearchResultView,
     print_docs,
 )
 
@@ -57,9 +60,24 @@ urlpatterns = [
         name="vessel-autocomplete",
     ),
     path(
+        "search_vessel/",
+        VesselSearchResultView.as_view(),
+        name="search_vessel",  # noqa: E501
+    ),
+    path(
         "companies/<str:slug>/applications/create/vessel_create/",
         VesselCreateView.as_view(),
         name="vessel_create",
+    ),
+    path(
+        "vessel_detail/<int:pk>/",
+        VesselDetailView.as_view(),
+        name="vessel_detail",  # noqa: E501
+    ),  # noqa: E501
+    path(
+        "vessel_update/<int:pk>/update/",
+        VesselUpdateView.as_view(),
+        name="vessel_update",  # noqa: E501
     ),
     path(
         "companies/<str:slug>/applications/<int:pk>/vesselextrainfo/",

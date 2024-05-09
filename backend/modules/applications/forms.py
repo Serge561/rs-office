@@ -184,45 +184,42 @@ class VesselCreateForm(forms.ModelForm):
             )
 
 
-# class VesselExtraInfoCreateForm(forms.ModelForm):
-#     """Форма добавления доп. инфо по судну."""
+class VesselUpdateForm(forms.ModelForm):
+    """Форма добавления судна."""
 
-#     class Meta:
-#         """Мета форма добавления доп. инфо по судну."""
+    class Meta:
+        """Мета формы редактирования параметров судна."""
 
-#         model = VesselExtraInfo
-#         fields = (
-#             "class_status",
-#             "due_date",
-#             "application",
-#             "city",
-#             "previous_survey_date",
-#             "last_psc_inspection_date",
-#             "last_psc_inspection_result",
-#             "completion_expected_date",
-#             "assigned_surveyors",
-#         )
-#         labels = {
-#             "city": "Место предыдущего освидетельствования",
-#         }
-#         widgets = {
-#             "city": autocomplete.ListSelect2(url="city-autocomplete"),  # noqa: E501
-#         }
+        model = Vessel
+        fields = (
+            "name",
+            "name_en",
+            "rs_number",
+            "imo_number",
+            "g_tonnage",
+            "build_date",
+            "me_power",
+            "flag",
+            "vessel_stat_group",
+        )
+        widgets = {
+            "flag": autocomplete.ListSelect2(url="country-autocomplete"),  # noqa: E501
+        }
 
-#     def __init__(self, *args, **kwargs):
-#         """Обновление стилей формы под Tailwind."""
-#         super().__init__(*args, **kwargs)
-#         for field in self.fields:
-#             self.fields[field].widget.attrs.update(
-#                 {
-#                     "class": "h-7 border-none mt-0 rounded px-4 w-full bg-gray-50",  # noqa: E501
-#                     "autocomplete": "off",
-#                 }
-#             )
+    def __init__(self, *args, **kwargs):
+        """Обновление стилей формы под Tailwind."""
+        super().__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update(
+                {
+                    "class": "h-7 border-none mt-0 rounded px-4 w-full bg-gray-50",  # noqa: E501
+                    "autocomplete": "off",
+                }
+            )
 
 
 class VesselExtraInfoUpdateForm(forms.ModelForm):
-    """Форма обновления адреса предприятия."""
+    """Форма обновления доп. инфо по судну и заявке."""
 
     assigned_surveyors = forms.ModelMultipleChoiceField(
         label="Исполнители заявки",
@@ -230,7 +227,7 @@ class VesselExtraInfoUpdateForm(forms.ModelForm):
     )  # noqa: E501
 
     class Meta:
-        """Мета формы обновления адреса."""
+        """Мета формы обновления доп. инфо по судну и заявке."""
 
         model = VesselExtraInfo
         fields = (

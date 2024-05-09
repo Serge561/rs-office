@@ -5,7 +5,7 @@ import gettext
 import pycountry
 from django.db import models
 from django.contrib.auth import get_user_model
-
+from django.urls import reverse
 from modules.services.mixins import CreatorMixin, UpdaterMixin
 
 User = get_user_model()
@@ -115,3 +115,7 @@ class Vessel(CreatorMixin, UpdaterMixin):
     def __str__(self):
         """Возвращение строки."""
         return f'"{self.name}" РС {self.rs_number}'
+
+    def get_absolute_url(self):
+        """Полный URL характеристик судна."""
+        return reverse("vessel_detail", kwargs={"pk": self.id})  # type: ignore # noqa: E501
