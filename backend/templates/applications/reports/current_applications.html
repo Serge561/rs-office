@@ -1,0 +1,130 @@
+{% extends 'main.html' %}
+<!-- prettier-ignore -->
+{% block content %}
+<!-- breadcrumbs -->
+{% block breadcrumbs %}
+<div>
+  <a href="{% url 'home' %}" class="breadcrumbs font-medium">Главная</a>
+  <a href="{% url 'dashboard_report' %}" class="breadcrumbs font-medium">
+    &rsaquo; Панель управления отчётами</a
+  >
+  {% block crumbs %}
+  <span class="breadcrumbs">
+    <!-- prettier-ignore -->
+    {% if title %} &rsaquo; {{ title }} {% endif %}
+  </span>
+  <!-- prettier-ignore -->
+  {% endblock%}
+</div>
+{% endblock %}
+<!-- end of breadcrumbs -->
+<div class="my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 pr-10 lg:px-8">
+  <div class="align-middle inline-block min-w-full overflow-hidden bg-white">
+    <table class="min-w-full">
+      <thead>
+        <tr>
+          <th
+            class="px-6 py-3 border-b-2 border-gray-300 text-left leading-4 text-blue-500 tracking-wider"
+          >
+            Номер
+          </th>
+          <th
+            class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+          >
+            Дата
+          </th>
+          <th
+            class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+          >
+            Дата завершения
+          </th>
+          <th
+            class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+          >
+            Код
+          </th>
+          <th
+            class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+          >
+            Вид
+          </th>
+          <th
+            class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+          >
+            Объём
+          </th>
+          <th
+            class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+          >
+            Название судна
+          </th>
+          <th
+            class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wide"
+          >
+            РС, ИМО, флаг
+          </th>
+        </tr>
+      </thead>
+      <tbody class="bg-white">
+        {% for application in applications %}
+        <tr>
+          <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
+            <div class="flex items-center">
+              <div>
+                <div class="text-sm leading-5 text-gray-800">
+                  <a
+                    href="{{ application.get_absolute_url }}"
+                    type="button"
+                    class="list-none hover:text-indigo-600 font-medium"
+                  >
+                    {{ application.number }}
+                  </a>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td
+            class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
+          >
+            {{ application.date|date:'SHORT_DATE_FORMAT' }}
+          </td>
+          <td
+            class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
+          >
+            {{ application.completion_date|date:'SHORT_DATE_FORMAT' }}
+          </td>
+          <td
+            class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
+          >
+            {{ application.survey_code}}
+          </td>
+          <td
+            class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
+          >
+            {{ application.survey_type}}
+          </td>
+          <td
+            class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
+          >
+            {{ application.survey_scope}}
+          </td>
+          <td
+            class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
+          >
+            {{ application.vessel.name }}
+          </td>
+          <td
+            class="px-5 py-2 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
+          >
+            <p>{{ application.vessel.rs_number }}</p>
+            <p>{{ application.vessel.imo_number }}</p>
+            <p>{{ application.vessel.get_flag_display }}</p>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% include 'pagination.html' %}
+  </div>
+</div>
+{% endblock %}

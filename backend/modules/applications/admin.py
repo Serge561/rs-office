@@ -129,6 +129,7 @@ class DocumentAdmin(admin.ModelAdmin):
     model = Document
     list_display = [
         "id",
+        "application_number",
         "application",
         "number",
         "form",
@@ -136,7 +137,7 @@ class DocumentAdmin(admin.ModelAdmin):
     ]
     readonly_fields = ("id",)
     search_fields = (
-        "application",
+        # "application",
         "number",
     )
     list_display_links = (
@@ -145,6 +146,11 @@ class DocumentAdmin(admin.ModelAdmin):
         "number",
     )
     list_select_related = ["form", "application"]
+
+    @admin.display(description="№ заявки")
+    def application_number(self, obj):
+        """Переопределение отображеиня поля application."""
+        return obj.application.number
 
 
 class AccountAdmin(admin.ModelAdmin):

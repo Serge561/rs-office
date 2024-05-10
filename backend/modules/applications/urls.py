@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long
+# pylint: disable=line-too-long, import-error
 """Маршруты приложения application."""
 
 from django.urls import path
@@ -25,7 +25,11 @@ from .views import (
     VesselExtraInfoDetailView,
     VesselExtraInfoUpdateView,
     VesselSearchResultView,
+    DashboardView,
+    CurrentApplicationsView,
     print_docs,
+    # show_dashboard_report,
+    # get_current_applications,
 )
 
 urlpatterns = [
@@ -37,8 +41,8 @@ urlpatterns = [
     path(
         "companies/<str:slug>/applications/<int:pk>/",
         ApplicationDetailView.as_view(),
-        name="application_detail",  # noqa: E501
-    ),  # noqa: E501
+        name="application_detail",
+    ),
     path(
         "companies/<str:slug>/applications/create/",
         ApplicationCreateView.as_view(),
@@ -62,7 +66,7 @@ urlpatterns = [
     path(
         "search_vessel/",
         VesselSearchResultView.as_view(),
-        name="search_vessel",  # noqa: E501
+        name="search_vessel",
     ),
     path(
         "companies/<str:slug>/applications/create/vessel_create/",
@@ -72,12 +76,12 @@ urlpatterns = [
     path(
         "vessel_detail/<int:pk>/",
         VesselDetailView.as_view(),
-        name="vessel_detail",  # noqa: E501
-    ),  # noqa: E501
+        name="vessel_detail",
+    ),
     path(
         "vessel_update/<int:pk>/update/",
         VesselUpdateView.as_view(),
-        name="vessel_update",  # noqa: E501
+        name="vessel_update",
     ),
     path(
         "companies/<str:slug>/applications/<int:pk>/vesselextrainfo/",
@@ -138,9 +142,19 @@ urlpatterns = [
     ),
     # =============== print docx ===============
     path(
-        # "companies/aktsionernoe-obshchestvo-arkticheskie-morskie-inzhenerno-geologicheskie-ekspeditsii/applications/1/account/print/",  # noqa: E501
         "companies/<str:slug>/applications/<int:pk>/account/print/",
         print_docs,
         name="print_doc",
+    ),
+    # ================ reports ================
+    path(
+        "dashboard_report/",
+        DashboardView.as_view(),
+        name="dashboard_report",
+    ),
+    path(
+        "dashboard_report/current_applications/",
+        CurrentApplicationsView.as_view(),
+        name="current_applications",
     ),
 ]

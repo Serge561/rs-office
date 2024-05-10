@@ -1,5 +1,5 @@
 # pylint: disable=too-few-public-methods, invalid-str-returned, import-error, line-too-long # noqa: E501
-"""sadasdasdasd."""
+"""Пакет ОРМ модели applications."""
 
 from modules.companies.models import Company, Employee, OfficeNumber  # noqa: F401, E501
 from .vessel import Vessel  # noqa: F401

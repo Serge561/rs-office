@@ -15,26 +15,6 @@
 {% endblock %}
 <!-- end of breadcrumbs -->
 <div class="my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 pr-10 lg:px-8">
-  <!-- search block -->
-  {% comment %}
-  <div
-    class="align-middle inline-block w-full py-4 overflow-hidden bg-white px-12"
-  >
-    <div class="flex justify-between">
-      <form role="search" method="get" action="{% url 'search' %}">
-        {% csrf_token %}
-        <input
-          type="search"
-          class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-4 p-2"
-          placeholder="Поиск по компаниям..."
-          name="do"
-          autocomplete="off"
-          id="search"
-        />
-      </form>
-    </div>
-  </div>
-  {% endcomment %}
   <!-- table block -->
   <div class="align-middle inline-block min-w-full overflow-hidden bg-white">
     <table class="min-w-full">
