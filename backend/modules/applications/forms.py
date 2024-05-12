@@ -1,12 +1,9 @@
 # pylint: disable=too-few-public-methods, line-too-long, import-error
 """Формы приложения applications."""
-# import gettext
+
 from django import forms
 from django.contrib.auth import get_user_model
 from dal import autocomplete
-
-# from django.shortcuts import get_object_or_404
-
 from .models import (
     Application,
     Vessel,
@@ -15,7 +12,7 @@ from .models import (
     Form,
     Document,
     Account,
-)  # , Company # noqa: E501
+)
 
 User = get_user_model()
 
@@ -43,9 +40,6 @@ class ApplicationCreateForm(forms.ModelForm):
                 url="vessel-autocomplete"
             ),  # noqa: E501
         }
-        # widgets = {
-        #     'field_name': TextInput(attrs={'placeholder': 'some value'}),
-        # }
 
     def __init__(self, *args, **kwargs):
         """Обновление стилей формы под Tailwind и другая настройка."""
@@ -63,8 +57,8 @@ class ApplicationCreateForm(forms.ModelForm):
         )
         self.fields["occasional_cause"].widget.attrs.update(
             {
-                "rows": 5,
-                "placeholder": "указать причину ВНО (в связи с ...)\r\nуказать вид существующего св-ва (ССП/СП/СПЛ) и № для его подтверждения или возобновления\r\nуказать название и № ТД\r\nуказать количество сварщиков или СОТПС",  # noqa: E501
+                "rows": 6,
+                "placeholder": "указать причину ВНО (в связи с ...)\r\nуказать вид существующего св-ва (ССП/СП/СПЛ) и № для его подтверждения или возобновления\r\nуказать название и № ТД\r\nуказать количество сварщиков или СОТПС\r\nуказать этап строительства",  # noqa: E501
             }
         )
         self.fields["register_signer"].queryset = User.staff.directors(  # type: ignore # noqa: E501

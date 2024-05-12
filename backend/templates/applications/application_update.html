@@ -21,7 +21,9 @@
     href="{% url 'application_detail' application.company.slug application.id %}"
     class="breadcrumbs font-medium"
   >
-    &rsaquo; {{ application.number }}</a
+    &rsaquo; Заявка № {{ application.number }} от
+    <!-- prettier-ignore -->
+    {{ application.date|date:'SHORT_DATE_FORMAT' }}</a
   >
   {% block crumbs %}
   <span class="breadcrumbs">

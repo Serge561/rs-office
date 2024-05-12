@@ -1,36 +1,16 @@
-# pylint: disable=line-too-long, unused-argument, too-many-ancestors, too-few-public-methods, invalid-name, too-many-branches, unused-variable, redefined-builtin, too-many-arguments, too-many-locals, too-many-statements  # noqa: E501
+# pylint: disable=line-too-long, too-many-ancestors
 """Представления для модели applications."""
 
+from datetime import datetime
 from django.contrib.auth import get_user_model
-
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 # from django.contrib.messages.views import SuccessMessageMixin
-
-# from django.http import HttpResponse
-# from django.shortcuts import get_object_or_404
-
-# from django.urls import reverse_lazy
-# from django.utils import dateformat
-
 from django.views.generic import (
     TemplateView,
     ListView,
 )
-
-# from docxtpl import DocxTemplate
-
-
-from ..models import (
-    # Account,
-    Application,
-    # Company,
-    # Document,
-    # Form,
-    # Vessel,
-    # VesselExtraInfo,
-)
-
+from ..models import Application
 
 User = get_user_model()
 
@@ -54,17 +34,23 @@ class CurrentApplicationsView(LoginRequiredMixin, ListView):
     template_name = "applications/reports/current_applications.html"
     login_url = "login"
     context_object_name = "applications"
-    paginate_by = 10
+    paginate_by = 5
 
-    # def get_queryset(self):
-    #     queryset = super().get_queryset()
-    #     company = get_object_or_404(Company, slug=self.kwargs["slug"])
-    #     return queryset.filter(company=company)
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        user = self.request.user
+        office_number = user.office_number.number  # type: ignore
+        return (
+            queryset.exclude(completion_date__isnull=False)
+            .filter(survey_code__in=["00001", "00002", "00121"])
+            .filter(
+                company__responsible_offices__number__icontains=office_number
+            )  # noqa: E501
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["title"] = "Список текущих заявок подразделения"
-        # context["company"] = get_object_or_404(
-        #     Company, slug=self.kwargs["slug"]
-        # )  # noqa: E501
+        context["title"] = (
+            f'Перечень судов в ремонте и постройке в зоне деятельности подразделения "{self.request.user.office_number}" по состоянию на {datetime.now().strftime("%d.%m.%Y")}'  # type: ignore # noqa: E501
+        )
         return context

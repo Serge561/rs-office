@@ -1,4 +1,4 @@
-# pylint: disable=too-few-public-methods, too-many-ancestors, line-too-long, import-error, no-member, invalid-name # noqa: E501
+# pylint: disable=too-few-public-methods, too-many-ancestors, line-too-long, import-error, no-member, invalid-name, too-many-branches # noqa: E501
 """ОРМ модели application."""
 
 from django.db import models
@@ -258,7 +258,12 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
                     result = f"{SURVEY.capitalize()} {survey_scope_string.lower()}"  # type: ignore # noqa: E501
                 else:
                     result = f"{survey_scope_string} {SURVEY} {self.occasional_cause}"  # type: ignore # noqa: E501
-            case "00002" | "00003":
+            case "00002":
+                if self.occasional_cause is not None:
+                    result = f"Технаблюдение за постройкой: {self.occasional_cause}"  # noqa: E501
+                else:
+                    result = survey_code_string
+            case "00003":
                 result = survey_code_string
             case "00006":
                 result = f"{survey_code_string} {self.occasional_cause} на т/х {self.vessel}"  # type: ignore # noqa: E501
