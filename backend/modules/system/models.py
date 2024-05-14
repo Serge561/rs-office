@@ -1,12 +1,15 @@
-# pylint: disable=invalid-str-returned, too-few-public-methods, import-error, too-many-ancestors # noqa: E501
+# pylint: disable=invalid-str-returned, too-few-public-methods, import-error, too-many-ancestors, no-member, line-too-long # noqa: E501
 """ОРМ приложения system."""
 from django.db import models
 
 from django.db.models import Q
+from django.core.cache import cache
 
 # from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import AbstractUser, UserManager
+
 from django.urls import reverse
+from django.utils import timezone
 from modules.services.utils import unique_slugify
 from phonenumber_field.modelfields import PhoneNumberField
 
@@ -132,17 +135,11 @@ class User(AbstractUser):
         """
         return reverse("profile_detail", kwargs={"slug": self.slug})
 
-
-# User.objects.filter(username__icontains = "user")
-# >>> User.objects.filter(
-# ... username__startswith='user'
-# ... ).filter(
-# ... date_joined__gte=datetime.date.today()
-# ... ).exclude(
-# ... is_active=False
-# ... )
-
-# from django.db.models import Q
-
-# User.objects.filter(Q(is_staff=True) | Q(is_superuser=True))
-# User.objects.filter(username__icontains = "user")
+    def is_online(self):
+        """Проверяет, был ли пользователь онлайн в течение последних 5 минут."""  # noqa: E501
+        last_seen = cache.get(f"last-seen-{self.id}")  # type: ignore
+        if last_seen is not None and timezone.now() < last_seen + timezone.timedelta(  # type: ignore # noqa: E501
+            seconds=300
+        ):
+            return True
+        return False

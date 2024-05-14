@@ -79,11 +79,12 @@ class ApplicationListView(LoginRequiredMixin, ListView):
         return context
 
 
-class ApplicationDetailView(DetailView):
+class ApplicationDetailView(LoginRequiredMixin, DetailView):
     """Представление для вывода заявки компании."""
 
     model = Application
     template_name = "applications/application_detail.html"
+    login_url = "login"
     context_object_name = "application"
 
     def get_context_data(self, **kwargs):
@@ -207,7 +208,7 @@ class VesselCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class VesselSearchResultView(ListView):
+class VesselSearchResultView(LoginRequiredMixin, ListView):
     """Реализация поиска судна на сайте."""
 
     model = Vessel
@@ -215,6 +216,7 @@ class VesselSearchResultView(ListView):
     # paginate_by = 10
     allow_empty = True
     template_name = "applications/vessels/vessel_search_result.html"
+    login_url = "login"
 
     def get_queryset(self):
         query = self.request.GET.get("do")
@@ -236,11 +238,12 @@ class VesselSearchResultView(ListView):
         return context
 
 
-class VesselDetailView(DetailView):
+class VesselDetailView(LoginRequiredMixin, DetailView):
     """Представление для вывода параметров судна."""
 
     model = Vessel
     template_name = "applications/vessels/vessel_detail.html"
+    login_url = "login"
     context_object_name = "vessel"
 
     def get_context_data(self, **kwargs):
@@ -275,11 +278,12 @@ class VesselUpdateView(
 # ================ функционал VesselExtraInfo ==================
 
 
-class VesselExtraInfoDetailView(DetailView):
+class VesselExtraInfoDetailView(LoginRequiredMixin, DetailView):
     """Представление для вывода доп. инфо по судну и заявке."""
 
     model = VesselExtraInfo
     template_name = "applications/vessels/vesselextrainfo_detail.html"
+    login_url = "login"
     context_object_name = "vesselextrainfo"
 
     def get_context_data(self, **kwargs):
@@ -396,11 +400,12 @@ class DocumentListView(LoginRequiredMixin, ListView):
         return context
 
 
-class DocumentDetailView(DetailView):
+class DocumentDetailView(LoginRequiredMixin, DetailView):
     """Представление для вывода отдельного документа."""
 
     model = Document
     template_name = "applications/documents/document_detail.html"
+    login_url = "login"
     context_object_name = "document"
     slug_url_kwarg = "pk"
     pk_url_kwarg = "id"
@@ -509,11 +514,12 @@ class DocumentDeleteView(LoginRequiredMixin, DeleteView):
 # =================== функционал Account ===================
 
 
-class AccountDetailView(DetailView):
+class AccountDetailView(LoginRequiredMixin, DetailView):
     """Представление для вывода стоимости услуги."""
 
     model = Account
     template_name = "applications/accounts/account_detail.html"
+    login_url = "login"
     context_object_name = "account"
 
     def get_context_data(self, **kwargs):

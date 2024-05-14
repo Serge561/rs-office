@@ -78,7 +78,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_browser_reload.middleware.BrowserReloadMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
-    # "modules.system.middleware.ActiveUserMiddleware",
+    "modules.system.middleware.ActiveUserMiddleware",
 ]
 
 ROOT_URLCONF = "backend.urls"
@@ -207,3 +207,10 @@ EMAIL_USE_SSL = config("EMAIL_USE_SSL", cast=bool)
 EMAIL_SERVER = EMAIL_HOST_USER
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 EMAIL_ADMIN = config("EMAIL_ADMIN")
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+        "LOCATION": (BASE_DIR / "cache"),
+    }
+}

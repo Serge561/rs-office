@@ -42,7 +42,7 @@
                   name="last_login"
                   id="last_login"
                   class="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
-                  value="{{ user.last_login }}"
+                  value="{{ user.last_login }} | {% if user.is_online %}Онлайн{% else %}Не в сети{% endif %}"
                   placeholder=""
                 />
               </div>
@@ -61,12 +61,14 @@
 
               <div class="md:col-span-5 text-right">
                 <div class="inline-flex items-end">
+                  {% if request.user == user %}
                   <a
                     href="{% url 'profile_edit' %}"
                     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 mt-4 px-4 rounded"
                   >
                     Редактировать профиль
                   </a>
+                  {% endif %}
                 </div>
               </div>
             </div>

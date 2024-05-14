@@ -60,13 +60,14 @@ class CompanyListView(LoginRequiredMixin, ListView):
         return context
 
 
-class CompanyDetailView(DetailView):
+class CompanyDetailView(LoginRequiredMixin, DetailView):
     """Представление для вывода карточки компании."""
 
     model = Company
     template_name = "companies/company_detail.html"
     # form_class = CompanyDetailViewForm
     context_object_name = "company"
+    login_url = "login"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -129,7 +130,7 @@ class CompanyDeleteView(AdminRequiredMixin, DeleteView):
         return context
 
 
-class CompanySearchResultView(ListView):
+class CompanySearchResultView(LoginRequiredMixin, ListView):
     """Реализация поиска фирм на сайте."""
 
     model = Company
@@ -137,6 +138,7 @@ class CompanySearchResultView(ListView):
     paginate_by = 10
     allow_empty = True
     template_name = "companies/company_list.html"
+    login_url = "login"
 
     def get_queryset(self):
         query = self.request.GET.get("do")
@@ -193,9 +195,6 @@ class AddressListView(LoginRequiredMixin, ListView):
         queryset = super().get_queryset()
         company = get_object_or_404(Company, slug=self.kwargs["slug"])
         return queryset.filter(company=company)
-
-        # person = Person.objects.filter(to_be_listed=True)
-        # context['gender'] = person.get_gender_display()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -499,11 +498,12 @@ class EmployeeListView(LoginRequiredMixin, ListView):
         return context
 
 
-class EmployeeDetailView(DetailView):
+class EmployeeDetailView(LoginRequiredMixin, DetailView):
     """Представление для вывода профиля работника компании."""
 
     model = Employee
     template_name = "companies/employees/employee_detail.html"
+    login_url = "login"
     context_object_name = "employee"
 
     def get_context_data(self, **kwargs):
@@ -568,7 +568,7 @@ class EmployeeUpdateView(
         return super().form_valid(form)
 
 
-class EmployeeSearchResultView(ListView):
+class EmployeeSearchResultView(LoginRequiredMixin, ListView):
     """Реализация поиска работника на сайте."""
 
     model = Employee
@@ -576,6 +576,7 @@ class EmployeeSearchResultView(ListView):
     paginate_by = 10
     allow_empty = True
     template_name = "companies/employees/employee_search_result.html"
+    login_url = "login"
 
     def get_queryset(self):
         query = self.request.GET.get("do")
@@ -597,13 +598,14 @@ class EmployeeSearchResultView(ListView):
         return context
 
 
-class StaffSearchResultView(ListView):
+class StaffSearchResultView(LoginRequiredMixin, ListView):
     """Реализация поиска служащего определённой компании."""
 
     model = Employee
     context_object_name = "employees"
     allow_empty = True
     template_name = "companies/employees/employee_list.html"
+    login_url = "login"
 
     def get_queryset(self):
         company = get_object_or_404(Company, slug=self.kwargs["slug"])
