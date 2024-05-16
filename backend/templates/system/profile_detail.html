@@ -60,7 +60,13 @@
               </div>
 
               <div class="md:col-span-5 text-right">
-                <div class="inline-flex items-end">
+                <div class="inline-flex items-end mr-4">
+                  <a
+                    href="{% url 'feedback' %}"
+                    class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 mt-4 px-4 rounded mr-4"
+                  >
+                    Показать форму обратной связи
+                  </a>
                   {% if request.user == user %}
                   <a
                     href="{% url 'profile_edit' %}"

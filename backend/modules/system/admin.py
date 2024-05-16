@@ -3,7 +3,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth import get_user_model
-from .models import OfficeNumber, Position
+from .models import OfficeNumber, Position, Feedback
 from .forms import CustomUserCreationForm, CustomUserChangeForm
 
 User = get_user_model()
@@ -99,6 +99,16 @@ class CustomUserAdmin(UserAdmin):
     #     return form
 
 
+class FeedbackAdmin(admin.ModelAdmin):
+    """
+    Админ-панель модели профиля
+    """
+
+    list_display = ("email", "ip_address", "user")
+    list_display_links = ("email", "ip_address")
+
+
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(OfficeNumber, OfficeNumberAdmin)
 admin.site.register(Position, PositionAdmin)
+admin.site.register(Feedback, FeedbackAdmin)

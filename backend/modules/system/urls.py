@@ -1,4 +1,5 @@
-"""asdasdadasdad."""
+"""URLs приложения system."""
+
 from django.urls import path
 
 from .views import (
@@ -14,6 +15,7 @@ from .views import (
     UserConfirmEmailView,
     EmailConfirmedView,
     EmailConfirmationFailedView,
+    FeedbackCreateView,
 )
 
 
@@ -60,4 +62,5 @@ urlpatterns = [
         EmailConfirmationFailedView.as_view(),
         name="email_confirmation_failed",
     ),
+    path("feedback/", FeedbackCreateView.as_view(), name="feedback"),
 ]

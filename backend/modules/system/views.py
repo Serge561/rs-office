@@ -37,9 +37,12 @@ from .forms import (
     UserPasswordChangeForm,
     UserForgotPasswordForm,
     UserSetNewPasswordForm,
+    FeedbackCreateForm,
 )
-
+from .models import Feedback
 from ..services.mixins import UserIsNotAuthenticated
+from ..services.email import send_contact_email_message
+from ..services.utils import get_client_ip
 
 User = get_user_model()
 
@@ -301,3 +304,29 @@ def tr_handler403(request, exception):
             "error_message": "Доступ к этой странице ограничен",
         },
     )
+
+
+class FeedbackCreateView(SuccessMessageMixin, CreateView):
+    """Представление формы обратной связи."""
+
+    model = Feedback
+    form_class = FeedbackCreateForm
+    success_message = "Ваше письмо успешно отправлено администрации сайта"
+    template_name = "system/feedback.html"
+    extra_context = {"title": "Контактная форма"}
+    success_url = reverse_lazy("home")
+
+    def form_valid(self, form):
+        if form.is_valid():
+            feedback = form.save(commit=False)  # type: ignore
+            feedback.ip_address = get_client_ip(self.request)
+            if self.request.user.is_authenticated:
+                feedback.user = self.request.user
+            send_contact_email_message(
+                feedback.subject,
+                feedback.email,
+                feedback.content,
+                feedback.ip_address,
+                feedback.user_id,
+            )
+        return super().form_valid(form)

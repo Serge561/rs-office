@@ -10,6 +10,7 @@ from django.contrib.auth.forms import (
     SetPasswordForm,
     PasswordResetForm,
 )
+from .models import Feedback
 
 
 User = get_user_model()
@@ -210,6 +211,38 @@ class UserSetNewPasswordForm(SetPasswordForm):
             self.fields[field].widget.attrs.update(
                 {
                     "class": "border rounded-lg px-3 py-2 mt-1 mb-2 text-sm w-full",  # noqa: E501
+                    "autocomplete": "off",
+                }
+            )
+
+
+class FeedbackCreateForm(forms.ModelForm):
+    """Форма отправки обратной связи."""
+
+    class Meta:
+        """Мета фориы обратной связи."""
+
+        model = Feedback
+        fields = ("subject", "email", "content")
+
+    def __init__(self, *args, **kwargs):
+        """
+        Обновление стилей формы
+        """
+        super().__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields["subject"].widget.attrs.update(
+                {"placeholder": "Введите тему письма"}
+            )  # noqa: E501
+            self.fields["email"].widget.attrs.update(
+                {"placeholder": "john.doe@rs-class.org"}
+            )
+            self.fields["content"].widget.attrs.update(
+                {"placeholder": "Введите текст сообщения"}
+            )
+            self.fields[field].widget.attrs.update(
+                {
+                    "class": "w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500",  # noqa: E501
                     "autocomplete": "off",
                 }
             )

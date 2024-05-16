@@ -1,0 +1,20 @@
+{% extends 'main.html' %}
+<!-- prettier-ignore -->
+{% load static %}
+<!-- prettier-ignore -->
+{% block content %}
+<div class="max-w-md mx-auto p-8 bg-white rounded-md shadow-md">
+  <h2 class="text-2xl font-semibold mb-6">Контактная форма</h2>
+  <form action="{% url 'feedback' %}" method="POST">
+    {% csrf_token %}
+    <!-- prettier-ignore -->
+    {{ form.as_p }}
+    <button
+      type="submit"
+      class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:shadow-outline-blue"
+    >
+      Отправить письмо
+    </button>
+  </form>
+</div>
+{% endblock %}
