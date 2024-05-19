@@ -150,7 +150,7 @@ class Feedback(models.Model):
 
     subject = models.CharField(max_length=255, verbose_name="Тема письма")
     email = models.EmailField(
-        max_length=255, verbose_name="Электронный адрес (email)"
+        max_length=255, verbose_name="Электронный адрес (email)", blank=True
     )  # noqa: E501
     content = models.TextField(verbose_name="Содержимое письма")
     created_at = models.DateTimeField(

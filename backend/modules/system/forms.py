@@ -230,16 +230,17 @@ class FeedbackCreateForm(forms.ModelForm):
         Обновление стилей формы
         """
         super().__init__(*args, **kwargs)
+        self.fields["subject"].widget.attrs.update(
+            {"placeholder": "Введите тему письма"}
+        )  # noqa: E501
+        # self.fields["email"].widget.attrs.update(
+        #     {"placeholder": "john.doe@rs-class.org"}
+        # )
+        self.fields["email"].widget = forms.HiddenInput()
+        self.fields["content"].widget.attrs.update(
+            {"placeholder": "Введите текст сообщения"}
+        )
         for field in self.fields:
-            self.fields["subject"].widget.attrs.update(
-                {"placeholder": "Введите тему письма"}
-            )  # noqa: E501
-            self.fields["email"].widget.attrs.update(
-                {"placeholder": "john.doe@rs-class.org"}
-            )
-            self.fields["content"].widget.attrs.update(
-                {"placeholder": "Введите текст сообщения"}
-            )
             self.fields[field].widget.attrs.update(
                 {
                     "class": "w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500",  # noqa: E501

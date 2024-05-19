@@ -14,14 +14,17 @@ click-plugins==1.1.1
 click-repl==0.3.0
 colorama==0.4.6
 cookiecutter==2.5.0
+cron-descriptor==1.4.3
 DAWG-Python==0.7.2
 Django==5.0
 django-autocomplete-light==3.9.7
 django-browser-reload==1.12.1
+django-celery-beat==2.6.0
 django-debug-toolbar==4.2.0
 django-localflavor==4.0
 django-phonenumber-field==7.3.0
 django-tailwind==3.6.0
+django-timezone-field==6.1.0
 docopt==0.6.2
 docxcompose==1.4.0
 docxtpl==0.16.8
@@ -41,6 +44,7 @@ pycountry==23.12.11
 Pygments==2.17.2
 pymorphy3==2.0.1
 pymorphy3-dicts-ru==2.4.417150.4580142
+python-crontab==3.0.0
 python-dateutil==2.8.2
 python-decouple==3.8
 python-docx==1.1.0
