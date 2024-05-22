@@ -11,7 +11,8 @@ from decouple import Config, RepositoryEnv, Csv
 from django.contrib.messages import constants as messages
 import pycountry
 
-config = Config(RepositoryEnv("docker/env/.env.dev"))
+# config = Config(RepositoryEnv("docker/env/.env.dev"))
+config = Config(RepositoryEnv("docker/env/.env.prod"))
 
 MESSAGE_TAGS = {
     messages.DEBUG: "h-14 font-regular relative block w-full rounded-b-lg bg-blue-200 p-4 text-base leading-5 text-pink-600 opacity-100",  # noqa: E501
@@ -175,15 +176,22 @@ LANGUAGES = (
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
+# STATIC_URL = '/static/'
+
+# if not DEBUG:
+#    STATIC_ROOT = '/home/django/www-data/example.com/static/'
+
+# STATICFILES_DIRS = [
+#    os.path.join(BASE_DIR, 'static/'),
+# ]
 
 STATIC_URL = "/static/"
-# STATIC_ROOT = BASE_DIR / "static"
 
-# STATICFILES_DIRS = [BASE_DIR / "templates/src"]
-# STATICFILES_DIRS = ["foodOnline_main/static"]
+STATIC_ROOT = os.path.join(BASE_DIR, "/static/")
 
+# STATICFILES_DIRS = (os.path.join(BASE_DIR, "static", "/theme/static/"),)
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, "static/"),
 ]
 
 MEDIA_ROOT = BASE_DIR / "media"
@@ -206,7 +214,7 @@ EMAIL_HOST = config("EMAIL_HOST", default="localhost")
 EMAIL_PORT = config("EMAIL_PORT", default=25, cast=int)
 EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
-EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=False, cast=bool)
+EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=True, cast=bool)
 EMAIL_USE_SSL = config("EMAIL_USE_SSL", default=False, cast=bool)
 EMAIL_SERVER = EMAIL_HOST_USER
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
