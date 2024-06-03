@@ -49,7 +49,7 @@ class CompanyListView(LoginRequiredMixin, ListView):
         queryset = super().get_queryset()
         user = self.request.user
         # if user.is_anonymous | user.is_staff:  # type: ignore
-        if user.is_staff:  # type: ignore
+        if user.is_superuser:  # type: ignore
             return queryset
         user_office_id = user.office_number.id  # type: ignore
         return queryset.filter(responsible_offices=user_office_id)

@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long, unused-variable, redefined-builtin, invalid-name  # noqa: E501
+# pylint: disable=line-too-long, unused-variable, redefined-builtin, invalid-name, too-many-arguments, too-many-branches, too-many-locals, too-many-statements  # noqa: E501
 """Представления для модели applications."""
 
 import io
@@ -27,12 +27,15 @@ def get_docx_template(survey_code, report_type, survey_scope=None):
        от кода услуги."""
     # report_type is certificate on AGREEMENT-application or
     # ACCEPTANCE of delivery service report
+    # SHEET is document check sheet
     match survey_code:
         case "00001" | "00003" | "00011":
             if report_type == "agreement":
                 template = "810_1_1.docx"
-            else:
+            elif report_type == "acceptance":
                 template = "430_3_4.docx"
+            else:
+                template = "List_registratsii_proverki_dokumentov.docx"
         case "00006":
             if report_type == "agreement":
                 template = "810_1_11.docx"
@@ -59,8 +62,10 @@ def get_docx_template(survey_code, report_type, survey_scope=None):
                     template = "810_1_10.docx"
                 else:
                     template = "810_1_10_1.docx"
-            else:
+            elif report_type == "acceptance":
                 template = "430_3_4.docx"
+            else:
+                template = "List_registratsii_proverki_dokumentov.docx"
         case _:
             # создать логику вывода сообщения на экран или все шаблоны сделать
             template = "404_page.docx"
@@ -113,19 +118,50 @@ def is_none(value):
     return "--"
 
 
-def is_vessel_none(name=None, rs=None, imo=None, power=None):
+def is_vessel_none(vessel=None, argument=None):  # noqa: E501
     """Проверка судна на None для заявок в промышленности."""
-    if name is not None:
-        vessel_attribute = f'"{name.name}"'
-    elif rs is not None:
-        vessel_attribute = is_none(rs.rs_number)
-    elif imo is not None:
-        vessel_attribute = is_none(imo.imo_number)
-    elif power is not None:
-        vessel_attribute = is_none(power.me_power)
+    if vessel is not None:
+        match argument:
+            case "name":
+                vessel_attribute = f'"{vessel.name}"'
+            case "rs":
+                vessel_attribute = is_none(vessel.rs_number)
+            case "imo":
+                vessel_attribute = is_none(vessel.imo_number)
+            case "power":
+                vessel_attribute = is_none(vessel.me_power)
+            case "gt":
+                vessel_attribute = is_none(vessel.g_tonnage)
+            case "bdate":
+                vessel_attribute = is_none(vessel.build_date)
+            case _:
+                vessel_attribute = ""
     else:
         vessel_attribute = ""
     return vessel_attribute
+
+
+def get_surveyor_or_none(surveyors_qs, specialty=None):
+    """Получить инспектора из списка назначенных инспекторов по заявке."""
+    if not surveyors_qs.exists():
+        return ""
+    surveyors = surveyors_qs.all()
+    match specialty:
+        case "hull":
+            surveyor = f"{surveyors_qs.first().last_name} {surveyors_qs.first().first_name[0]}. {surveyors_qs.first().patronymic_name[0]}."  # noqa: E501
+        case "mech":
+            if surveyors_qs.count() > 1:
+                surveyor = f"{surveyors[1].last_name} {surveyors[1].first_name[0]}. {surveyors[1].patronymic_name[0]}."  # noqa: E501
+            else:
+                surveyor = f"{surveyors_qs.first().last_name} {surveyors_qs.first().first_name[0]}. {surveyors_qs.first().patronymic_name[0]}."  # noqa: E501
+        case _:
+            if surveyors_qs.count() > 2:
+                surveyor = f"{surveyors[2].last_name} {surveyors[2].first_name[0]}. {surveyors[2].patronymic_name[0]}."  # noqa: E501
+            elif surveyors_qs.count() == 2:
+                surveyor = f"{surveyors[1].last_name} {surveyors[1].first_name[0]}. {surveyors[1].patronymic_name[0]}."  # noqa: E501
+            else:
+                surveyor = f"{surveyors_qs.last().last_name} {surveyors_qs.last().first_name[0]}. {surveyors_qs.last().patronymic_name[0]}."  # noqa: E501
+    return surveyor
 
 
 def is_product_survey(app):
@@ -167,9 +203,9 @@ def is_legal_address_same(is_same_check, postal_address, legal_address=None):
     return legal_address
 
 
-def get_issued_docs(document_qs=None, survey_code="00001", document_date=None):
+def get_issued_docs(document_qs, survey_code="00001", document_date=None):
     """Выданные документы в зависимости от кода услуги."""
-    if document_qs is None:
+    if not document_qs.exists():
         return ""
     match survey_code:
         case "00001" | "00003" | "00011" | "00015" | "00101" | "00103" | "00121":  # noqa: E501
@@ -322,9 +358,9 @@ def print_docs(request, **kwargs):
         "day": application.date.strftime("%d"),  # type: ignore
         "month": dateformat.format(application.date, settings.DATE_FORMAT),
         "year": application.date.strftime("%y"),  # type: ignore
-        "vessel": is_vessel_none(application.vessel, None, None, None),  # type: ignore # noqa: E501
-        "rs_number": is_vessel_none(None, application.vessel, None, None),  # type: ignore # noqa: E501
-        "imo_number": is_vessel_none(None, None, application.vessel, None),  # type: ignore # noqa: E501
+        "vessel": is_vessel_none(application.vessel, "name"),  # type: ignore # noqa: E501
+        "rs_number": is_vessel_none(application.vessel, "rs"),  # type: ignore # noqa: E501
+        "imo_number": is_vessel_none(application.vessel, "imo"),  # type: ignore # noqa: E501
         "survey_scope": is_product_survey(application),
         "survey_object": application.get_survey_object_display(),  # type: ignore # noqa: E501
         "city": application.city,
@@ -359,7 +395,7 @@ def print_docs(request, **kwargs):
         "register_signer": f"{application.register_signer.first_name[0]}. {application.register_signer.patronymic_name[0]}. {application.register_signer.last_name}",  # type: ignore # noqa: E501
         "applicant_signer": f"{application.applicant_signer.first_name[0]}. {application.applicant_signer.patronymic_name[0]}. {application.applicant_signer.second_name}",  # type: ignore # noqa: E501
         # for small crafts
-        "engine_power": str(is_vessel_none(None, None, None, application.vessel)),  # type: ignore # noqa: E501
+        "engine_power": str(is_vessel_none(application.vessel, "power")),  # type: ignore # noqa: E501
         "vessel_departure_estimated_date": is_none(application.vesselextrainfo.completion_expected_date),  # type: ignore # noqa: E501
         "rs_branch_city": rs_branch.addresses.first().city,  # type: ignore # noqa: E501
         # for reports on acceptance-delivery services
@@ -371,6 +407,13 @@ def print_docs(request, **kwargs):
         "tax": get_sum_in_words(application.account.service_cost, company.bank_accounts.filter(current_bankaccount=True).first().account_currency, "vat"),  # type: ignore # noqa: E501
         "total": get_sum_in_words(application.account.service_cost, company.bank_accounts.filter(current_bankaccount=True).first().account_currency, "total"),  # type: ignore # noqa: E501
         "surveyor_signer": f"{request.user.first_name[0]}. {request.user.patronymic_name[0]}. {request.user.last_name}",  # type: ignore # noqa: E501
+        # for document checking sheet
+        "completion_date": is_none(application.completion_date),
+        "g_tonnage": str(is_vessel_none(application.vessel, "gt")),  # type: ignore # noqa: E501
+        "build_date": str(is_vessel_none(application.vessel, "bdate")),  # type: ignore # noqa: E501
+        "hull_surveyor": get_surveyor_or_none(application.vesselextrainfo.assigned_surveyors, "hull"),  # type: ignore # noqa: E501
+        "mech_surveyor": get_surveyor_or_none(application.vesselextrainfo.assigned_surveyors, "mech"),  # type: ignore # noqa: E501
+        "elrn_surveyor": get_surveyor_or_none(application.vesselextrainfo.assigned_surveyors, "elrn"),  # type: ignore # noqa: E501
     }  # noqa: E501
 
     doc.render(context)

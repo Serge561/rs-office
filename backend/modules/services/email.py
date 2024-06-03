@@ -47,7 +47,7 @@ def send_activate_email_message(user_id):
         "system/email/activate_email_send.html",
         {
             "user": user,
-            "activation_url": f"http://{current_site}{activation_url}",
+            "activation_url": f"https://{current_site}{activation_url}",
         },
     )
     return user.email_user(subject, message)  # type: ignore

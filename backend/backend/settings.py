@@ -11,8 +11,8 @@ from decouple import Config, RepositoryEnv, Csv
 from django.contrib.messages import constants as messages
 import pycountry
 
-# config = Config(RepositoryEnv("docker/env/.env.dev"))
-config = Config(RepositoryEnv("docker/env/.env.prod"))
+config = Config(RepositoryEnv("docker/env/.env.dev"))
+# config = Config(RepositoryEnv("docker/env/.env.prod"))
 
 MESSAGE_TAGS = {
     messages.DEBUG: "h-14 font-regular relative block w-full rounded-b-lg bg-blue-200 p-4 text-base leading-5 text-pink-600 opacity-100",  # noqa: E501
@@ -209,6 +209,8 @@ LOGOUT_REDIRECT_URL = "home"
 # Email settings
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
+# DEFAULT_FROM_EMAIL = config("EMAIL_HOST_USER", default="")
+
 # Email configuration
 EMAIL_HOST = config("EMAIL_HOST", default="localhost")
 EMAIL_PORT = config("EMAIL_PORT", default=25, cast=int)
@@ -245,3 +247,5 @@ CELERY_BEAT_SCHEDULE = {
         ),  # Резервная копия будет создаваться каждый день в полночь
     },
 }
+
+USE_THOUSAND_SEPARATOR = True

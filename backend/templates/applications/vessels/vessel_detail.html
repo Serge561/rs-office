@@ -45,7 +45,7 @@
                     Номер РС
                 </p>
                 <p class="px-4">
-                    {{ vessel.rs_number }}
+                    {{ vessel.rs_number|default_if_none:'' }}
                 </p>
             </div>
             <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b">
@@ -53,7 +53,7 @@
                     Номер ИМО
                 </p>
                 <p class="px-4">
-                    {{ vessel.imo_number }}
+                    {{ vessel.imo_number|default_if_none:'' }}
                 </p>
             </div>
             <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b">
@@ -61,7 +61,7 @@
                     Валовая вместимость
                 </p>
                 <p class="px-4">
-                    {{ vessel.g_tonnage }}
+                    {{ vessel.g_tonnage|default_if_none:0 }}
                 </p>
             </div>
             <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b">

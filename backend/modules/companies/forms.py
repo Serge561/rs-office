@@ -15,6 +15,7 @@ class CompanyCreateForm(forms.ModelForm):
     phone_number = PhoneNumberField(
         region="RU",
         label="Телефонный номер",
+        required=False,
     )
 
     class Meta:
@@ -98,12 +99,12 @@ class AddressCreateForm(forms.ModelForm):
                     "autocomplete": "off",
                 }
             )
-            self.fields["is_same"].widget.attrs.update(
-                {
-                    "class": "",
-                    "autocomplete": "off",
-                }
-            )
+        self.fields["is_same"].widget.attrs.update(
+            {
+                "class": "",
+                "autocomplete": "off",
+            }
+        )
 
 
 class AddressUpdateForm(AddressCreateForm):
@@ -287,6 +288,7 @@ class EmployeeCreateForm(forms.ModelForm):
     phone_number = PhoneNumberField(
         region="RU",
         label="Телефонный номер",
+        required=False,
     )
 
     class Meta:
@@ -322,6 +324,7 @@ class EmployeeUpdateForm(EmployeeCreateForm):
     phone_number = PhoneNumberField(
         region="RU",
         label="Телефонный номер",
+        required=False,
     )
 
     class Meta:

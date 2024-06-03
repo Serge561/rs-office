@@ -24,8 +24,7 @@ services:
     command: sh -c "python manage.py collectstatic --no-input &&
       python manage.py makemigrations &&
       python manage.py migrate &&
-      python manage.py runserver 0.0.0.0:8000"
-      gunicorn --workers=4 --reload --max-requests=1000 backend.wsgi -b 0.0.0.0:8000""
+      gunicorn --workers=4 --reload --max-requests=1000 backend.wsgi -b 0.0.0.0:8000"
 
   nginx:
     container_name: nginx
@@ -96,6 +95,6 @@ services:
     volumes:
       - ./docker/certbot/conf:/etc/letsencrypt:rw
       - ./docker/certbot/www:/var/www/certbot:rw
-    command: certonly --webroot --webroot-path=/var/www/certbot/ --email serge561@ya.ru --agree-tos --no-eff-email -d 81.200.147.125 -d www.81.200.147.125
+    # command: certonly --webroot --webroot-path=/var/www/certbot/ --email serge561@ya.ru --agree-tos --no-eff-email -d 24rs-office.ru -d www.24rs-office.ru
     depends_on:
       - nginx

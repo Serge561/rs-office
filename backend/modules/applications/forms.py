@@ -195,6 +195,7 @@ class VesselUpdateForm(forms.ModelForm):
             "me_power",
             "flag",
             "vessel_stat_group",
+            "is_international_voyage",
         )
         widgets = {
             "flag": autocomplete.ListSelect2(url="country-autocomplete"),  # noqa: E501
@@ -210,6 +211,12 @@ class VesselUpdateForm(forms.ModelForm):
                     "autocomplete": "off",
                 }
             )
+        self.fields["is_international_voyage"].widget.attrs.update(
+            {
+                "class": "",
+                "autocomplete": "off",
+            }
+        )
 
 
 class VesselExtraInfoUpdateForm(forms.ModelForm):

@@ -56,7 +56,7 @@
           <th
             class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
           >
-            Иcполнители
+            Иcполнители заявки
           </th>
           <th
             class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
@@ -97,8 +97,8 @@
           <td
             class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
           >
-            <p>{{ application.vessel.rs_number }}</p>
-            <p>{{ application.vessel.imo_number }}</p>
+            <p>{{ application.vessel.rs_number|default_if_none:'--' }}</p>
+            <p>{{ application.vessel.imo_number|default_if_none:'--' }}</p>
             {% if application.vessel.flag == "RU" %}
             <p>Россия</p>
             {% else %}
@@ -115,7 +115,7 @@
             class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
           >
             <!-- prettier-ignore -->
-            {{ application.vesselextrainfo.class_status }}: {{ application.vesselextrainfo.get_class_status_display|truncatechars:16|lower }}
+            {{ application.vesselextrainfo.get_class_status_display|truncatechars:21|lower }}
             <!-- prettier-ignore -->
             <p>{{ application.vesselextrainfo.due_date|date:'SHORT_DATE_FORMAT'}}</p>
           </td>

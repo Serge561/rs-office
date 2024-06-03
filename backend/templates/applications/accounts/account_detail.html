@@ -69,18 +69,24 @@
                 Удалить доп. инфо
               </a> {% endcomment %}
               <a
+                href="{% url "print_doc" account.application.company.slug account.application.id %}?name=sheet"
+                type="button"
+                class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Лист
+              <a
                 href="{% url "print_doc" account.application.company.slug account.application.id %}?name=acceptance"
                 type="button"
                 class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
               >
-                Скачать акт сдачи
+                Акт сдачи-приёмки
               </a>
               <a
                 href="{% url "print_doc" account.application.company.slug account.application.id %}?name=agreement"
                 type="button"
                 class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
               >
-                Скачать договор
+                Договор-заявка
               </a>
               <a
                 href="{% url "account_update" account.application.company.slug account.application.id %}"
