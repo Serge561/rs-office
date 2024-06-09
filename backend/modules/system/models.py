@@ -51,18 +51,20 @@ class StaffQuerySet(models.QuerySet):
 
     def directors(self, office_number):
         """Руководство."""
-        return self.filter(
-            Q(position=4) | Q(position=5) | Q(position=6)
-        ).filter(  # noqa: E501
-            office_number=office_number
-        )  # noqa: E501
+        return (
+            self.filter(
+                Q(position=4) | Q(position=5) | Q(position=6) | Q(position=7)
+            )  # noqa: E501
+            .filter(office_number=office_number)
+            .exclude(is_active=False)
+        )
 
     def surveyors(self):
         """Инспекторы."""
         return self.filter(
             Q(position=1) | Q(position=2) | Q(position=3)
         ).exclude(  # noqa: E501
-            is_superuser=True
+            is_active=False
         )
 
 

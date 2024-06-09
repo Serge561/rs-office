@@ -27,6 +27,7 @@ from .views import (
     VesselSearchResultView,
     DashboardView,
     CurrentApplicationsView,
+    CurrentApplicationsSurveyorView,
     print_docs,
     # show_dashboard_report,
     # get_current_applications,
@@ -156,5 +157,10 @@ urlpatterns = [
         "dashboard_report/current_applications/",
         CurrentApplicationsView.as_view(),
         name="current_applications",
+    ),
+    path(
+        "dashboard_report/current_applications_surveyor/",
+        CurrentApplicationsSurveyorView.as_view(),
+        name="current_applications_surveyor",
     ),
 ]

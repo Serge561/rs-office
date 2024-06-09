@@ -11,6 +11,7 @@ from django.contrib.postgres.search import (
     SearchRank,
 )
 from django.shortcuts import get_object_or_404
+from django.db.models import Q
 from django.urls import reverse_lazy
 from django.views.generic import (
     CreateView,
@@ -106,7 +107,10 @@ class ApplicationCreateView(LoginRequiredMixin, CreateView):
         user = self.request.user
         branch_number = user.office_number.number[0:3]  # type: ignore
         director = (
-            User.objects.filter(position__name__icontains="директор").filter(
+            User.objects.filter(
+                Q(position__name__icontains="директор")
+                | Q(position__name__icontains="руководитель филиала")
+            ).filter(
                 office_number__number__icontains=branch_number
             )  # noqa: E501
         ).first()
@@ -150,7 +154,10 @@ class ApplicationUpdateView(
         user = self.request.user
         branch_number = user.office_number.number[0:3]  # type: ignore
         director = (
-            User.objects.filter(position__name__icontains="директор").filter(
+            User.objects.filter(
+                Q(position__name__icontains="директор")
+                | Q(position__name__icontains="руководитель филиала")
+            ).filter(
                 office_number__number__icontains=branch_number
             )  # noqa: E501
         ).first()

@@ -1,0 +1,93 @@
+{% extends 'main.html' %}
+<!-- prettier-ignore -->
+{% block content %}
+<!-- breadcrumbs -->
+{% block breadcrumbs %}
+<div>
+  <a href="{% url 'home' %}" class="breadcrumbs font-medium">Главная</a>
+  <a
+    href="{% url 'company_detail' company.slug %}"
+    class="breadcrumbs font-medium"
+  >
+    &rsaquo; {{ company.name|truncatechars:50 }}</a
+  >
+  <a
+    href="{% url 'company_bankaccount_list' company.slug %}"
+    class="breadcrumbs font-medium"
+  >
+    &rsaquo; {{ "Список банковских счетов компании" }}</a
+  >
+  {% block crumbs %}
+  <span class="breadcrumbs">
+    <!-- prettier-ignore -->
+    {% if title %} &rsaquo; {{ title }} {% endif %}
+  </span>
+  <!-- prettier-ignore -->
+  {% endblock%}
+</div>
+{% endblock %}
+<!-- end of breadcrumbs -->
+{% comment %} grid grid-flow-col auto-cols-max {% endcomment %}
+<div class="flex space-x-2 items-center justify-center px-4">
+    <!-- prettier-ignore -->
+    <div class="max-w-4xl bg-white rounded-lg shadow-xl">
+        <div class="p-4 border-b">
+            <h2 class="text-2xl ">
+                {{ bank }}
+            </h2>
+        </div>
+        <div>
+            <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b">
+              <p class="text-gray-600">
+                БИК или SWIFT банка/терр. отд. фед. казначейства: 
+              </p>
+              <p class="px-4">
+                {{ bank.bic }}
+              </p>
+            </div>
+            <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b">
+              <p class="text-gray-600">
+                Номер корр. счёта или единого казнач. счёта отделения ЦБР:
+              </p>
+              <p class="px-4">
+                {{ bank.correspondent_account }}
+              </p>
+            </div>
+            <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b">
+              <p class="text-gray-600">
+                Номер казнач. счёта терр. отд. фед. казначейства:
+              </p>
+              <p class="px-4">
+                {{ bank.regional_treasury_account }}
+              </p>
+            </div>
+        </div>
+        <div class="md:col-span-4 text-right px-4 py-3">
+            <div class="inline-flex items-end">
+              {% comment %} <a
+                href="{% url "employee_delete" company.slug %}"
+                type="button"
+                class="mr-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Удалить карточку
+              </a>
+              <a
+                href="{% url "employee_update" employee.company.slug employee.id %}"
+                type="button"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Обновить профиль
+              </a> {% endcomment %}
+              {% comment %} "document_update" document.application.company.slug document.application.pk document.id {% endcomment %}
+              <a
+                href="{% url "company_bankaccount_list" company.slug %}"
+                type="button"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Ok
+            </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

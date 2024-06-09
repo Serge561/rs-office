@@ -261,7 +261,7 @@ class Bank(CreatorMixin, UpdaterMixin):
         unique=True,  # noqa: E501
     )  # noqa: E501
     correspondent_account = models.CharField(
-        "Номер коррсчёта или единого казнач. счёта отделения ЦБР",
+        "Номер корр. счёта или единого казнач. счёта отделения ЦБР",
         max_length=20,
         blank=True,
     )  # noqa: E501

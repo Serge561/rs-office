@@ -10,6 +10,7 @@ from .views import (
     BankAccountListView,
     BankAccountUpdateView,
     BankAutocomplete,
+    BankDetailView,
     BankCreateView,
     CompanyListView,
     CompanyDetailView,
@@ -21,7 +22,6 @@ from .views import (
     AddressCreateView,
     AddressUpdateView,
     AddressDeleteView,
-    # autosuggest,
     CityAutocomplete,
     CountryAutocomplete,
     EmployeeCreateView,
@@ -122,6 +122,11 @@ urlpatterns = [
         "companies/<str:slug>/bankaccounts/<int:pk>/delete/",
         BankAccountDeleteView.as_view(),
         name="bankaccount_delete",
+    ),
+    path(
+        "companies/<str:slug>/bankaccounts/<int:pk>/bank_detail/<int:id>/",
+        BankDetailView.as_view(),
+        name="bank_detail",
     ),
     path(
         "companies/<str:slug>/bankaccounts/create/bank_create/",

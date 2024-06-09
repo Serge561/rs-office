@@ -93,6 +93,7 @@ class ApplicationUpdateForm(ApplicationCreateForm):
             "number",
             "date",
             "completion_date",
+            "city",
             "survey_code",
             "survey_type",
             "survey_scope",
@@ -103,7 +104,11 @@ class ApplicationUpdateForm(ApplicationCreateForm):
             "applicant_signer",
             "authorized_person",
         )
+        labels = {
+            "city": "Место освидетельствования",
+        }
         widgets = {
+            "city": autocomplete.ModelSelect2(url="city-autocomplete"),  # noqa: E501
             "vessel": autocomplete.ModelSelect2(
                 url="vessel-autocomplete"
             ),  # noqa: E501

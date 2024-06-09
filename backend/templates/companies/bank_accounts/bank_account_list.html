@@ -80,19 +80,26 @@
         </div>
     </div>
     <!-- Футер -->
-    <div class="md:col-span-4 text-right px-4 py-1">
+    <div class="md:col-span-4 text-right px-4 py-2">
         <div class="inline-flex items-end">
           <a
             href="{% url "bankaccount_delete" company.slug account.id %}"
             type="button"
-            class="mr-4 bg-red-500 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded"
+            class="mr-4 bg-red-500 hover:bg-red-700 text-white font-semibold py-2 px-2 rounded"
           >
             Удалить счёт
           </a>
           <a
+          href="{% url "bank_detail" company.slug account.pk account.bank.id %}"
+          type="button"
+          class="mr-4 bg-green-500 hover:bg-green-700 text-white font-semibold py-2 px-2 rounded"
+        >
+          Реквизиты банка
+        </a>
+          <a
             href="{% url "bankaccount_update" company.slug account.id %}"
             type="button"
-            class="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-2 rounded"
           >
             Редактировать
           </a>

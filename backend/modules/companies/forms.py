@@ -92,6 +92,7 @@ class AddressCreateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         """Обновление стилей формы под Tailwind."""
         super().__init__(*args, **kwargs)
+        self.fields["postal_code"].label = "Почтовый индекс"
         for field in self.fields:
             self.fields[field].widget.attrs.update(
                 {
@@ -127,6 +128,7 @@ class AddressUpdateForm(AddressCreateForm):
     def __init__(self, *args, **kwargs):
         """Обновление стилей формы под Tailwind."""
         super().__init__(*args, **kwargs)
+        self.fields["postal_code"].label = "Почтовый индекс"
         for field in self.fields:
             self.fields[field].widget.attrs.update(
                 {
