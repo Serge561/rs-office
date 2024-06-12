@@ -382,12 +382,6 @@ class BankAccount(UpdaterMixin):
 # ================= Employee ORM =================
 
 
-# def get_queryset(self):
-#     queryset = super().get_queryset()
-#     company = get_object_or_404(Company, slug=self.kwargs["slug"])
-#     return queryset.filter(company=company)
-
-
 class Employee(CreatorMixin, UpdaterMixin):
     """Модель персонала компаний."""
 
@@ -401,7 +395,7 @@ class Employee(CreatorMixin, UpdaterMixin):
         def get_company_staff(self, company):
             """Получить выборку служащих определённой компании."""
             queryset = self.all()
-            queryset = queryset.filter(company=company)
+            queryset = queryset.filter(company=company).filter(is_quit=False)
             return queryset
 
     class ProxyType(models.TextChoices):
@@ -437,10 +431,10 @@ class Employee(CreatorMixin, UpdaterMixin):
         "Номер документа", max_length=27, blank=True
     )  # noqa: E501
     proxy_date = models.DateField("Дата доверенности", null=True, blank=True)
+    is_quit = models.BooleanField("Не действует", default=False)
     extra_info = models.CharField(
         "Доп. информация", max_length=127, blank=True
     )  # noqa: E501
-
     objects = EmployeeManager()
 
     class Meta:

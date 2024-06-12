@@ -142,6 +142,7 @@ class EmployeeAdmin(admin.ModelAdmin):
         "patronymic_name",
         "phone_number",
         "extra_number",
+        "is_quit",
         "extra_info",
         "created_at",
         "updated_at",

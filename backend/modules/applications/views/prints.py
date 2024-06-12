@@ -22,12 +22,14 @@ from ..models import (
 User = get_user_model()
 
 
-def get_docx_template(survey_code, report_type, survey_scope=None):
+def get_docx_template(survey_code, report_type, rs_branch, survey_scope=None):  # noqa: E501
     """Получить определённый шаблон docx в зависимости
-       от кода услуги."""
+       от кода услуги и подразделения."""
     # report_type is certificate on AGREEMENT-application or
     # ACCEPTANCE of delivery service report
     # SHEET is document check sheet
+    print(rs_branch)
+    # if rs_branch in ["110", "112", "120", "121", "125", "130", "131", "141", "150", "170", "171", "172", "173", "174", "184", "190"]:  # noqa: E501
     match survey_code:
         case "00001" | "00003" | "00011":
             if report_type == "agreement":
@@ -118,12 +120,15 @@ def is_none(value):
     return "--"
 
 
-def is_vessel_none(vessel=None, argument=None):  # noqa: E501
+def is_vessel_none(vessel=None, argument=None, rs_branch=None):  # noqa: E501
     """Проверка судна на None для заявок в промышленности."""
     if vessel is not None:
         match argument:
             case "name":
-                vessel_attribute = f'"{vessel.name}"'
+                if vessel.flag != "RU" or rs_branch in ["110", "112", "120", "121", "125", "130", "131", "141", "150", "170", "171", "172", "173", "174", "184", "190"]:  # noqa: E501
+                    vessel_attribute = f'"{vessel.name}"'
+                else:
+                    vessel_attribute = f'"{vessel.name}" / "{vessel.name_en}"'
             case "rs":
                 vessel_attribute = is_none(vessel.rs_number)
             case "imo":
@@ -349,7 +354,7 @@ def print_docs(request, **kwargs):
     ).first()
 
     button_name = request.GET.get('name')
-    docx_template = get_docx_template(application.survey_code, button_name, application.survey_scope)  # noqa: E501
+    docx_template = get_docx_template(application.survey_code, button_name, branch_number, application.survey_scope)  # noqa: E501
     doc = DocxTemplate(f"templates/docx/{docx_template}")
 
     context = {
@@ -358,7 +363,7 @@ def print_docs(request, **kwargs):
         "day": application.date.strftime("%d"),  # type: ignore
         "month": dateformat.format(application.date, settings.DATE_FORMAT),
         "year": application.date.strftime("%y"),  # type: ignore
-        "vessel": is_vessel_none(application.vessel, "name"),  # type: ignore # noqa: E501
+        "vessel": is_vessel_none(application.vessel, "name",  branch_number),  # type: ignore # noqa: E501
         "rs_number": is_vessel_none(application.vessel, "rs"),  # type: ignore # noqa: E501
         "imo_number": is_vessel_none(application.vessel, "imo"),  # type: ignore # noqa: E501
         "survey_scope": is_product_survey(application),

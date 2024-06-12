@@ -136,12 +136,12 @@ class AddressUpdateForm(AddressCreateForm):
                     "autocomplete": "off",
                 }
             )
-            self.fields["is_same"].widget.attrs.update(
-                {
-                    "class": "",
-                    "autocomplete": "off",
-                }
-            )
+        self.fields["is_same"].widget.attrs.update(
+            {
+                "class": "",
+                "autocomplete": "off",
+            }
+        )
 
 
 class CityCreateForm(forms.ModelForm):
@@ -210,12 +210,12 @@ class BankAccountCreateForm(forms.ModelForm):
                     "autocomplete": "off",
                 }
             )
-            self.fields["current_bankaccount"].widget.attrs.update(
-                {
-                    "class": "",
-                    "autocomplete": "off",
-                }
-            )
+        self.fields["current_bankaccount"].widget.attrs.update(
+            {
+                "class": "",
+                "autocomplete": "off",
+            }
+        )
 
 
 class BankAccountUpdateForm(BankAccountCreateForm):
@@ -245,12 +245,12 @@ class BankAccountUpdateForm(BankAccountCreateForm):
                     "autocomplete": "off",
                 }
             )
-            self.fields["current_bankaccount"].widget.attrs.update(
-                {
-                    "class": "",
-                    "autocomplete": "off",
-                }
-            )
+        self.fields["current_bankaccount"].widget.attrs.update(
+            {
+                "class": "",
+                "autocomplete": "off",
+            }
+        )
 
 
 class BankCreateForm(forms.ModelForm):
@@ -318,6 +318,12 @@ class EmployeeCreateForm(forms.ModelForm):
                     "autocomplete": "off",
                 }
             )
+        self.fields["is_quit"].widget.attrs.update(
+            {
+                "class": "",
+                "autocomplete": "off",
+            }
+        )
 
 
 class EmployeeUpdateForm(EmployeeCreateForm):
@@ -344,6 +350,7 @@ class EmployeeUpdateForm(EmployeeCreateForm):
             "proxy_type",
             "proxy_number",
             "proxy_date",
+            "is_quit",
             "extra_info",
         )
 
@@ -362,6 +369,12 @@ class EmployeeUpdateForm(EmployeeCreateForm):
                     "autocomplete": "off",
                 }
             )
+        self.fields["is_quit"].widget.attrs.update(
+            {
+                "class": "",
+                "autocomplete": "off",
+            }
+        )
 
 
 # ============================ misc ==============================

@@ -439,26 +439,26 @@ class BankAccountDeleteView(AdminRequiredMixin, DeleteView):
         return context
 
 
-class BankDetailView(LoginRequiredMixin, DetailView):
-    """Представление для вывода реквизитов банка."""
+# class BankDetailView(LoginRequiredMixin, DetailView):
+#     """Представление для вывода реквизитов банка."""
 
-    model = Bank
-    template_name = "companies/bank_accounts/bank_detail.html"
-    login_url = "login"
-    context_object_name = "bank"
-    slug_url_kwarg = "pk"
-    pk_url_kwarg = "id"
+#     model = Bank
+#     template_name = "companies/bank_accounts/bank_detail.html"
+#     login_url = "login"
+#     context_object_name = "bank"
+#     slug_url_kwarg = "pk"
+#     pk_url_kwarg = "id"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["title"] = f'Реквизиты банка "{self.object}"'  # type: ignore # noqa: E501
-        context["company"] = get_object_or_404(
-            Company, slug=self.kwargs["slug"]
-        )  # noqa: E501
-        context["account"] = get_object_or_404(
-            Company, pk=self.kwargs["pk"]
-        )  # noqa: E501
-        return context
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context["title"] = f'Реквизиты банка "{self.object}"'  # type: ignore # noqa: E501
+#         context["company"] = get_object_or_404(
+#             Company, slug=self.kwargs["slug"]
+#         )  # noqa: E501
+#         context["account"] = get_object_or_404(
+#             Company, pk=self.kwargs["pk"]
+#         )  # noqa: E501
+#         return context
 
 
 class BankCreateView(LoginRequiredMixin, CreateView):
