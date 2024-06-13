@@ -64,21 +64,6 @@
         </div>
         <div class="md:col-span-4 text-right px-4 py-3">
             <div class="inline-flex items-end">
-              {% comment %} <a
-                href="{% url "employee_delete" company.slug %}"
-                type="button"
-                class="mr-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-              >
-                Удалить карточку
-              </a>
-              <a
-                href="{% url "employee_update" employee.company.slug employee.id %}"
-                type="button"
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              >
-                Обновить профиль
-              </a> {% endcomment %}
-              {% comment %} "document_update" document.application.company.slug document.application.pk document.id {% endcomment %}
               <a
                 href="{% url "company_bankaccount_list" company.slug %}"
                 type="button"

@@ -89,13 +89,13 @@
           >
             Удалить счёт
           </a>
-          {% comment %} <a
+          <a
             href="{% url "bank_detail" company.slug account.pk account.bank.id %}"
             type="button"
             class="mr-4 bg-green-500 hover:bg-green-700 text-white font-semibold py-2 px-2 rounded"
           >
             Реквизиты банка
-          </a> {% endcomment %}
+          </a>
           <a
             href="{% url "bankaccount_update" company.slug account.id %}"
             type="button"
