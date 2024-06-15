@@ -1556,6 +1556,14 @@
 },
 {
     "model": "sessions.session",
+    "pk": "78urrx1cv89zfze7ae9ty6oixlxki98s",
+    "fields": {
+        "session_data": ".eJxVjEEOgjAQRe_StWmGDoXWpXvP0ExnpoIaSCisjHdXEha6_e-9_zKJtnVIW9UljWLOpjGn3y0TP3Tagdxpus2W52ldxmx3xR602uss-rwc7t_BQHX41qGhHoBLi8jag8voSyM-IxArY2BsvWuhdBALBYk5BuejU-mCahY07w_bsjf9:1sIEiq:pcI324oJvPLNrxxpm8FlIWni_nJaiyycuit6AH3TXqg",
+        "expire_date": "2024-06-28T21:44:36.545Z"
+    }
+},
+{
+    "model": "sessions.session",
     "pk": "86gmhhj156ad0mkvonqzzy7rf1xz8giy",
     "fields": {
         "session_data": ".eJxVjMEOwiAQRP-FsyFApWQ9evcbyLK7SNVAUtqT8d9tkx70MJd5b-atIq5LiWuXOU6sLsqp02-XkJ5Sd8APrPemqdVlnpLeFX3Qrm-N5XU93L-Dgr1s65EMMAh5F84WMsAWixgCM7GAZOM8mZF9thRQABjJ25AGO5gkTtTnC_j5OKg:1sAmR3:hBjSKdllKZcXvZfwLD38Q5jEZGxxiTsZNzWlbbVUHIA",
@@ -1584,14 +1592,6 @@
     "fields": {
         "session_data": ".eJxVjMEOwiAQRP-FsyFApWQ9evcbyLK7SNVAUtqT8d9tkx70MJd5b-atIq5LiWuXOU6sLsqp02-XkJ5Sd8APrPemqdVlnpLeFX3Qrm-N5XU93L-Dgr1s65EMMAh5F84WMsAWixgCM7GAZOM8mZF9thRQABjJ25AGO5gkTtTnC_j5OKg:1s8Pip:X5Uhp7AOEDmDUvKAKcNwOkynsfgssL8h98X0m5cLuF0",
         "expire_date": "2024-06-01T19:27:59.809Z"
-    }
-},
-{
-    "model": "sessions.session",
-    "pk": "no1f4qol1u34uru9g8y47q9b8cpl120d",
-    "fields": {
-        "session_data": ".eJxVjEsOAiEQBe_C2hDl1-DSvWcgTdPIqIFkmFkZ766TzEK3r6reS0RclxrXwXOcsjgLJQ6_W0J6cNtAvmO7dUm9LfOU5KbInQ557Zmfl939O6g46rf2bPmoETSEEBQax-lkdAKvCCEbV8Brq8AXyERFW_KMyiA4qzQkS-L9AdHEN5A:1sH6Hj:LLzu-FE0UlCyUx23Zm8wovkh8xDNaz-UGPYuExJVdpw",
-        "expire_date": "2024-06-25T18:31:55.172Z"
     }
 },
 {
@@ -1742,7 +1742,7 @@
     "model": "system.user",
     "fields": {
         "password": "pbkdf2_sha256$720000$J3biVTwqfhSzGCdyoB9pS4$DKMxqii1mb9TB055u+nz3Q6QfG0AfwWEnWI3JEqgaq4=",
-        "last_login": "2024-06-10T17:39:04.360Z",
+        "last_login": "2024-06-14T21:44:36.566Z",
         "is_superuser": true,
         "username": "admin",
         "first_name": "",
@@ -1766,7 +1766,7 @@
     "model": "system.user",
     "fields": {
         "password": "pbkdf2_sha256$720000$Z5zQ2I4e0FsvCmUc6kGQAv$cX40Ad37E2S3kVjb/0FHln+y02WDrWVMxjFSqNTi7fs=",
-        "last_login": "2024-06-12T12:11:33.607Z",
+        "last_login": "2024-06-14T21:37:50.019Z",
         "is_superuser": false,
         "username": "kozlov.sv",
         "first_name": "Сергей",
@@ -1886,7 +1886,7 @@
     "model": "system.user",
     "fields": {
         "password": "pbkdf2_sha256$720000$f8EL9p8lt6EfRe4XjBm2kj$sL08Lf68QYDO1396ZeVU8gEEv2CPsNzBBG2nt3Q1RTE=",
-        "last_login": "2024-06-10T17:02:14.162Z",
+        "last_login": "2024-06-14T21:44:12.190Z",
         "is_superuser": false,
         "username": "dobrusev.pu",
         "first_name": "Павел",
@@ -123072,8 +123072,10 @@
     "model": "companies.bankaccount",
     "pk": 2,
     "fields": {
-        "updated_at": "2024-02-08T20:49:52.508Z",
-        "updated_by": null,
+        "updated_at": "2024-06-13T18:40:07.005Z",
+        "updated_by": [
+            "kozlov.sv"
+        ],
         "company": 134,
         "bank": 10,
         "bank_account": "30356НИ6470",
@@ -123332,8 +123334,10 @@
     "model": "companies.bankaccount",
     "pk": 22,
     "fields": {
-        "updated_at": "2024-02-08T20:49:52.508Z",
-        "updated_by": null,
+        "updated_at": "2024-06-13T18:33:38.361Z",
+        "updated_by": [
+            "kozlov.sv"
+        ],
         "company": 160,
         "bank": 10,
         "bank_account": "20356К01640",
