@@ -153,13 +153,18 @@ class CityCreateForm(forms.ModelForm):
         model = City
         fields = (
             "name",
+            "name_en",
             "country",
+            "country_en",
             "region",
             "district",
         )
         widgets = {
             "country": autocomplete.ListSelect2(
                 url="country-autocomplete"
+            ),  # noqa: E501
+            "country_en": autocomplete.ListSelect2(
+                url="country-en-autocomplete"
             ),  # noqa: E501
             "region": autocomplete.ListSelect2(url="region-autocomplete"),  # noqa: E501
         }

@@ -18,8 +18,17 @@ from django.contrib.postgres.search import (
     SearchRank,
 )  # noqa: E501
 from django.urls import reverse_lazy
-from localflavor.ru.ru_regions import RU_REGIONS_CHOICES
-from .models import Address, Bank, BankAccount, City, Company, Employee
+
+# from localflavor.ru.ru_regions import RU_REGIONS_CHOICES
+from .models import (
+    Address,
+    Bank,
+    BankAccount,
+    City,
+    Company,
+    Employee,
+    RussianRegions,
+)  # noqa: E501
 from ..services.mixins import AdminRequiredMixin
 from .forms import (
     AddressCreateForm,
@@ -287,11 +296,20 @@ class CountryAutocomplete(autocomplete.Select2ListView):
         return country_list
 
 
+class CountryEnAutocomplete(autocomplete.Select2ListView):
+    """Автозаполнение для поля города."""
+
+    def get_list(self):
+        country_list_en = City.COUNTRIES_EN
+        return country_list_en
+
+
 class RegionAutocomplete(autocomplete.Select2ListView):
     """Автозаполнение для поля область или край РФ."""
 
     def get_list(self):
-        ru_region_list = RU_REGIONS_CHOICES
+        # ru_region_list = RU_REGIONS_CHOICES
+        ru_region_list = RussianRegions.choices
         return ru_region_list
 
 

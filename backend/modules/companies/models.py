@@ -10,12 +10,131 @@ from modules.services.mixins import CreatorMixin, UpdaterMixin
 from modules.services.utils import unique_slugify
 from modules.system.models import OfficeNumber
 from phonenumber_field.modelfields import PhoneNumberField
-from localflavor.ru.ru_regions import RU_REGIONS_CHOICES
+
+# from localflavor.ru.ru_regions import RU_REGIONS_CHOICES
 
 import pycountry
 
-
 User = get_user_model()
+
+
+class RussianRegions(models.TextChoices):
+    "Список субъектов Российской Федерации."
+
+    RU01 = "Respublika Adygeya", "Республика Адыгея"
+    RU02 = "Respublika Bashkortostan", "Республика Башкортостан"
+    RU03 = "Respublika Buryatia", "Республика Бурятия"
+    RU04 = "Respublika Altay", "Республика Алтай"
+    RU05 = "Respublika Dagestan", "Республика Дагестан"
+    RU06 = "Respublika Ingushetiya", "Республика Ингушетия"
+    RU07 = (
+        "Kabardino-Balkarskaya Respublika",
+        "Кабардино-Балкарская Республика",
+    )  # noqa: E501
+    RU08 = "Respublika Kalmykia", "Республика Калмыкия"
+    RU09 = (
+        "Karachaevo-Cherkesskaya Respublika",
+        "Карачаево-Черкесская Республика",
+    )  # noqa: E501
+    RU10 = "Respublika Karelia", "Республика Карелия"
+    RU11 = "Respublika Komi", "Республика Коми"
+    RU12 = "Respublika Mariy Ehl", "Республика Марий Эл"
+    RU13 = "Respublika Mordovia", "Республика Мордовия"
+    RU14 = "Respublika Sakha (Yakutiya)", "Республика Саха (Якутия)"
+    RU15 = (
+        "Respublika Severnaya Osetia - Alania",
+        "Республика Северная Осетия - Алания",
+    )
+    RU16 = (
+        "Respublika Tatarstan (Tatarstan)",
+        "Республика Татарстан (Татарстан)",
+    )  # noqa: E501
+    RU17 = "Respublika Tyva", "Республика Тыва"
+    RU18 = "Udmurtskaya Respublika", "Удмуртская Республика"
+    RU19 = "Respublika Khakassiya", "Республика Хакасия"
+    RU20 = "Respublika Chechenskaya", "Республика Чеченская"
+    RU21 = (
+        "Respublika Chuvashskaya - Чувашия",
+        "Республика Чувашская - Чувашия",
+    )  # noqa: E501
+    RU22 = "Altayskiy Kray", "Алтайский край"
+    RU23 = "Krasnodarskiy Kray", "Краснодарский край"
+    RU24 = "Krasnoyarskiy Kray", "Красноярский край"
+    RU25 = "Primorskiy Kray", "Приморский край"
+    RU26 = "Stavropolskiy Kray", "Ставропольский край"
+    RU27 = "Khabarovskiy Kray", "Хабаровский край"
+    RU28 = "Amurskaya oblast", "Амурская область"
+    RU29 = "Arkhangelskaya oblast", "Архангельская область"
+    RU30 = "Astrakhanskaya oblast", "Астраханская область"
+    RU31 = "Belgorodskaya oblast", "Белгородская область"
+    RU32 = "Bryanskaya oblast", "Брянская область"
+    RU33 = "Vladimirskaya oblast", "Владимирская область"
+    RU34 = "Volgogradskaya oblast", "Волгоградская область"
+    RU35 = "Vologodskaya oblast", "Вологодская область"
+    RU36 = "Voronezhskaya oblast", "Воронежская область"
+    RU37 = "Ivanovskaya oblast", "Ивановская область"
+    RU38 = "Irkutskaya oblast", "Иркутская область"
+    RU39 = "Kaliningradskaya oblast", "Калининградская область"
+    RU40 = "Kaluzhskaya oblast", "Калужская область"
+    RU41 = "Kamchatskiy kray", "Камчатский край"
+    RU42 = "Kemerovskaya oblast", "Кемеровская область"
+    RU43 = "Kirovskaya oblast", "Кировская область"
+    RU44 = "Kostromskaya oblast", "Костромская область"
+    RU45 = "Kurganskaya oblast", "Курганская область"
+    RU46 = "Kurskaya oblast", "Курская область"
+    RU47 = "Leningradskaya oblast", "Ленинградская область"
+    RU48 = "Lipetskaya oblast", "Липецкая область"
+    RU49 = "Magadanskaya oblast", "Магаданская область"
+    RU50 = "Moskovskaya oblast", "Московская область"
+    RU51 = "Murmanskaya oblast", "Мурманская область"
+    RU52 = "Nizhegorodskaja oblast", "Нижегородская область"
+    RU53 = "Novgorodskaya oblast", "Новгородская область"
+    RU54 = "Novosibirskaya oblast", "Новосибирская область"
+    RU55 = "Omskaya oblast", "Омская область"
+    RU56 = "Orenburgskaya oblast", "Оренбургская область"
+    RU57 = "Orlovskaya oblast", "Орловская область"
+    RU58 = "Penzenskaya oblast", "Пензенская область"
+    RU59 = "Permskiy kray", "Пермский край"
+    RU60 = "Pskovskaya oblast", "Псковская область"
+    RU61 = "Rostovskaya oblast", "Ростовская область"
+    RU62 = "Ryazanskaya oblast", "Рязанская область"
+    RU63 = "Samarskaya oblast", "Самарская область"
+    RU64 = "Saratovskaya oblast", "Саратовская область"
+    RU65 = "Sakhalinskaya oblast", "Сахалинская область"
+    RU66 = "Sverdlovskaya oblast", "Свердловская область"
+    RU67 = "Smolenskaya oblast", "Смоленская область"
+    RU68 = "Tambovskaya oblast", "Тамбовская область"
+    RU69 = "Tverskaya oblast", "Тверская область"
+    RU70 = "Tomskaya oblast", "Томская область"
+    RU71 = "Tulskaya oblast", "Тульская область"
+    RU72 = "Tyumenskaya oblast", "Тюменская область"
+    RU73 = "Ulyanovskaya oblast", "Ульяновская область"
+    RU74 = "Chelyabinskaya oblast", "Челябинская область"
+    RU75 = "Zabaykalskiy Kray", "Забайкальский край"
+    RU76 = "Yaroslavskaya oblast", "Ярославская область"
+    RU77 = "gorod Moskva", "город Москва"
+    RU78 = "gorod Saint-Peterburg", "город Санкт-Петербург"
+    RU79 = "Evreyskaya avtonomnaya oblast", "Еврейская автономная область"
+    RU80 = (
+        "Zabaykalskiy Kray (Aginskiy Buryatskiy okrug)",
+        "Забайкальский край (Агинский Бурятский округ)",
+    )
+    RU83 = "Nenetskiy autonomnyy okrug", "Ненецкий автономный округ"
+    RU85 = (
+        "Irkutskaya oblast (Ust-Ordynskiy Buryatskiy okrug)",
+        "Иркутская область (Усть-Ордынский Бурятский округ)",
+    )
+    RU86 = (
+        "Khanty-Mansiyskiy avtonomnyy okrug - Yugra",
+        "Ханты-Мансийский Автономный округ - Югра",
+    )
+    RU87 = "Chukotskiy avtonomnyy okrug", "Чукотский автономный округ"
+    RU89 = (
+        "Yamalo-Nenetskiy avtonomnyy okrug",
+        "Ямало-Ненецкий автономный округ",
+    )  # noqa: E501
+    RU91 = "Respublika Krym", "Республика Крым"
+    RU92 = "Gorod Sevastopol", "Город Севастополь"
 
 
 class CharNullField(models.CharField):
@@ -52,14 +171,26 @@ class City(CreatorMixin, UpdaterMixin):
             )
 
     COUNTRIES = [(country.alpha_2, _(country.name)) for country in pycountry.countries]  # type: ignore # noqa: E501
+    COUNTRIES_EN = [(country.alpha_2, country.name) for country in pycountry.countries]  # type: ignore # noqa: E501
 
     name = models.CharField("Название", max_length=40, db_index=True)
+    name_en = models.CharField(
+        "Английское название", max_length=40, blank=True
+    )  # noqa: E501
     country = models.CharField("Страна", choices=COUNTRIES, max_length=2)
+    country_en = models.CharField(
+        "Английское название cтраны",
+        choices=COUNTRIES_EN,
+        max_length=2,
+        blank=True,  # noqa: E501
+    )
     region = models.CharField(
         "Область или край РФ",
-        choices=RU_REGIONS_CHOICES,
+        # choices=RU_REGIONS_CHOICES,
+        max_length=50,
+        choices=RussianRegions.choices,
         blank=True,
-    )
+    )  # type: ignore
     district = models.CharField(
         "Район или городской округ",
         max_length=128,

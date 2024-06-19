@@ -41,8 +41,10 @@ class CityAdmin(admin.ModelAdmin):
     list_display = [
         "id",
         "name",
+        "name_en",
         "district",
         "country",
+        "country_en",
         "region",
         "created_by",
         "created_at",

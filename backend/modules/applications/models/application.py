@@ -269,7 +269,10 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
                 result = f'{survey_code_string} "{self.occasional_cause}" на т/х {self.vessel}'  # type: ignore # noqa: E501
             case "00011":
                 if self.survey_scope not in ["ADD", "INT"]:
-                    result = f"{survey_scope_string} {SURVEY} {survey_type_string[0].lower()}{survey_type_string[1:]}"  # noqa: E501
+                    if self.survey_type != "DII":
+                        result = f"{survey_scope_string} {SURVEY} {survey_type_string[0].lower()}{survey_type_string[1:]}"  # noqa: E501
+                    else:
+                        result = survey_type_string
                 else:
                     result = f"{survey_scope_string.split()[0]} {SURVEY} {survey_type_string[0].lower()}{survey_type_string[1:]}"  # noqa: E501
             case "00015":

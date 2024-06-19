@@ -103,8 +103,12 @@
           class="text-center text-xl my-4 bg-gray-100 py-6 rounded-md border-b-2 cursor-pointer text-gray-600"
         >
           <a href="{% url "company_application_list" company.slug %}" type="button" class="list-none hover:text-indigo-600">
-              Показать заявки</a
-          >
+            {% if company.applications.count == 0 %}
+              Показать заявки
+            {% else %}
+              Показать заявки ({{ company.applications.count }})
+            {% endif %}
+          </a>
         </h1>
         <div class="bg-white rounded-md list-none text-center">
           <li class= "py-3 bg-gray-100 rounded-md border-b-2">

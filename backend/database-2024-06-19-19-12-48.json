@@ -1556,14 +1556,6 @@
 },
 {
     "model": "sessions.session",
-    "pk": "78urrx1cv89zfze7ae9ty6oixlxki98s",
-    "fields": {
-        "session_data": ".eJxVjEEOgjAQRe_StWmGDoXWpXvP0ExnpoIaSCisjHdXEha6_e-9_zKJtnVIW9UljWLOpjGn3y0TP3Tagdxpus2W52ldxmx3xR602uss-rwc7t_BQHX41qGhHoBLi8jag8voSyM-IxArY2BsvWuhdBALBYk5BuejU-mCahY07w_bsjf9:1sIEiq:pcI324oJvPLNrxxpm8FlIWni_nJaiyycuit6AH3TXqg",
-        "expire_date": "2024-06-28T21:44:36.545Z"
-    }
-},
-{
-    "model": "sessions.session",
     "pk": "86gmhhj156ad0mkvonqzzy7rf1xz8giy",
     "fields": {
         "session_data": ".eJxVjMEOwiAQRP-FsyFApWQ9evcbyLK7SNVAUtqT8d9tkx70MJd5b-atIq5LiWuXOU6sLsqp02-XkJ5Sd8APrPemqdVlnpLeFX3Qrm-N5XU93L-Dgr1s65EMMAh5F84WMsAWixgCM7GAZOM8mZF9thRQABjJ25AGO5gkTtTnC_j5OKg:1sAmR3:hBjSKdllKZcXvZfwLD38Q5jEZGxxiTsZNzWlbbVUHIA",
@@ -1608,6 +1600,14 @@
     "fields": {
         "session_data": ".eJxVjEsOAiEQBe_C2hDl1-DSvWcgTdPIqIFkmFkZ766TzEK3r6reS0RclxrXwXOcsjgLJQ6_W0J6cNtAvmO7dUm9LfOU5KbInQ557Zmfl939O6g46rf2bPmoETSEEBQax-lkdAKvCCEbV8Brq8AXyERFW_KMyiA4qzQkS-L9AdHEN5A:1sE9xZ:YAs8Ga_hcx5-muQH6QIcAKX77o3n7CuOX3-jnO149K8",
         "expire_date": "2024-06-17T15:50:57.308Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "td6yi242bdeqzhfz31437otpiv5mot7r",
+    "fields": {
+        "session_data": ".eJxVjEEOgjAQRe_StWmGDoXWpXvP0ExnpoIaSCisjHdXEha6_e-9_zKJtnVIW9UljWLOpjGn3y0TP3Tagdxpus2W52ldxmx3xR602uss-rwc7t_BQHX41qGhHoBLi8jag8voSyM-IxArY2BsvWuhdBALBYk5BuejU-mCahY07w_bsjf9:1sIrEo:VCJhlml4mfnR7Saq2dLD5CdLaKSFqd1Pvz4_mUmWMBY",
+        "expire_date": "2024-06-30T14:52:10.362Z"
     }
 },
 {
@@ -1742,7 +1742,7 @@
     "model": "system.user",
     "fields": {
         "password": "pbkdf2_sha256$720000$J3biVTwqfhSzGCdyoB9pS4$DKMxqii1mb9TB055u+nz3Q6QfG0AfwWEnWI3JEqgaq4=",
-        "last_login": "2024-06-14T21:44:36.566Z",
+        "last_login": "2024-06-18T22:19:56.227Z",
         "is_superuser": true,
         "username": "admin",
         "first_name": "",
@@ -1766,7 +1766,7 @@
     "model": "system.user",
     "fields": {
         "password": "pbkdf2_sha256$720000$Z5zQ2I4e0FsvCmUc6kGQAv$cX40Ad37E2S3kVjb/0FHln+y02WDrWVMxjFSqNTi7fs=",
-        "last_login": "2024-06-14T21:37:50.019Z",
+        "last_login": "2024-06-18T22:04:07.902Z",
         "is_superuser": false,
         "username": "kozlov.sv",
         "first_name": "Сергей",
@@ -97896,7 +97896,7 @@
         "created_by": [
             "kozlov.sv"
         ],
-        "updated_at": "2024-05-12T17:43:52.201Z",
+        "updated_at": "2024-06-16T14:05:46.650Z",
         "updated_by": [
             "kozlov.sv"
         ],
@@ -97905,17 +97905,17 @@
         "number": "2445987",
         "date": "2024-05-01",
         "completion_date": null,
-        "survey_code": "00001",
-        "survey_type": "",
+        "survey_code": "00011",
+        "survey_type": "DII",
         "survey_scope": "",
-        "occasional_cause": "\"Грузовая марка\" № 5234-234234-23",
-        "survey_object": "",
+        "occasional_cause": "",
+        "survey_object": "SHIP",
         "vessel": 249,
         "register_signer": [
             "kemoklidze.vg"
         ],
-        "applicant_signer": 1286,
-        "authorized_person": 1121
+        "applicant_signer": 1121,
+        "authorized_person": 1120
     }
 },
 {
@@ -136751,11 +136751,12 @@
         "created_by": [
             "admin"
         ],
-        "updated_at": "2024-01-30T09:02:39Z",
+        "updated_at": "2024-06-18T22:06:09.475Z",
         "updated_by": null,
         "name": "Архангельск",
+        "name_en": "",
         "country": "RU",
-        "region": "29",
+        "region": "",
         "district": ""
     }
 },
@@ -136770,6 +136771,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Северодвинск",
+        "name_en": "",
         "country": "RU",
         "region": "29",
         "district": ""
@@ -136783,11 +136785,12 @@
         "created_by": [
             "admin"
         ],
-        "updated_at": "2024-01-30T09:02:39Z",
+        "updated_at": "2024-06-18T22:14:56.226Z",
         "updated_by": null,
         "name": "Мурманск",
+        "name_en": "",
         "country": "RU",
-        "region": "51",
+        "region": "",
         "district": ""
     }
 },
@@ -136804,6 +136807,7 @@
             "admin"
         ],
         "name": "Калининград",
+        "name_en": "",
         "country": "RU",
         "region": "",
         "district": ""
@@ -136822,6 +136826,7 @@
             "admin"
         ],
         "name": "Санкт-Петербург",
+        "name_en": "",
         "country": "RU",
         "region": "",
         "district": ""
@@ -136838,6 +136843,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Рига",
+        "name_en": "",
         "country": "LV",
         "region": "",
         "district": ""
@@ -136854,6 +136860,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Лиепая",
+        "name_en": "",
         "country": "LV",
         "region": "",
         "district": ""
@@ -136870,6 +136877,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Клайпеда",
+        "name_en": "",
         "country": "LT",
         "region": "",
         "district": ""
@@ -136886,6 +136894,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Балтийск",
+        "name_en": "",
         "country": "RU",
         "region": "39",
         "district": ""
@@ -136904,6 +136913,7 @@
             "admin"
         ],
         "name": "Севастополь",
+        "name_en": "",
         "country": "RU",
         "region": "",
         "district": ""
@@ -136920,6 +136930,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Херсон",
+        "name_en": "",
         "country": "UA",
         "region": "",
         "district": ""
@@ -136933,11 +136944,12 @@
         "created_by": [
             "admin"
         ],
-        "updated_at": "2024-01-30T09:02:39Z",
+        "updated_at": "2024-06-18T22:19:56.235Z",
         "updated_by": null,
         "name": "Ростов-на-Дону",
+        "name_en": "",
         "country": "RU",
-        "region": "61",
+        "region": "",
         "district": ""
     }
 },
@@ -136949,11 +136961,12 @@
         "created_by": [
             "admin"
         ],
-        "updated_at": "2024-01-30T09:02:39Z",
+        "updated_at": "2024-06-18T22:06:17.029Z",
         "updated_by": null,
         "name": "Астрахань",
+        "name_en": "",
         "country": "RU",
-        "region": "30",
+        "region": "",
         "district": ""
     }
 },
@@ -136968,6 +136981,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Навашино",
+        "name_en": "",
         "country": "RU",
         "region": "52",
         "district": ""
@@ -136984,6 +136998,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Нижний Новгород",
+        "name_en": "",
         "country": "RU",
         "region": "52",
         "district": ""
@@ -136997,11 +137012,12 @@
         "created_by": [
             "admin"
         ],
-        "updated_at": "2024-01-30T09:02:39Z",
+        "updated_at": "2024-06-18T22:08:26.919Z",
         "updated_by": null,
         "name": "Владивосток",
+        "name_en": "",
         "country": "RU",
-        "region": "25",
+        "region": "",
         "district": ""
     }
 },
@@ -137016,6 +137032,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Хатанга",
+        "name_en": "",
         "country": "RU",
         "region": "24",
         "district": ""
@@ -137032,6 +137049,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Советская Гавань",
+        "name_en": "",
         "country": "RU",
         "region": "73",
         "district": ""
@@ -137048,6 +137066,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Москва",
+        "name_en": "",
         "country": "RU",
         "region": "",
         "district": ""
@@ -137064,6 +137083,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Петрозаводск",
+        "name_en": "",
         "country": "RU",
         "region": "10",
         "district": ""
@@ -137082,6 +137102,7 @@
             "admin"
         ],
         "name": "Светлый",
+        "name_en": "",
         "country": "RU",
         "region": "",
         "district": ""
@@ -137098,6 +137119,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Комсомольск-на-Амуре",
+        "name_en": "",
         "country": "RU",
         "region": "27",
         "district": ""
@@ -137114,6 +137136,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Каспийск",
+        "name_en": "",
         "country": "RU",
         "region": "05",
         "district": ""
@@ -137130,6 +137153,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Новая Ладога",
+        "name_en": "",
         "country": "RU",
         "region": "28",
         "district": ""
@@ -137146,6 +137170,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Шлиссельбург",
+        "name_en": "",
         "country": "RU",
         "region": "28",
         "district": ""
@@ -137162,6 +137187,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Ломоносов",
+        "name_en": "",
         "country": "RU",
         "region": "28",
         "district": ""
@@ -137178,6 +137204,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Пионерский",
+        "name_en": "",
         "country": "RU",
         "region": "39",
         "district": ""
@@ -137194,6 +137221,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Южно-Сахалинск",
+        "name_en": "",
         "country": "RU",
         "region": "65",
         "district": ""
@@ -137210,6 +137238,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Приморск",
+        "name_en": "",
         "country": "RU",
         "region": "28",
         "district": ""
@@ -137226,6 +137255,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Кронштадт",
+        "name_en": "",
         "country": "RU",
         "region": "47",
         "district": ""
@@ -137242,6 +137272,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Минск",
+        "name_en": "",
         "country": "BY",
         "region": "",
         "district": ""
@@ -137258,6 +137289,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Заливино",
+        "name_en": "",
         "country": "RU",
         "region": "39",
         "district": ""
@@ -137274,6 +137306,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Гусев",
+        "name_en": "",
         "country": "RU",
         "region": "39",
         "district": ""
@@ -137290,6 +137323,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Вознесенье",
+        "name_en": "",
         "country": "RU",
         "region": "28",
         "district": ""
@@ -137306,6 +137340,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Нариманов",
+        "name_en": "",
         "country": "RU",
         "region": "4",
         "district": ""
@@ -137322,6 +137357,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Халл",
+        "name_en": "",
         "country": "EE",
         "region": "",
         "district": ""
@@ -137338,6 +137374,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Торсхавн",
+        "name_en": "",
         "country": "FO",
         "region": "",
         "district": ""
@@ -137354,6 +137391,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Усть-Луга",
+        "name_en": "",
         "country": "RU",
         "region": "28",
         "district": ""
@@ -137370,6 +137408,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Рабочеостровск (пос.)",
+        "name_en": "",
         "country": "RU",
         "region": "10",
         "district": ""
@@ -137386,6 +137425,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Всеволожск",
+        "name_en": "",
         "country": "RU",
         "region": "28",
         "district": ""
@@ -137399,9 +137439,10 @@
         "created_by": [
             "admin"
         ],
-        "updated_at": "2024-01-30T09:02:39Z",
+        "updated_at": "2024-06-15T17:33:59.370Z",
         "updated_by": null,
         "name": "Авейро",
+        "name_en": "Aveiro",
         "country": "PT",
         "region": "",
         "district": ""
@@ -137418,6 +137459,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Тромсё",
+        "name_en": "",
         "country": "NO",
         "region": "",
         "district": ""
@@ -137434,6 +137476,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Киркенес",
+        "name_en": "",
         "country": "NO",
         "region": "",
         "district": ""
@@ -137450,6 +137493,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Антверпен",
+        "name_en": "",
         "country": "BE",
         "region": "",
         "district": ""
@@ -137466,6 +137510,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Гент",
+        "name_en": "",
         "country": "BE",
         "region": "",
         "district": ""
@@ -137482,6 +137527,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Варна",
+        "name_en": "",
         "country": "BG",
         "region": "",
         "district": ""
@@ -137495,9 +137541,10 @@
         "created_by": [
             "admin"
         ],
-        "updated_at": "2024-01-30T09:02:39Z",
+        "updated_at": "2024-06-15T17:38:19.936Z",
         "updated_by": null,
         "name": "Гданьск",
+        "name_en": "Gdansk",
         "country": "PL",
         "region": "",
         "district": ""
@@ -137514,6 +137561,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Гдыня",
+        "name_en": "",
         "country": "PL",
         "region": "",
         "district": ""
@@ -137530,6 +137578,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Сингапур",
+        "name_en": "",
         "country": "SG",
         "region": "",
         "district": ""
@@ -137546,6 +137595,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Стамбул",
+        "name_en": "",
         "country": "TR",
         "region": "",
         "district": ""
@@ -137559,9 +137609,10 @@
         "created_by": [
             "admin"
         ],
-        "updated_at": "2024-01-30T09:02:39Z",
+        "updated_at": "2024-06-15T17:39:40.535Z",
         "updated_by": null,
         "name": "Шанхай",
+        "name_en": "Shanghai",
         "country": "CN",
         "region": "",
         "district": ""
@@ -137578,6 +137629,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Искендерун",
+        "name_en": "",
         "country": "TR",
         "region": "",
         "district": ""
@@ -137594,6 +137646,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Клаксвик",
+        "name_en": "",
         "country": "FO",
         "region": "",
         "district": ""
@@ -137610,6 +137663,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Новый Порт (село)",
+        "name_en": "",
         "country": "RU",
         "region": "83",
         "district": ""
@@ -137626,6 +137680,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Рунавик",
+        "name_en": "",
         "country": "FO",
         "region": "",
         "district": ""
@@ -137642,6 +137697,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Мольфетта",
+        "name_en": "",
         "country": "IT",
         "region": "",
         "district": ""
@@ -137658,6 +137714,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Рейкьявик",
+        "name_en": "",
         "country": "IS",
         "region": "",
         "district": ""
@@ -137674,6 +137731,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Мукран",
+        "name_en": "",
         "country": "DE",
         "region": "",
         "district": ""
@@ -137690,6 +137748,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Волочаевское (пос.)",
+        "name_en": "",
         "country": "RU",
         "region": "39",
         "district": "г. о. Светловский"
@@ -137706,6 +137765,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Мурино",
+        "name_en": "",
         "country": "RU",
         "region": "28",
         "district": ""
@@ -137722,6 +137782,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Дорожный (пос.)",
+        "name_en": "",
         "country": "RU",
         "region": "39",
         "district": "Гурьевский р-н"
@@ -137738,6 +137799,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Гвардейск",
+        "name_en": "",
         "country": "RU",
         "region": "39",
         "district": ""
@@ -137754,6 +137816,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Монте-Карло",
+        "name_en": "",
         "country": "MC",
         "region": "",
         "district": ""
@@ -137767,9 +137830,10 @@
         "created_by": [
             "admin"
         ],
-        "updated_at": "2024-01-30T09:02:39Z",
+        "updated_at": "2024-06-15T17:34:24.802Z",
         "updated_by": null,
         "name": "Автодорога Балтия",
+        "name_en": "Avtodoroga Baltiya",
         "country": "RU",
         "region": "50",
         "district": "г. о. Красногорск"
@@ -137786,6 +137850,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Ахты",
+        "name_en": "",
         "country": "RU",
         "region": "51",
         "district": ""
@@ -137802,6 +137867,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Малое Исаково (пос.)",
+        "name_en": "",
         "country": "RU",
         "region": "39",
         "district": "м. о. Гурьевский"
@@ -137818,6 +137884,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Тихореченское (СНТ)",
+        "name_en": "",
         "country": "RU",
         "region": "39",
         "district": "г. о. Балтийский"
@@ -137834,6 +137901,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Муромское (пос.)",
+        "name_en": "",
         "country": "RU",
         "region": "39",
         "district": "м. о. Зеленоградский"
@@ -137850,6 +137918,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Невское (Гурьевский р-н)",
+        "name_en": "",
         "country": "RU",
         "region": "39",
         "district": ""
@@ -137863,9 +137932,10 @@
         "created_by": [
             "admin"
         ],
-        "updated_at": "2024-01-30T09:02:39Z",
+        "updated_at": "2024-06-15T17:34:40.214Z",
         "updated_by": null,
         "name": "Акатлар",
+        "name_en": "Akatlar",
         "country": "TR",
         "region": "",
         "district": ""
@@ -137879,9 +137949,10 @@
         "created_by": [
             "admin"
         ],
-        "updated_at": "2024-01-30T09:02:39Z",
+        "updated_at": "2024-06-15T17:35:58.311Z",
         "updated_by": null,
         "name": "Гаосюн",
+        "name_en": "Kaohsiung",
         "country": "TW",
         "region": "",
         "district": ""
@@ -137898,6 +137969,7 @@
         "updated_at": "2024-01-30T09:02:39Z",
         "updated_by": null,
         "name": "Шоссейное (пос.)",
+        "name_en": "",
         "country": "RU",
         "region": "39",
         "district": "Гурьевский р-н"
@@ -137914,6 +137986,7 @@
         "updated_at": "2024-02-03T10:34:41.840Z",
         "updated_by": null,
         "name": "Ижевское (пос.)",
+        "name_en": "",
         "country": "RU",
         "region": "39",
         "district": "Светловский г. о."
@@ -137930,6 +138003,7 @@
         "updated_at": "2024-02-03T11:34:00.549Z",
         "updated_by": null,
         "name": "Ушаково",
+        "name_en": "",
         "country": "RU",
         "region": "39",
         "district": "Гурьевский г. о."
@@ -137946,6 +138020,7 @@
         "updated_at": "2024-02-03T20:21:54.172Z",
         "updated_by": null,
         "name": "Куликово (пос.)",
+        "name_en": "",
         "country": "RU",
         "region": "39",
         "district": "Зеленоградский г. о."
@@ -137962,6 +138037,7 @@
         "updated_at": "2024-04-20T19:25:56.546Z",
         "updated_by": null,
         "name": "Тяньцзинь",
+        "name_en": "",
         "country": "CN",
         "region": "",
         "district": ""

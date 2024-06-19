@@ -24,6 +24,7 @@ from .views import (
     AddressDeleteView,
     CityAutocomplete,
     CountryAutocomplete,
+    CountryEnAutocomplete,
     EmployeeCreateView,
     EmployeeDetailView,
     EmployeeListView,
@@ -86,6 +87,11 @@ urlpatterns = [
         r"^country-autocomplete/$",
         CountryAutocomplete.as_view(),
         name="country-autocomplete",
+    ),
+    url(
+        r"^country-en-autocomplete/$",
+        CountryEnAutocomplete.as_view(),
+        name="country-en-autocomplete",
     ),
     url(
         r"^region-autocomplete/$",
