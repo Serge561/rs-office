@@ -119,6 +119,7 @@ class AddressUpdateForm(AddressCreateForm):
             "postal_code",
             "city",
             "address_line",
+            "address_line_en",
             "is_same",
         )
         widgets = {
@@ -158,6 +159,7 @@ class CityCreateForm(forms.ModelForm):
             "country_en",
             "region",
             "district",
+            "district_en",
         )
         widgets = {
             "country": autocomplete.ListSelect2(
@@ -349,6 +351,7 @@ class EmployeeUpdateForm(EmployeeCreateForm):
             "first_name",
             "patronymic_name",
             "position",
+            "position_en",
             "phone_number",
             "extra_number",
             "email",

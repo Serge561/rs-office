@@ -35,6 +35,9 @@ class Position(models.Model):
     name = models.CharField(
         verbose_name="Должность", max_length=255, blank=True
     )  # noqa: E501
+    name_en = models.CharField(
+        verbose_name="Должность на английском", max_length=255, blank=True
+    )  # noqa: E501
 
     class Meta:
         """Человекочитаемое название модели position."""
@@ -53,7 +56,11 @@ class StaffQuerySet(models.QuerySet):
         """Руководство."""
         return (
             self.filter(
-                Q(position=4) | Q(position=5) | Q(position=6) | Q(position=7)
+                Q(position=4)
+                | Q(position=5)
+                | Q(position=6)
+                | Q(position=7)
+                | Q(position=8)
             )  # noqa: E501
             .filter(office_number=office_number)
             .exclude(is_active=False)
@@ -62,7 +69,7 @@ class StaffQuerySet(models.QuerySet):
     def surveyors(self):
         """Инспекторы."""
         return self.filter(
-            Q(position=1) | Q(position=2) | Q(position=3)
+            Q(position=1) | Q(position=2) | Q(position=3) | Q(position=9)
         ).exclude(  # noqa: E501
             is_active=False
         )
@@ -91,6 +98,12 @@ class User(AbstractUser):
         verbose_name="URL", max_length=255, blank=True, unique=True
     )  # noqa: E501
     patronymic_name = models.CharField("Отчество", max_length=20, blank=True)
+    first_name_en = models.CharField(
+        "Имя на английском", max_length=20, blank=True
+    )  # noqa: E501
+    last_name_en = models.CharField(
+        "Фамилия на английском", max_length=20, blank=True
+    )  # noqa: E501
     position = models.ForeignKey(
         Position,
         on_delete=models.SET_NULL,

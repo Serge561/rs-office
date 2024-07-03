@@ -1,4 +1,4 @@
-# pylint: disable=too-few-public-methods, too-many-ancestors, line-too-long, import-error, no-member, invalid-name, too-many-branches # noqa: E501
+# pylint: disable=too-few-public-methods, too-many-ancestors, line-too-long, import-error, no-member, invalid-name, too-many-branches  # noqa: E501
 """ОРМ модели application."""
 
 from django.db import models
@@ -49,111 +49,69 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
     class SurveyCode(models.TextChoices):
         """Выбор кода услуги."""
 
-        SHIPSURVEY = (
-            "00001",
-            "Классификационные освидетельствования судов в эксплуатации",
-        )  # noqa: E501
-        SHIPBUILDING = "00002", "Техническое наблюдение за постройкой судна"
-        SHIPREPAIR = "00003", "Услуги по освидетельствованию судна в ремонте"
-        NONSHIPPROD = (
-            "00004",
-            "Техническое наблюдение за изготовлением материалов и изделий не судового назначения",  # noqa: E501
-        )
-        STEELPROD = "00005", "Техническое наблюдение за изготовлением стали"
-        TECHDOCUM = "00006", "Рассмотрение технической документации"
-        TONNAGE = "00007", "Обмер судов"
-        BEHALFIACS = "00008", "Замещение ИКО"
-        CONTAINER = "00009", "Техническое наблюдение за контейнерами"
-        OTHERACTIV = "00010", "Прочие виды деятельности"
-        ISMISPSILO = (
-            "00011",
-            "Освидетельствование на соответствие МКУБ, ОСПС, КТМС судов",
-        )
-        OTHERCONV = (
-            "00012",
-            "Освидетельствование на сответствие другим МК судов в эксплуатации",  # noqa: E501
-        )
-        VOLUNTARY = "00013", "Добровольная сертификация"
-        ISMCOMPANY = (
-            "00014",
-            "Освидетельствование на соответствие МКУБ судовых компаний",
-        )
-        SHIPPRODUCT = (
-            "00015",
-            "Техническое наблюдение за изготовлением материалов и изделий для судов",  # noqa: E501
-        )
-        PIPELINE = (
-            "00016",
-            "Техническое наблюдение за постройкой МСП и трубопроводов",
-        )
-        QMANAGESYS = "00100", "Сертификация систем менеджмента качества"
-        WELDING = (
-            "00101",
-            "Квалификационные испытания сварщиков и одобрение технологических процессов сварки (СОДС, СОТПС)",  # noqa: E501
-        )
-        GOSTRPROD = "00102", "Сертификация продукции в системе ГОСТ Р"
-        COMPANYRUREG = (
-            "00103",
-            "Освидетельствование предприятий, лабораторий на территории России (СП, ССП, СПИ, СПЛ)",  # noqa: E501
-        )
-        COMPANYNOTRU = (
-            "00104",
-            "Освидетельствование предприятий, лабораторий на территории других стран (не Россия)",  # noqa: E501
-        )
-        DANGEROUSG = (
-            "00105",
-            "Услуги по декларированию и сертификации навалочных и опасных грузов, сертификация тары",  # noqa: E501
-        )
-        ONREPORTVAT = (
-            "00120",
-            "Техническое наблюдение согласно отчёту предприятия (с НДС)",
-        )
-        SMALLCRAFTS = (
-            "00121",
-            "Классификация и освидетельствование маломерного судна",
-        )
+        C00001 = "00001", "Классификационные освидетельствования судов в эксплуатации"  # noqa: E501
+        C00002 = "00002", "Техническое наблюдение за постройкой судна"
+        C00003 = "00003", "Услуги по освидетельствованию судна в ремонте"
+        C00004 = "00004", "Техническое наблюдение за изготовлением материалов и изделий не судового назначения"  # noqa: E501
+        C00005 = "00005", "Техническое наблюдение за изготовлением стали"
+        C00006 = "00006", "Рассмотрение технической документации"
+        C00007 = "00007", "Обмер судов"
+        C00008 = "00008", "Замещение ИКО"
+        C00009 = "00009", "Техническое наблюдение за контейнерами"
+        C00010 = "00010", "Прочие виды деятельности"
+        C00011 = "00011", "Освидетельствование на соответствие МКУБ, ОСПС, КТМС судов"  # noqa: E501
+        C00012 = "00012", "Освидетельствование на соответствие другим МК судов в эксплуатации"  # noqa: E501
+        C00013 = "00013", "Добровольная сертификация"
+        C00014 = "00014", "Освидетельствование на соответствие МКУБ судовых компаний"  # noqa: E501
+        C00015 = "00015", "Техническое наблюдение за изготовлением материалов и изделий для судов"  # noqa: E501
+        C00016 = "00016", "Техническое наблюдение за постройкой МСП и трубопроводов"  # noqa: E501
+        C00100 = "00100", "Сертификация систем менеджмента качества"
+        C00101 = "00101", "Квалификационные испытания сварщиков и одобрение технологических процессов сварки (СОДС, СОТПС)"  # noqa: E501
+        C00102 = "00102", "Сертификация продукции в системе ГОСТ Р"
+        C00103 = "00103", "Освидетельствование предприятий, лабораторий на территории России (СП, ССП, СПИ, СПЛ)"  # noqa: E501
+        C00104 = "00104", "Освидетельствование предприятий, лабораторий на территории других стран (не Россия)"  # noqa: E501
+        C00105 = "00105", "Услуги по декларированию и сертификации навалочных и опасных грузов, сертификация тары"  # noqa: E501
+        C00120 = "00120", "Техническое наблюдение согласно отчёту предприятия (с НДС)"  # noqa: E501
+        C00121 = "00121", "Классификация и освидетельствование маломерного судна"  # noqa: E501
 
     class SurveyType(models.TextChoices):
         """Выбор вида освидетельствования."""
 
         ISM = "ISM", "На соответствие требованиям МКУБ"
-        ISPS = "ISS", "На соответствие требованиям МК ОСПС"
-        MLC2006 = "MLC", "На соответствие требованиям КТМС-2006"
-        MLCDPII = (
-            "DII",
-            "Рассмотрение II части Декларации о соответствии трудовым нормам в морском судоходстве",  # noqa: E501
-        )
-        EXPAND = "EXP", "Расширение сферы деятельности"
-        CHANGE = "CHA", "Изменение содержания свидетельства"
-        WELDER = "WAC", "Квалификационные испытания сварщиков"
-        WELDPS = "WPS", "Технологические процессы сварки"
+        ISS = "ISS", "На соответствие требованиям МК ОСПС"
+        MLC = "MLC", "На соответствие требованиям КТМС-2006"
+        DII = "DII", "Рассмотрение II части Декларации о соответствии трудовым нормам в морском судоходстве"  # noqa: E501
+        EXP = "EXP", "Расширение сферы деятельности"
+        CHA = "CHA", "Изменение содержания свидетельства"
+        WAC = "WAC", "Квалификационные испытания сварщиков"
+        WPS = "WPS", "Технологические процессы сварки"
 
     class SurveyScope(models.TextChoices):
         """Выбор объёма освидетельствования."""
 
-        INITIAL = "I", "Первоначальное"
+        INITIL = "I", "Первоначальное"  # noqa: E741
         ANNUAL = "A", "Ежегодное"
-        INTERMEDIATE = "IN", "Промежуточное"
-        SPECIAL = "S", "Очередное"
-        RENEWAL = "R", "Возобновляющее"
+        INTERM = "IN", "Промежуточное"
+        SPECIL = "S", "Очередное"
+        RENEWL = "R", "Возобновляющее"
         BOTTOM = "D", "Подводной части судна"
-        OCCASIONAL = "O", "Внеочередное"
-        CONTINUOUS = "C", "Непрерывное"
-        INTERIM = "INT", "Временное (МКУБ, ОСПС, КТМС)"
-        ADDITIONAL = "ADD", "Дополнительное (МКУБ, ОСПС, КТМС)"
-        PRIMARY = "PR", "Первичное (СОДС, СОТПС)"
-        PERIODICAL = "PL", "Периодическое (СОДС, СОТПС)"
+        OCCASL = "O", "Внеочередное"  # noqa: E741
+        CONTIN = "C", "Непрерывное"
+        INTERI = "INT", "Временное (МКУБ, ОСПС, КТМС)"
+        ADDITL = "ADD", "Дополнительное (МКУБ, ОСПС, КТМС)"  # noqa: E501
+        PRIMAR = "PR", "Первичное (СОДС, СОТПС)"
+        PERIOD = "PL", "Периодическое (СОДС, СОТПС)"
 
     class SurveyObject(models.TextChoices):
         """Выбор объекта освидетельствования."""
 
-        SHIP = "SHIP", "Судно"
-        ALL = "ALL", "Судно по всем частям"
-        HULL = "HULL", "Судно по корпусной части"
-        MECH = "MECH", "Судно по механической части"
-        ELEC = "ELEC", "Судно по электромеханической части"
-        HUME = "HUME", "Судно по корпусной и механической частям"
-        MEEL = "MEEL", "Судно по механической и электромеханической частям"
+        SHIPPART = "SHIP", "Судно"
+        ALLPARTS = "ALL", "Судно по всем частям"
+        HULLPART = "HULL", "Судно по корпусной части"
+        MECHPART = "MECH", "Судно по механической части"
+        ELECPART = "ELEC", "Судно по электромеханической части"
+        HULLMECH = "HUME", "Судно по корпусной и механической частям"
+        MECHELEC = "MEEL", "Судно по механической и электромеханической частям"  # noqa: E501
 
     company = models.ForeignKey(
         Company,
@@ -172,14 +130,13 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
         "Код услуги",
         max_length=5,
         choices=SurveyCode.choices,
-        default="00001",
+        default=SurveyCode.C00001,
     )
     survey_type = models.CharField(
         "Вид освидетельствования",
         max_length=3,
         choices=SurveyType.choices,
         blank=True,
-        default="00001",
     )
     survey_scope = models.CharField(
         "Объём освидетельствования",
@@ -188,16 +145,21 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
         blank=True,
     )
     occasional_cause = models.TextField(
-        "Уточнение сведений об услуге",  # noqa: E501
+        "Уточнение сведений об услуге",
         max_length=127,
-        blank=True,  # noqa: E501
+        blank=True,
+    )
+    occasional_cause_en = models.TextField(
+        "Уточнение сведений об услуге на английском",
+        max_length=127,
+        blank=True,
     )
     survey_object = models.CharField(
         "Объекты освидетельствования",
         max_length=4,
         choices=SurveyObject.choices,
         blank=True,
-        default="ALLO",
+        # default=SurveyObject.ALLPARTS,
     )
     vessel = models.ForeignKey(
         Vessel,
@@ -243,68 +205,153 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
         verbose_name = "Заявка"
         verbose_name_plural = "Заявки"
 
+    def get_survey_type_en(self, survey_type_value):
+        """Получить перевод вида освидетельствования
+        на английский язык."""
+        match survey_type_value:
+            case self.SurveyType.CHA:
+                result = "Changing content of the certificate"
+            case self.SurveyType.DII:
+                result = "Review of Declaration of Maritime Labour Compliance part II"  # noqa: E501
+            case self.SurveyType.EXP:
+                result = "Expanding field of activity"
+            case self.SurveyType.ISM:
+                result = "On compliance with the requirements of ISMC"
+            case self.SurveyType.ISS:
+                result = "On compliance with the requirements of ISPS IC"
+            case self.SurveyType.MLC:
+                result = "On compliance with the requirements of MLC-2006 Convention"  # noqa: E501
+            case self.SurveyType.WAC:
+                result = "Welder approvals"
+            case self.SurveyType.WPS:
+                result = "Welding procedure specifications"
+            case _:
+                return ""
+        return result
+
+    def get_survey_scope_en(self, survey_scope_value):
+        """Получить перевод объёма освидетельствования
+        на английский язык."""
+        match survey_scope_value:
+            case self.SurveyScope.INITIL:
+                result = "Initial"
+            case self.SurveyScope.ANNUAL:
+                result = "Annual"
+            case self.SurveyScope.INTERM:
+                result = "Intermediate"
+            case self.SurveyScope.SPECIL:
+                result = "Special"
+            case self.SurveyScope.RENEWL:
+                result = "Renewal"
+            case self.SurveyScope.BOTTOM:
+                result = "Bottom"
+            case self.SurveyScope.OCCASL:
+                result = "Occasional"
+            case self.SurveyScope.CONTIN:
+                result = "Continuous"
+            case self.SurveyScope.INTERI:
+                result = "Interim (ISM ISPS MLC)"
+            case self.SurveyScope.ADDITL:
+                result = "Additional (ISM ISPS MLC)"
+            case self.SurveyScope.PRIMAR:
+                result = "Primary (WAC WPSAC)"
+            case self.SurveyScope.PERIOD:
+                result = "Periodical (WAC WPSAC)"
+            case _:
+                return ""
+        return result
+
     def __str__(self):
         """Возвращение строки."""
         SURVEY = "освидетельствование"
+        SURVEY_EN = "survey"
         QUALIFICATION = "аттестация"
-        survey_code_string = self.get_survey_code_display()  # type: ignore
-        survey_type_string = self.get_survey_type_display()  # type: ignore
-        survey_scope_string = self.get_survey_scope_display()  # type: ignore
+        QUALIFICATION_EN = "qualification"
+        SURVEY_CODES = self.SurveyCode
+        SURVEY_TYPES = self.SurveyType
+        SURVEY_SCOPES = self.SurveyScope
+        survey_type_en = self.get_survey_type_en(self.survey_type)
+        survey_scope_en = self.get_survey_scope_en(self.survey_scope)
         match self.survey_code:
-            case "00001":
-                if self.survey_scope not in ["O", "C", "D"]:
-                    result = f"{survey_scope_string} {SURVEY}"  # type: ignore # noqa: E501
-                elif self.survey_scope == "D":
-                    result = f"{SURVEY.capitalize()} {survey_scope_string.lower()}"  # type: ignore # noqa: E501
+            case SURVEY_CODES.C00001:
+                if self.survey_scope not in [SURVEY_SCOPES.OCCASL, SURVEY_SCOPES.CONTIN, SURVEY_SCOPES.BOTTOM]:  # noqa: E501
+                    result = f"{self.get_survey_scope_display()} {SURVEY} / {survey_scope_en} {SURVEY_EN}"  # type: ignore # noqa: E501
+                elif self.survey_scope == SURVEY_SCOPES.BOTTOM:
+                    result = f"{SURVEY.capitalize()} {self.get_survey_scope_display().lower()} / {survey_scope_en} {SURVEY_EN}"  # type: ignore # noqa: E501
                 else:
-                    result = f"{survey_scope_string} {SURVEY} {self.occasional_cause}"  # type: ignore # noqa: E501
-            case "00002":
+                    result = f"{self.get_survey_scope_display()} {SURVEY} {self.occasional_cause} / {survey_scope_en} {SURVEY_EN} {self.occasional_cause_en}"  # type: ignore # noqa: E501
+            case SURVEY_CODES.C00002:
                 if self.occasional_cause is not None:
-                    result = f"Технаблюдение за постройкой: {self.occasional_cause}"  # noqa: E501
+                    result = f"Технаблюдение за постройкой: {self.occasional_cause} / Technical supervision for shipbuilding: {self.occasional_cause_en}"  # noqa: E501
                 else:
-                    result = survey_code_string
-            case "00003":
-                result = survey_code_string
-            case "00006":
-                result = f'{survey_code_string} "{self.occasional_cause}" на т/х {self.vessel}'  # type: ignore # noqa: E501
-            case "00011":
-                if self.survey_scope not in ["ADD", "INT"]:
-                    if self.survey_type != "DII":
-                        result = f"{survey_scope_string} {SURVEY} {survey_type_string[0].lower()}{survey_type_string[1:]}"  # noqa: E501
+                    result = f"{self.get_survey_code_display()} / Technical supervision for shipbuilding"  # type: ignore # noqa: E501
+            case SURVEY_CODES.C00003:
+                result = f"{self.get_survey_code_display()} / Services on survey of a ship in repair"  # type: ignore # noqa: E501
+            case SURVEY_CODES.C00006:
+                result = f'{self.get_survey_code_display()} "{self.occasional_cause}" на тх {self.vessel} / Review of technical documentation "{self.occasional_cause_en}" on mv {self.vessel.name_en}'  # type: ignore # noqa: E501
+            case SURVEY_CODES.C00011:
+                if self.survey_scope not in [SURVEY_SCOPES.ADDITL, SURVEY_SCOPES.INTERI]:  # noqa: E501
+                    if self.survey_type != SURVEY_TYPES.DII:  # noqa: E501
+                        result = f"{self.get_survey_scope_display()} {SURVEY} {self.get_survey_type_display()[0].lower()}{self.get_survey_type_display()[1:]} / {survey_scope_en} {SURVEY_EN} {survey_type_en[0].lower()}{survey_type_en[1:]}"  # type: ignore # noqa: E501
                     else:
-                        result = survey_type_string
+                        result = f"{self.get_survey_type_display()} / {survey_type_en}"  # type: ignore # noqa: E501
                 else:
-                    result = f"{survey_scope_string.split()[0]} {SURVEY} {survey_type_string[0].lower()}{survey_type_string[1:]}"  # noqa: E501
-            case "00015":
-                result = f"{SURVEY.capitalize()} объектов технаблюдения:"  # type: ignore # noqa: E501
-            case "00101":
-                if self.survey_type == "WAC":
-                    if self.survey_scope == "PR":
-                        result = f"Первичная {QUALIFICATION} сваршиков - {self.occasional_cause} чел."  # noqa: E501
+                    result = f"{self.get_survey_scope_display().split()[0]} {SURVEY} {self.get_survey_type_display()[0].lower()}{self.get_survey_type_display()[1:]} / {survey_scope_en.split()[0]} {SURVEY_EN} {survey_type_en[0].lower()}{survey_type_en[1:]}"  # type: ignore # noqa: E501
+            case SURVEY_CODES.C00015:
+                result = f"{SURVEY.capitalize()} / {SURVEY_EN.capitalize()} of"  # noqa: E501
+            case SURVEY_CODES.C00101:
+                if self.survey_type == SURVEY_TYPES.WAC:
+                    if self.survey_scope == SURVEY_SCOPES.PRIMAR:
+                        result = f"Первичная {QUALIFICATION} сваршиков - {self.occasional_cause} чел. / Primary {QUALIFICATION_EN} of welders - {self.occasional_cause} prs"  # noqa: E501
                     else:
-                        result = f"Периодическая {QUALIFICATION} сварщиков без проведения практических испытаний - {self.occasional_cause} чел."  # noqa: E501
+                        result = f"Периодическая {QUALIFICATION} сварщиков без проведения практических испытаний - {self.occasional_cause} чел. / Periodical {QUALIFICATION_EN} of welders without conducting practical tests - {self.occasional_cause} prs"  # noqa: E501
                 else:
-                    if self.survey_scope == "PR":
-                        result = f"Одобрение технологического процесса сварки - {self.occasional_cause} шт."  # noqa: E501
+                    if self.survey_scope == SURVEY_SCOPES.PRIMAR:
+                        result = f"Одобрение технологического процесса сварки - {self.occasional_cause} шт. / Approval of the welding procedure specification - {self.occasional_cause} pcs"  # noqa: E501
                     else:
-                        result = f"Подтверждение Свидетельства об одобрении технологического процесса сварки (без испытаний) - {self.occasional_cause} шт."  # noqa: E501
-            case "00103":
-                if self.survey_type not in ["EXP", "CHA"]:
-                    result = f"{survey_scope_string} {SURVEY} {self.occasional_cause}"  # noqa: E501
+                        result = f"Подтверждение Свидетельства об одобрении технологического процесса сварки (без испытаний) - {self.occasional_cause} шт. / Endorsing Welding procedure approval test certificate (without tests) - {self.occasional_cause} pcs"  # noqa: E501
+            case SURVEY_CODES.C00103 | SURVEY_CODES.C00104:
+                if self.survey_type not in [SURVEY_TYPES.EXP, SURVEY_TYPES.CHA]:  # noqa: E501
+                    result = f"{self.get_survey_scope_display()} {SURVEY} {self.occasional_cause} / {survey_scope_en} {SURVEY_EN} {self.occasional_cause}"  # type: ignore # noqa: E501
                 else:
-                    result = f"{survey_scope_string} {SURVEY} в связи с {survey_type_string.split()[0].lower()}м {survey_type_string.split()[1]} {survey_type_string.split()[2]} {self.occasional_cause}"  # noqa: E501
-            case "00121":
-                if self.survey_scope != "O":
-                    result = f"{survey_scope_string} {SURVEY} маломерного судна"  # type: ignore # noqa: E501
+                    result = f"{self.get_survey_scope_display()} {SURVEY} в связи с {self.get_survey_type_display().split()[0].lower()}м {self.get_survey_type_display().split()[1]} {self.get_survey_type_display().split()[2]} {self.occasional_cause} / {survey_scope_en} {SURVEY_EN} in connection with {survey_type_en.split()[0].lower()} {survey_type_en.split()[1:]} {self.occasional_cause}"  # type: ignore # noqa: E501
+            case SURVEY_CODES.C00121:
+                if self.survey_scope != SURVEY_SCOPES.OCCASL:
+                    result = f"{self.get_survey_scope_display()} {SURVEY} маломерного судна"  # type: ignore # noqa: E501
                 else:
-                    result = f"{survey_scope_string} {SURVEY} маломерного судна {self.occasional_cause}"  # type: ignore # noqa: E501
+                    result = f"{self.get_survey_scope_display()} {SURVEY} маломерного судна {self.occasional_cause}"  # type: ignore # noqa: E501
             case _:
-                result = f"Функционал с кодом'{self.survey_code}' в разработке"
+                result = f"Функционал '{self.get_survey_code_display()}' в разработке"  # type: ignore # noqa: E501
         return result
 
     def get_absolute_url(self):
         """Полный URL заявки фирмы."""
         return reverse("application_detail", kwargs={"slug": self.company.slug, "pk": self.id})  # type: ignore # noqa: E501
+
+    def get_application_for_reports(self):
+        """Кастомный метод, чтобы передавать в
+        отчёт объём ремонта только на русском."""
+        match self.survey_code:
+            case self.SurveyCode.C00001:
+                if self.survey_scope not in [self.SurveyScope.OCCASL, self.SurveyScope.CONTIN, self.SurveyScope.BOTTOM]:  # noqa: E501
+                    result = f"{self.get_survey_scope_display()} освидетельствование"  # type: ignore # noqa: E501
+                elif self.survey_scope == self.SurveyScope.BOTTOM:
+                    result = f"Освидетельствование {self.get_survey_scope_display().lower()}"  # type: ignore # noqa: E501
+                else:
+                    result = f"{self.get_survey_scope_display()} освидетельствование {self.occasional_cause}"  # type: ignore # noqa: E501
+            case self.SurveyCode.C00002:
+                if self.occasional_cause is not None:
+                    result = f"Технаблюдение за постройкой: {self.occasional_cause}"  # noqa: E501
+                else:
+                    result = f"{self.get_survey_code_display()}"  # type: ignore # noqa: E501
+            case self.SurveyCode.C00121:
+                if self.survey_scope != self.SurveyScope.OCCASL:
+                    result = f"{self.get_survey_scope_display()} освидетельствование маломерного судна"  # type: ignore # noqa: E501
+                else:
+                    result = f"{self.get_survey_scope_display()} осыидетельствование маломерного судна {self.occasional_cause}"  # type: ignore # noqa: E501
+            case _:
+                result = f"Функционал '{self.get_survey_code_display()}' в разработке"  # type: ignore # noqa: E501
+        return result
 
 
 class VesselExtraInfo(PlaceMixin):

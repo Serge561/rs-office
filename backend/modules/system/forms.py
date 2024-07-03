@@ -48,6 +48,8 @@ class UserUpdateForm(forms.ModelForm):
             "last_name",
             "first_name",
             "patronymic_name",
+            "first_name_en",
+            "last_name_en",
             "position",
             "office_number",
             "phone_number",

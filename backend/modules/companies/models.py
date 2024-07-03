@@ -196,6 +196,11 @@ class City(CreatorMixin, UpdaterMixin):
         max_length=128,
         blank=True,
     )
+    district_en = models.CharField(
+        "Район или городской округ на английском",
+        max_length=128,
+        blank=True,
+    )
 
     objects = CityManager()
 
@@ -211,14 +216,14 @@ class City(CreatorMixin, UpdaterMixin):
     def __str__(self):
         """Возвращение строки."""
         if self.region and not self.district:
-            return f"{self.name}, {self.get_region_display()}"  # type: ignore # noqa: E501
+            return f"{self.name}, {self.get_region_display()} / {self.name_en}, {self.region}"  # type: ignore # noqa: E501
         if self.region and self.district:
-            return f"{self.name}, {self.district}, {self.get_region_display()}"  # type: ignore # noqa: E501
+            return f"{self.name}, {self.district}, {self.get_region_display()} / {self.name_en}, {self.district_en}, {self.region}"  # type: ignore # noqa: E501
         if not self.region and self.country == "RU":  # type: ignore
-            return self.name
+            return f"{self.name} / {self.name_en}"
         if self.district:
-            return f"{self.name}, {self.district}, {self.get_country_display()}"  # type: ignore # noqa: E501
-        return f"{self.name}, {self.get_country_display()}"  # type: ignore # noqa: E501
+            return f"{self.name}, {self.district}, {self.get_country_display()} / {self.name_en}, {self.district_en}, {self.get_country_en_display()}"  # type: ignore # noqa: E501
+        return f"{self.name}, {self.get_country_display()} / {self.name_en}, {self.get_country_en_display()}"  # type: ignore # noqa: E501
 
 
 class PlaceMixin(models.Model):
@@ -329,6 +334,9 @@ class Address(PlaceMixin, UpdaterMixin):
     address_line = models.CharField(
         "Адрес", max_length=256, blank=True, db_index=True
     )  # noqa: E501
+    address_line_en = models.CharField(
+        "Адрес на английском", max_length=256, blank=True, db_index=True
+    )  # noqa: E501
     address_type = models.CharField(
         "Тип адреса",
         max_length=2,
@@ -358,7 +366,15 @@ class Address(PlaceMixin, UpdaterMixin):
 
     def __str__(self):
         """Возвращение строки."""
-        return f"{self.address_line}, {self.city} {self.postal_code}"  # noqa: E501
+        # return f"{self.address_line}, {self.city} {self.postal_code}"  # noqa: E501
+        city_ru = str(self.city).split("/", maxsplit=1)[0]
+        if self.address_line_en == "":
+            return f"{self.address_line}, {city_ru} {self.postal_code}"  # noqa: E501
+        if self.address_line == "":
+            return (
+                f"{self.address_line_en}, {self.city} {self.postal_code}"  # noqa: E501
+            )
+        return f"{self.address_line} / {self.address_line_en}, {self.city} {self.postal_code}"  # noqa: E501
 
     def get_absolute_url(self):
         """Полный URL адресов компании."""
@@ -549,6 +565,9 @@ class Employee(CreatorMixin, UpdaterMixin):
     first_name = models.CharField("Имя", max_length=15, blank=True)
     patronymic_name = models.CharField("Отчество", max_length=20, blank=True)
     position = models.CharField("Должность", max_length=127, blank=True)
+    position_en = models.CharField(
+        "Должность на английском", max_length=127, blank=True
+    )
     phone_number = PhoneNumberField("Номер телефона", blank=True)
     extra_number = models.CharField("Доб.", max_length=11, blank=True)
     email = models.EmailField("Электронный адрес", max_length=127, blank=True)

@@ -98,7 +98,7 @@ class CompanyCreateView(LoginRequiredMixin, CreateView):
         return context
 
     def form_valid(self, form):
-        form.instance.creator = self.request.user
+        form.instance.created_by = self.request.user
         form.save()
         return super().form_valid(form)
 
@@ -119,7 +119,7 @@ class CompanyUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
         return context
 
     def form_valid(self, form):
-        form.instance.updater = self.request.user  # type: ignore
+        form.instance.updated_by = self.request.user  # type: ignore
         form.save()  # type: ignore
         return super().form_valid(form)
 
@@ -355,7 +355,8 @@ class BankAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         qs = Bank.objects.all()
         if self.q:
-            qs = qs.filter(name__istartswith=self.q)
+            # qs = qs.filter(name__istartswith=self.q)
+            qs = qs.filter(name__icontains=self.q)
         return qs
 
 

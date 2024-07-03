@@ -86,6 +86,14 @@
             </div>
             <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b">
                 <p class="text-gray-600">
+                    Уточнение сведений об услуге на английском
+                </p>
+                <p class="px-4">
+                    {{ application.occasional_cause_en }}
+                </p>
+            </div>
+            <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b">
+                <p class="text-gray-600">
                     Судно
                 </p>
                 <p class="px-4">
@@ -97,7 +105,7 @@
                     Объекты освидетельствования
                 </p>
                 <p class="px-4">
-                    {{ application.get_survey_object_display }}
+                    {{ application.get_survey_object_display|default_if_none:'' }}
                 </p>
             </div>
             <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b">
@@ -113,7 +121,7 @@
                     Подписывает от Заказчика
                 </p>
                 <p class="px-4">
-                    {{ application.applicant_signer }}
+                    {{ application.applicant_signer|default_if_none:'' }}
                 </p>
             </div>
               <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b">

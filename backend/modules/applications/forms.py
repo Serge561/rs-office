@@ -61,6 +61,12 @@ class ApplicationCreateForm(forms.ModelForm):
                 "placeholder": "указать причину ВНО (в связи с ...)\r\nуказать вид существующего св-ва (ССП/СП/СПЛ) и № для его подтверждения или возобновления\r\nуказать название и № ТД\r\nуказать количество сварщиков или СОТПС\r\nуказать этап строительства",  # noqa: E501
             }
         )
+        self.fields["occasional_cause_en"].widget.attrs.update(
+            {
+                "rows": 2,
+                "placeholder": "indicate the cause of OS (in connection with ...)\r\nindicate the name and No. of TD",  # noqa: E501
+            }
+        )
         self.fields["register_signer"].queryset = User.staff.directors(  # type: ignore # noqa: E501
             office_number=self.initial["office_number"]
         )
@@ -98,6 +104,7 @@ class ApplicationUpdateForm(ApplicationCreateForm):
             "survey_type",
             "survey_scope",
             "occasional_cause",
+            "occasional_cause_en",
             "survey_object",
             "vessel",
             "register_signer",
@@ -127,7 +134,8 @@ class ApplicationUpdateForm(ApplicationCreateForm):
                 "id": "datepicker2",
             }
         )
-        self.fields["occasional_cause"].widget.attrs["rows"] = 5
+        self.fields["occasional_cause"].widget.attrs["rows"] = 6
+        self.fields["occasional_cause_en"].widget.attrs["rows"] = 2
         self.fields["register_signer"].queryset = User.staff.directors(  # type: ignore # noqa: E501
             office_number=self.initial["office_number"]
         )

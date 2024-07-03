@@ -1,10 +1,11 @@
-# pylint: disable=line-too-long, unused-variable, redefined-builtin, invalid-name, too-many-arguments, too-many-branches, too-many-locals, too-many-statements  # noqa: E501
+# pylint: disable=line-too-long, unused-variable, redefined-builtin, invalid-name, too-many-arguments, too-many-branches, too-many-locals, too-many-statements, too-many-return-statements,  # noqa: E501
 """Представления для модели applications."""
 
 import io
 from decimal import Decimal
 import datetime
 import pymorphy3
+from transliterate import translit, detect_language
 from petrovich.main import Petrovich
 from petrovich.enums import Case
 from num2words import num2words
@@ -14,72 +15,150 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils import dateformat
 from docxtpl import DocxTemplate
-from ..models import (
-    Application,
-    Company,
-)
+from ..models import Application, Company, Form, BankAccount
 
 User = get_user_model()
 
+RS_RU_BRANCHES = [
+    "110",
+    "112",
+    "120",
+    "121",
+    "125",
+    "130",
+    "131",
+    "141",
+    "150",
+    "170",
+    "171",
+    "172",
+    "173",
+    "174",
+    "184",
+    "190",
+]  # noqa: E501
 
-def get_docx_template(survey_code, report_type, rs_branch, survey_scope=None):  # noqa: E501
+AGREEMENT_APPLICATION = "agreement"
+ACCEPTANCE = "acceptance"
+RS_BRANCH_NAME_FIRST_CHARS = "РС,"
+GONORATIVE = "Mr/Mrs"
+
+TEMPLATES = {
+    "LISTREGI": "List_registratsii_proverki_dokumentov.docx",
+    "PAGE404R": "404_page.docx",
+    "T43031": "430_3_1.docx",
+    "T43033": "430_3_3.docx",
+    "T43034": "430_3_4.docx",
+    "T43035": "430_3_5.docx",
+    "T81011": "810_1_1.docx",
+    "T81011E": "810_1_1_en.docx",
+    "T81012P": "810_1_2_p.docx",
+    "T81012PE": "810_1_2_p_en.docx",
+    "T81012S": "810_1_2_s.docx",
+    "T81012SE": "810_1_2_s_en.docx",
+    "T81012W": "810_1_2_w.docx",
+    "T81012WE": "810_1_2_w_en.docx",
+    "T8101101": "810_1_10_1.docx",
+    "T810110": "810_1_10.docx",
+    "T810111E": "810_1_11_en.docx",
+    "T810111": "810_1_11.docx",
+}
+
+
+def get_docx_template(
+    survey_code, report_type, rs_branch, survey_scope=None
+):  # noqa: E501
     """Получить определённый шаблон docx в зависимости
-       от кода услуги и подразделения."""
-    # report_type is certificate on AGREEMENT-application or
-    # ACCEPTANCE of delivery service report
-    # SHEET is document check sheet
-    print(rs_branch)
-    # if rs_branch in ["110", "112", "120", "121", "125", "130", "131", "141", "150", "170", "171", "172", "173", "174", "184", "190"]:  # noqa: E501
-    match survey_code:
-        case "00001" | "00003" | "00011":
-            if report_type == "agreement":
-                template = "810_1_1.docx"
-            elif report_type == "acceptance":
-                template = "430_3_4.docx"
-            else:
-                template = "List_registratsii_proverki_dokumentov.docx"
-        case "00006":
-            if report_type == "agreement":
-                template = "810_1_11.docx"
-            else:
-                template = "430_3_1.docx"
-        case "00015":
-            if report_type == "agreement":
-                template = "810_1_2_p.docx"
-            else:
-                template = "430_3_3.docx"
-        case "00101":
-            if report_type == "agreement":
-                template = "810_1_2_w.docx"
-            else:
-                template = "430_3_1.docx"
-        case "00103":
-            if report_type == "agreement":
-                template = "810_1_2_s.docx"
-            else:
-                template = "430_3_1.docx"
-        case "00121":
-            if report_type == "agreement":
-                if survey_scope == "I":
-                    template = "810_1_10.docx"
+    от кода услуги и подразделения. Notes:
+     - report_type is certificate on AGREEMENT-application or,
+     - ACCEPTANCE of delivery service report,
+     - SHEET is document check sheet."""
+    # print(rs_branch)
+    if rs_branch not in RS_RU_BRANCHES:  # noqa: E501
+        match survey_code:
+            case (
+                Application.SurveyCode.C00001
+                | Application.SurveyCode.C00003
+                | Application.SurveyCode.C00011
+            ):  # noqa: E501
+                if report_type == AGREEMENT_APPLICATION:
+                    template = TEMPLATES.get("T81011E")
+                elif report_type == ACCEPTANCE:
+                    template = TEMPLATES.get("T43035")
                 else:
-                    template = "810_1_10_1.docx"
-            elif report_type == "acceptance":
-                template = "430_3_4.docx"
+                    template = TEMPLATES.get("LISTREGI")
+            case Application.SurveyCode.C00006:
+                if report_type == AGREEMENT_APPLICATION:
+                    template = TEMPLATES.get("T810111E")
+                else:
+                    template = TEMPLATES.get("T43035")
+            case Application.SurveyCode.C00015:
+                if report_type == AGREEMENT_APPLICATION:
+                    template = TEMPLATES.get("T81012PE")
+                else:
+                    template = TEMPLATES.get("T43035")
+            case Application.SurveyCode.C00101:
+                if report_type == AGREEMENT_APPLICATION:
+                    template = TEMPLATES.get("T81012WE")
+                else:
+                    template = TEMPLATES.get("T43035")
+            case Application.SurveyCode.C00104:
+                if report_type == AGREEMENT_APPLICATION:
+                    template = TEMPLATES.get("T81012SE")
+                else:
+                    template = TEMPLATES.get("T43035")
+            case _:
+                # создать логику вывода сообщения на
+                # экран или все шаблоны сделать
+                template = TEMPLATES.get("PAGE404R")
+        return template
+    match survey_code:
+        case (
+            Application.SurveyCode.C00001
+            | Application.SurveyCode.C00003
+            | Application.SurveyCode.C00011
+        ):  # noqa: E501
+            if report_type == AGREEMENT_APPLICATION:
+                template = TEMPLATES.get("T81011")
+            elif report_type == ACCEPTANCE:
+                template = TEMPLATES.get("T43034")
             else:
-                template = "List_registratsii_proverki_dokumentov.docx"
+                template = TEMPLATES.get("LISTREGI")
+        case Application.SurveyCode.C00006:
+            if report_type == AGREEMENT_APPLICATION:
+                template = TEMPLATES.get("T810111")
+            else:
+                template = TEMPLATES.get("T43031")
+        case Application.SurveyCode.C00015:  # noqa: E501
+            if report_type == AGREEMENT_APPLICATION:
+                template = TEMPLATES.get("T81012P")
+            else:
+                template = TEMPLATES.get("T43033")
+        case Application.SurveyCode.C00101:  # noqa: E501
+            if report_type == AGREEMENT_APPLICATION:
+                template = TEMPLATES.get("T81012W")
+            else:
+                template = TEMPLATES.get("T43031")
+        case Application.SurveyCode.C00103:  # noqa: E501
+            if report_type == AGREEMENT_APPLICATION:
+                template = TEMPLATES.get("T81012S")
+            else:
+                template = TEMPLATES.get("T43031")
+        case Application.SurveyCode.C00121:
+            if report_type == AGREEMENT_APPLICATION:
+                if survey_scope == Application.SurveyScope.INITIL:
+                    template = TEMPLATES.get("T810110")
+                else:
+                    template = TEMPLATES.get("T8101101")
+            elif report_type == ACCEPTANCE:
+                template = TEMPLATES.get("T43034")
+            else:
+                template = TEMPLATES.get("LISTREGI")
         case _:
-            # создать логику вывода сообщения на экран или все шаблоны сделать
-            template = "404_page.docx"
+            # создать логику вывода сообщения на
+            # экран или все шаблоны сделать
+            template = TEMPLATES.get("PAGE404R")
     return template
-
-
-def get_genitive_case(phrase):
-    """Функция перевода слов в родительный падеж."""
-    # parse a phrase with several words without punctuation, conj and prepos
-    morph = pymorphy3.MorphAnalyzer()
-    result = ' '.join(morph.parse(word)[0].inflect({'gent'}).word for word in phrase.split())  # type: ignore # noqa: E501
-    return result
 
 
 def get_genitive_case_lastname(lastname):
@@ -91,41 +170,82 @@ def get_genitive_case_lastname(lastname):
     return cased_lname
 
 
-def get_genitive_case_proxy(proxy, number=None, date=None):
+def get_genitive_case(phrase):
+    """Функция перевода слов в родительный падеж."""
+    # parse a phrase with several words without punctuation, conj and prepos
+    morph = pymorphy3.MorphAnalyzer()
+    result = " ".join(morph.parse(word)[0].inflect({"gent"}).word for word in phrase.split())  # type: ignore # noqa: E501
+    return result
+
+
+def get_signer_cased(
+    position,
+    lastname,
+    firstname,
+    middlename=None,
+    rs_branch=None,
+    position_en=None,
+    is_register=False,
+    firstname_en=None,
+    lastname_en=None,
+):  # noqa: E501
+    """Получить имя и должность заявителя или представителя РС в
+    родительном падеже и их перевод на английский язык (транслитерацию)
+    для двуязычных форм в зависимости от расположения филиала."""
+    if rs_branch in RS_RU_BRANCHES:
+        if middlename is None:
+            return f"{get_genitive_case(str(position))} {get_genitive_case_lastname(lastname)} {firstname[0]}."  # type: ignore # noqa: E501
+        return f"{get_genitive_case(str(position))} {get_genitive_case_lastname(lastname)} {firstname[0]}. {middlename[0]}."  # type: ignore # noqa: E501
+    if is_register is False:
+        if detect_language(lastname) != "ru":
+            if middlename is None:
+                return f"{position}/{position_en} {GONORATIVE} {firstname[0]}. {lastname}"  # noqa: E501
+            return f"{position}/{position_en} {GONORATIVE} {firstname[0]}. {middlename[0]}. {lastname}"  # noqa: E501
+        if middlename is None:
+            return f"{get_genitive_case(str(position))} {get_genitive_case_lastname(lastname)} {firstname[0]}. / {position_en} {translit(firstname[0], 'ru', reversed=True)}. {translit(lastname, 'ru', reversed=True)}"  # noqa: E501
+        return f"{get_genitive_case(str(position))} {get_genitive_case_lastname(lastname)} {firstname[0]}. {middlename[0]}. / {position_en} {translit(firstname[0], 'ru', reversed=True)}. {translit(middlename[0], 'ru', reversed=True)}. {translit(lastname, 'ru', reversed=True)}"  # noqa: E501
+    return f"{get_genitive_case(str(position))} {get_genitive_case_lastname(lastname)} {firstname[0]}. {middlename[0]}. / {position_en} {firstname_en[0]}. {lastname_en}"  # type: ignore # noqa: E501
+
+
+def get_genitive_case_proxy(proxy, number=None, date=None, rs_branch=None):
     """Функция перевода названий документов,
-       на основании которых действует заявитель,
-       в родительный падеж."""
+    на основании которых действует заявитель,
+    в родительный падеж."""
     match proxy:
         case "Устав":
-            power_of_attoney_gen = "Устава"
+            power_of_attoney_gen = "Устава / Charter"
         case "Кодекс торгового мореплавания (КТМ РФ)":
-            power_of_attoney_gen = "Кодекса торгового мореплавания (КТМ РФ)"
+            power_of_attoney_gen = "Кодекса торгового мореплавания (КТМ РФ) / Merchant shipping code (MSC RF)"  # noqa: E501
         case "Доверенность":
-            power_of_attoney_gen = f"Доверенности № {number} от {is_none(date)}"  # type: ignore # noqa: E501
+            power_of_attoney_gen = f"Доверенности № {number} от {is_none(date)} / Power of attorney No. {number} dd {is_none(date)}"  # type: ignore # noqa: E501
         case "Приказ":
-            power_of_attoney_gen = "Приказа"
+            power_of_attoney_gen = "Приказа / Order"
         case "Свидетельство о регистрации":
-            power_of_attoney_gen = "Свидетельства о регистрации"
+            power_of_attoney_gen = (
+                "Свидетельства о регистрации / Certificate of registry"  # noqa: E501
+            )
         case _:
             power_of_attoney_gen = proxy
-    return power_of_attoney_gen
+    if rs_branch not in RS_RU_BRANCHES:
+        return power_of_attoney_gen
+    return power_of_attoney_gen.split("/", maxsplit=1)[0]
 
 
 def is_none(value):
     """Проверка значений на None."""
-    if value is not None:
-        if isinstance(value, datetime.date):
-            return value.strftime("%d.%m.%Y")
-        return value
-    return "--"
+    if value is None or value == "":
+        return "--"
+    if isinstance(value, datetime.date):
+        return value.strftime("%d.%m.%Y")
+    return value
 
 
-def is_vessel_none(vessel=None, argument=None, rs_branch=None):  # noqa: E501
+def is_vessel_none(vessel=None, argument=None, rs_branch=None):
     """Проверка судна на None для заявок в промышленности."""
     if vessel is not None:
         match argument:
             case "name":
-                if vessel.flag != "RU" or rs_branch in ["110", "112", "120", "121", "125", "130", "131", "141", "150", "170", "171", "172", "173", "174", "184", "190"]:  # noqa: E501
+                if vessel.flag != "RU" or rs_branch in RS_RU_BRANCHES:
                     vessel_attribute = f'"{vessel.name}"'
                 else:
                     vessel_attribute = f'"{vessel.name}" / "{vessel.name_en}"'
@@ -169,11 +289,24 @@ def get_surveyor_or_none(surveyors_qs, specialty=None):
     return surveyor
 
 
-def is_product_survey(app):
+def is_product_survey(app, rs_branch, report_type):
     """Функция обработки поля document с параметрами материала или
-       изделия при техническом наблюдении за их изготовлением."""
-    if app.survey_code != "00015":
-        return app
+    изделия при техническом наблюдении за их изготовлением."""
+    if app.survey_code != Application.SurveyCode.C00015:  # noqa: E501
+        if rs_branch not in RS_RU_BRANCHES:  # noqa: E501
+            if (
+                app.survey_code
+                in [
+                    Application.SurveyCode.C00001,
+                    Application.SurveyCode.C00002,
+                    Application.SurveyCode.C00003,
+                    Application.SurveyCode.C00011,
+                ]
+                and report_type == ACCEPTANCE
+            ):
+                return f'{app} т/х {app.vessel} / m/v "{app.vessel.name_en}"'
+            return app
+        return str(app).split("/", maxsplit=1)[0]
     if app.documents is None:
         return ""
     if app.documents.count() == 1:
@@ -185,17 +318,31 @@ def is_product_survey(app):
     return survey_scope
 
 
-def is_authorized_person_none(person=None):
-    """Проверка уполномоченного лица на None."""
+def get_authorized_person(person=None, rs_branch=None):
+    """Получить уполномоченное лицо на русском или на
+    русском и транслите в зависимости от филиала,
+    если существует."""
     if person is not None:
-        if person.phone_number is not None and person.email is not None:  # type: ignore # noqa: E501
-            authorized_person = f"{person}, {person.phone_number}, {person.email}"  # type: ignore # noqa: E501
-        elif person.phone_number is not None and person.email is None:  # type: ignore # noqa: E501
-            authorized_person = f"{person}, {person.phone_number}"  # type: ignore # noqa: E501
-        elif person.phone_number is None and person.email is not None:  # type: ignore # noqa: E501
-            authorized_person = f"{person}, {person.email}"  # type: ignore # noqa: E501
+        if person.phone_number != "" and person.email != "":  # type: ignore # noqa: E501
+            if rs_branch in RS_RU_BRANCHES:
+                authorized_person = f"{person}, {person.phone_number}, {person.email}"  # type: ignore # noqa: E501
+            else:
+                authorized_person = f"{person} / {translit(str(person), 'ru', reversed=True)}, {person.phone_number}, {person.email}"  # type: ignore # noqa: E501
+        elif person.phone_number != "" and person.email == "":  # type: ignore # noqa: E501
+            if rs_branch in RS_RU_BRANCHES:
+                authorized_person = f"{person}, {person.phone_number}"  # type: ignore # noqa: E501
+            else:
+                authorized_person = f"{person} / {translit(str(person), 'ru', reversed=True)}, {person.phone_number}"  # type: ignore # noqa: E501
+        elif person.phone_number == "" and person.email != "":  # type: ignore # noqa: E501
+            if rs_branch in RS_RU_BRANCHES:
+                authorized_person = f"{person}, {person.email}"  # type: ignore # noqa: E501
+            else:
+                authorized_person = f"{person} / {translit(str(person), 'ru', reversed=True)}, {person.email}"  # type: ignore # noqa: E501
         else:
-            authorized_person = f"{person}"  # type: ignore
+            if rs_branch in RS_RU_BRANCHES:
+                authorized_person = f"{person}"  # type: ignore
+            else:
+                authorized_person = f"{person} / {translit(str(person), 'ru', reversed=True)}"  # type: ignore # noqa: E501
     else:
         authorized_person = "--"
     return authorized_person
@@ -208,25 +355,79 @@ def is_legal_address_same(is_same_check, postal_address, legal_address=None):
     return legal_address
 
 
-def get_issued_docs(document_qs, survey_code="00001", document_date=None):
+def get_form_type_en(f_type):
+    """Получить название формы документа на
+    английском языке для двуязычных форм."""
+    match f_type:
+        case Form.FormType.AGR:
+            result = "Aggrement"
+        case Form.FormType.ANN:
+            result = "Annex"
+        case Form.FormType.ATL:
+            result = "According to list"
+        case Form.FormType.CER:
+            result = "Certificate"
+        case Form.FormType.CHE:
+            result = "Check-list"
+        case Form.FormType.LET:
+            result = "Letter of approval"
+        case Form.FormType.MIN:
+            result = "Minutes"
+        case Form.FormType.QUR:
+            result = "Ship's status"
+        case Form.FormType.REC:
+            result = "Record"
+        case Form.FormType.REG:
+            result = "Register"
+        case Form.FormType.REP | Form.FormType.RPT:
+            result = "Report"
+        case _:
+            return ""
+    return result
+
+
+def get_issued_docs(
+    document_qs,
+    survey_code=Application.SurveyCode.C00001,
+    document_date=None,
+    rs_branch=None,
+):  # noqa: E501
     """Выданные документы в зависимости от кода услуги."""
     if not document_qs.exists():
         return ""
     match survey_code:
-        case "00001" | "00003" | "00011" | "00015" | "00101" | "00103" | "00121":  # noqa: E501
+        case (
+            Application.SurveyCode.C00001
+            | Application.SurveyCode.C00003
+            | Application.SurveyCode.C00011
+            | Application.SurveyCode.C00015
+            | Application.SurveyCode.C00101
+            | Application.SurveyCode.C00103
+            | Application.SurveyCode.C00121
+        ):  # noqa: E501
             if document_qs.count() > 1:
-                documents = f"{document_qs.first().form} №№ {document_qs.first()} - {document_qs.last()} от {is_none(document_date)}"  # noqa: E501
+                if rs_branch in RS_RU_BRANCHES:
+                    documents = f"{document_qs.first().form} №№ {document_qs.first()} - {document_qs.last()} от {is_none(document_date)}"  # noqa: E501
+                else:
+                    documents = f"{document_qs.first().form.get_form_type_display()} ф. / {get_form_type_en(document_qs.first().form.form_type)} of f. {document_qs.first().form.number} №№ {document_qs.first()} - {document_qs.last()} от/dd {is_none(document_date)}"  # noqa: E501
             else:
-                documents = f"{document_qs.first().form} № {document_qs.first()} от {is_none(document_date)}"  # noqa: E501
-        case "00006":
-            documents = f"{document_qs.first().form} {document_qs.first()} от {is_none(document_date)}"  # type: ignore # noqa: E501
+                if rs_branch in RS_RU_BRANCHES:
+                    documents = f"{document_qs.first().form} № {document_qs.first()} от {is_none(document_date)}"  # noqa: E501
+                else:
+                    documents = f"{document_qs.first().form.get_form_type_display()} ф. / {get_form_type_en(document_qs.first().form.form_type)} of f. {document_qs.first().form.number} № {document_qs.first()} от/dd {is_none(document_date)}"  # noqa: E501
+        case Application.SurveyCode.C00006:
+            if rs_branch in RS_RU_BRANCHES:
+                documents = f"{document_qs.first().form} {document_qs.first()} от {is_none(document_date)}"  # type: ignore # noqa: E501
+            else:
+                documents = f"{document_qs.first().form.get_form_type_display()} № / {get_form_type_en(document_qs.first().form.form_type)} No. {document_qs.first()} от/dd {is_none(document_date)}"  # noqa: E501
         case _:
             return ""
     return documents
 
 
-def moneyfmt(value, places=2, curr='', sep=',', dp='.',
-             pos='', neg='-', trailneg=''):
+def moneyfmt(
+    value, places=2, curr="", sep=",", dp=".", pos="", neg="-", trailneg=""
+):  # noqa: E501
     """Convert Decimal to a money formatted string.
 
     places:  required number of places after the decimal point
@@ -253,7 +454,7 @@ def moneyfmt(value, places=2, curr='', sep=',', dp='.',
     """
     # taken from https://docs.python.org/3/library/decimal.html
 
-    q = Decimal(10) ** -places      # 2 places --> '0.01'
+    q = Decimal(10) ** -places  # 2 places --> '0.01'
     sign, digits, exp = value.quantize(q).as_tuple()
     result = []
     digits = list(map(str, digits))
@@ -261,11 +462,11 @@ def moneyfmt(value, places=2, curr='', sep=',', dp='.',
     if sign:
         build(trailneg)
     for i in range(places):
-        build(next() if digits else '0')
+        build(next() if digits else "0")
     if places:
         build(dp)
     if not digits:
-        build('0')
+        build("0")
     i = 0
     while digits:
         build(next())
@@ -275,60 +476,85 @@ def moneyfmt(value, places=2, curr='', sep=',', dp='.',
             build(sep)
     build(curr)
     build(neg if sign else pos)
-    return ''.join(reversed(result))
+    return "".join(reversed(result))
+
+
+def replace_dollar_by_rnb(curr_in_words_input):
+    """Заменяет слово доллар или dollar на слово 'юань'."""
+    separation = curr_in_words_input.split()
+    result = ""
+    new_list = []
+    for item in separation:
+        if item == "долларов":
+            new_list.append("юаней")
+            continue
+        if item == "доллара":
+            new_list.append("юаня")
+            continue
+        elif item == "доллар":
+            new_list.append("юань")
+            continue
+        elif item in ["центов", "цента", "цент"]:
+            new_list.append("цзяо")
+            continue
+        if item in ["dollars", "dollar"]:
+            new_list.append("yuan")
+            continue
+        elif item in ["cents", "cent"]:
+            new_list.append("jiao")
+            continue
+        else:
+            new_list.append(item)
+    result = (" ").join(new_list)
+    return result
 
 
 def get_sum_in_words(netto: Decimal, currency_code, tax=None):
     """Сумма прописью: российский рубль, евро, доллар США,
-       китайский юань, белорусский рубль."""
+    китайский юань, белорусский рубль."""
     VAT_RATE = 0.2
     vat = round(netto * Decimal(VAT_RATE), 2)
     brutto = round(netto + vat, 2)
     match currency_code:
-        case "RUB":
-            netto_formatted = moneyfmt(netto, sep=' ', dp=',')
-            vat_formatted = moneyfmt(vat, sep=' ', dp=',')
-            brutto_formatted = moneyfmt(brutto, sep=' ', dp=',')
+        case BankAccount.Currency.RUB:
+            netto_formatted = moneyfmt(netto, sep=" ", dp=",")
+            vat_formatted = moneyfmt(vat, sep=" ", dp=",")
+            brutto_formatted = moneyfmt(brutto, sep=" ", dp=",")
             if tax is None:
                 result = f"{netto_formatted} p. ({num2words(netto, lang='ru', to='currency', separator='', cents=False, currency='RUB')})"  # noqa: E501
             elif tax == "vat":
                 result = f"{vat_formatted} p. ({num2words(vat, lang='ru', to='currency', separator='', cents=False, currency='RUB')})"  # noqa: E501
             else:
                 result = f"{brutto_formatted} p. ({num2words(brutto, lang='ru', to='currency', separator='', cents=False, currency='RUB')})"  # noqa: E501
-        case "EUR":
-            netto_formatted = moneyfmt(netto, curr='€', sep=' ', dp=',')
-            vat_formatted = moneyfmt(vat, curr='€', sep=' ', dp=',')
-            brutto_formatted = moneyfmt(brutto, curr='€', sep=' ', dp=',')
-            if tax is None:
-                result = f"{netto_formatted} ({num2words(netto, to='currency', separator=' and', cents=False)})"  # noqa: E501
-            elif tax == "vat":
-                result = f"{vat_formatted} ({num2words(vat, to='currency', separator=' and', cents=False)})"  # noqa: E501
-            else:
-                result = f"{brutto_formatted} ({num2words(brutto, to='currency', separator=' and', cents=False)})"  # noqa: E501
-        case "USD":
-            netto_formatted = moneyfmt(netto, curr='$', sep=' ')
-            vat_formatted = moneyfmt(vat, curr='$', sep=' ')
-            brutto_formatted = moneyfmt(brutto, curr='$', sep=' ')
-            if tax is None:
-                result = f"{netto_formatted} ({num2words(netto, lang='en', to='currency', separator=' and', cents=False, currency='USD')})"  # noqa: E501
-            elif tax == "vat":
-                result = f"{vat_formatted} ({num2words(vat, lang='en', to='currency', separator=' and', cents=False, currency='USD')})"  # noqa: E501
-            else:
-                result = f"{brutto_formatted} ({num2words(brutto, lang='en', to='currency', separator=' and', cents=False, currency='USD')})"  # noqa: E501
-        case "CNY":
-            netto_formatted = moneyfmt(netto, curr='¥', sep=' ')
-            vat_formatted = moneyfmt(vat, curr='¥', sep=' ')
-            brutto_formatted = moneyfmt(brutto, curr='¥', sep=' ')
-            if tax is None:
-                result = f"{netto} ({num2words(netto, to='currency', separator=' and', cents=False)})"  # noqa: E501
-            elif tax == "vat":
-                result = f"{vat} ({num2words(vat, to='currency', separator=' and', cents=False)})"  # noqa: E501
-            else:
-                result = f"{brutto} ({num2words(brutto, to='currency', separator=' and', cents=False)})"  # noqa: E501
-        case "BYN":
-            netto_formatted = moneyfmt(netto, sep=' ', dp=',')
-            vat_formatted = moneyfmt(vat, sep=' ', dp=',')
-            brutto_formatted = moneyfmt(brutto, sep=' ', dp=',')
+        case BankAccount.Currency.EUR:
+            netto_formatted = moneyfmt(netto, curr="€", sep=" ", dp=",")
+            result = f"€{netto_formatted} ({num2words(netto, lang='ru', to='currency', separator='', cents=False)} / {num2words(netto, to='currency', separator=' and', cents=False)})"  # noqa: E501
+        case BankAccount.Currency.USD:
+            netto_formatted = moneyfmt(netto, curr="$", sep=" ")
+            result = f"${netto_formatted} ({num2words(netto, lang='ru', to='currency', separator='', cents=False, currency='USD')} / {num2words(netto, lang='en', to='currency', separator=' and', cents=False, currency='USD')})"  # noqa: E501
+        # noqa: E501
+        case BankAccount.Currency.CNY:
+            netto_formatted = moneyfmt(netto, curr="¥", sep=" ")
+            num_in_words_ru = num2words(
+                netto,
+                lang="ru",
+                to="currency",
+                separator="",
+                cents=False,
+                currency="USD",
+            )
+            num_in_words_en = num2words(
+                netto,
+                to="currency",
+                separator=" and",
+                cents=False,
+                currency="USD",
+            )
+            result = f"{netto_formatted} ({replace_dollar_by_rnb(num_in_words_ru)} / {replace_dollar_by_rnb(num_in_words_en)})"  # noqa: E501ф
+        case BankAccount.Currency.BYN:
+            netto_formatted = moneyfmt(netto, sep=" ", dp=",")
+            vat_formatted = moneyfmt(vat, sep=" ", dp=",")
+            brutto_formatted = moneyfmt(brutto, sep=" ", dp=",")
             if tax is None:
                 result = f"{netto_formatted} pуб. ({num2words(netto, lang='ru', to='currency', separator='', cents=False, currency='RUB')}"  # noqa: E501
             elif tax == "vat":
@@ -341,6 +567,159 @@ def get_sum_in_words(netto: Decimal, currency_code, tax=None):
     return result
 
 
+def get_month_en(app_date):
+    """Получить название месяца на английском
+    в зависимости от его номера."""
+    month_no = dateformat.format(app_date, "n")
+    match month_no:
+        case "1":
+            month_in_en = "January"
+        case "2":
+            month_in_en = "February"
+        case "3":
+            month_in_en = "March"
+        case "4":
+            month_in_en = "April"
+        case "5":
+            month_in_en = "May"
+        case "6":
+            month_in_en = "June"
+        case "7":
+            month_in_en = "July"
+        case "8":
+            month_in_en = "August"
+        case "9":
+            month_in_en = "September"
+        case "10":
+            month_in_en = "October"
+        case "11":
+            month_in_en = "November"
+        case "12":
+            month_in_en = "December"
+        case _:
+            month_in_en = "not set"
+    return month_in_en
+
+
+def get_port(port, rs_branch=None):
+    """Возвращает город на русском или русско-
+    английском в зависимости от филиала."""
+    if port is not None:
+        if rs_branch not in RS_RU_BRANCHES:
+            return port
+        return str(port).split("/", maxsplit=1)[0]
+    return "--"
+
+
+def get_register_staff_position(position, position_en, rs_branch):
+    """Возвращает должности персонала РС на русском
+    или русско-английском в зависимости от филиала."""
+    if rs_branch in RS_RU_BRANCHES:
+        return position
+    return f"{position} / {position_en}"
+
+
+def get_register_signer_proxy(poa_number, poa_date, rs_branch):
+    """Функция определения доверенности подписанта от РС на русском
+    языке и двуязычной форме в зависимости от филиала."""
+    if rs_branch in RS_RU_BRANCHES:
+        return f"Доверенности № {poa_number} от {is_none(poa_date)}"
+    return f"Доверенности / Power of attorney № {poa_number} от/dd {is_none(poa_date)}"  # noqa: E501
+
+
+def get_signer(
+    firstname,
+    lastname,
+    rs_branch,
+    is_register,
+    middlename=None,
+    firstname_en=None,
+    lastname_en=None,
+):  # noqa: E501
+    """Получить имя заявителя или представителя РС для одноязычных или
+    транслитерацию для двуязычных форм в зависимости от расположения
+    филиала."""
+    if rs_branch in RS_RU_BRANCHES:
+        if middlename is None:
+            return f"{firstname[0]}. {lastname} "  # type: ignore # noqa: E501
+        return f"{firstname[0]}. {middlename[0]}. {lastname}"  # type: ignore # noqa: E501
+    if is_register is False:
+        if detect_language(lastname) != "ru":
+            if middlename is None:
+                return f"{firstname[0]}. {lastname}"  # noqa: E501
+            return f"{firstname[0]}. {middlename[0]}. {lastname}"  # noqa: E501
+        if middlename is None:
+            return f"{firstname[0]}. {lastname} / {translit(firstname[0], 'ru', reversed=True)}. {translit(lastname, 'ru', reversed=True)}"  # noqa: E501
+        return f"{firstname[0]}. {middlename[0]}. {lastname} / {translit(firstname[0], 'ru', reversed=True)}. {translit(middlename[0], 'ru', reversed=True)}. {translit(lastname, 'ru', reversed=True)}"  # noqa: E501
+    return f"{firstname[0]}. {middlename[0]}. {lastname} / {firstname_en[0]}. {lastname_en}"  # type: ignore # noqa: E501
+
+
+def get_surveyor_or_applicant(
+    position,
+    lastname,
+    firstname,
+    middlename=None,
+    rs_branch=None,
+    position_en=None,
+    is_register=False,
+    firstname_en=None,
+    lastname_en=None,
+):  # noqa: E501
+    """Получить имя и должность заявителя или представителя РС в
+    именительном падеже и их перевод на английский язык (транслитерацию)
+    для двуязычных форм в зависимости от расположения филиала."""
+    if rs_branch in RS_RU_BRANCHES:
+        if middlename is None:
+            return f"{position} {lastname} {firstname[0]}."  # type: ignore # noqa: E501
+        return f"{position} {lastname} {firstname[0]}. {middlename[0]}."  # type: ignore # noqa: E501
+    if is_register is False:
+        if detect_language(lastname) != "ru":
+            if middlename is None:
+                return f"{position}/{position_en} {GONORATIVE} {firstname[0]}. {lastname}"  # noqa: E501
+            return f"{position}/{position_en} {GONORATIVE} {firstname[0]}. {middlename[0]}. {lastname}"  # noqa: E501
+        if middlename is None:
+            return f"{position} {lastname} {firstname[0]}. / {position_en} {translit(firstname[0], 'ru', reversed=True)}. {translit(lastname, 'ru', reversed=True)}"  # noqa: E501
+        return f"{position} {lastname} {firstname[0]}. {middlename[0]}. / {position_en} {translit(firstname[0], 'ru', reversed=True)}. {translit(middlename[0], 'ru', reversed=True)}. {translit(lastname, 'ru', reversed=True)}"  # noqa: E501
+    return f"{position} {lastname} {firstname[0]}. {middlename[0]}. / {position_en} {firstname_en[0]}. {lastname_en}"  # type: ignore # noqa: E501
+
+
+def get_survey_object_en(survey_object_value):
+    """Получить перевод объектов освидетельствования
+    на английский язык для двуязычных форм."""
+    match survey_object_value:
+        case Application.SurveyObject.SHIPPART:
+            result = "The ship"
+        case Application.SurveyObject.ALLPARTS:
+            result = "The ship on all parts"
+        case Application.SurveyObject.HULLPART:
+            result = "The ship on the hull part"
+        case Application.SurveyObject.MECHPART:
+            result = "The ship on the mechanical part"
+        case Application.SurveyObject.ELECPART:
+            result = "The ship on the electric-mechanical parts"
+        case Application.SurveyObject.HULLMECH:
+            result = "The ship on the hull and mechanical parts"
+        case Application.SurveyObject.MECHELEC:
+            result = (
+                "The ship on the mechanical and electric-mechanical parts"  # noqa: E501
+            )
+        case _:
+            return ""
+    return result
+
+
+def get_survey_object(ship_part_value, ship_part_label, branch_number):
+    """Получить объекты освидетельствования судна на
+    одном или двух языках в зависимости от филиала."""
+    if branch_number in RS_RU_BRANCHES:
+        result = ship_part_label
+    else:
+        result = (
+            f"{ship_part_label} / {get_survey_object_en(ship_part_value)}"  # noqa: E501
+        )
+    return result
+
+
 def print_docs(request, **kwargs):
     """Функция печати документов."""
 
@@ -348,13 +727,20 @@ def print_docs(request, **kwargs):
     application = get_object_or_404(Application, id=kwargs["pk"])
     branch_number = application.register_signer.office_number.number[0:3]  # type: ignore # noqa: E501
     rs_branch = (
-        Company.objects.filter(name__icontains="РС,").filter(
+        Company.objects.filter(
+            name__icontains=RS_BRANCH_NAME_FIRST_CHARS
+        ).filter(  # noqa: E501
             responsible_offices__number__icontains=branch_number
         )  # noqa: E501
     ).first()
 
-    button_name = request.GET.get('name')
-    docx_template = get_docx_template(application.survey_code, button_name, branch_number, application.survey_scope)  # noqa: E501
+    button_name = request.GET.get("name")
+    docx_template = get_docx_template(
+        application.survey_code,
+        button_name,
+        branch_number,
+        application.survey_scope,
+    )
     doc = DocxTemplate(f"templates/docx/{docx_template}")
 
     context = {
@@ -363,18 +749,20 @@ def print_docs(request, **kwargs):
         "day": application.date.strftime("%d"),  # type: ignore
         "month": dateformat.format(application.date, settings.DATE_FORMAT),
         "year": application.date.strftime("%y"),  # type: ignore
-        "vessel": is_vessel_none(application.vessel, "name",  branch_number),  # type: ignore # noqa: E501
+        "vessel": is_vessel_none(application.vessel, "name", branch_number),  # type: ignore # noqa: E501
         "rs_number": is_vessel_none(application.vessel, "rs"),  # type: ignore # noqa: E501
         "imo_number": is_vessel_none(application.vessel, "imo"),  # type: ignore # noqa: E501
-        "survey_scope": is_product_survey(application),
-        "survey_object": application.get_survey_object_display(),  # type: ignore # noqa: E501
-        "city": application.city,
+        "survey_scope": is_product_survey(
+            application, branch_number, button_name
+        ),  # noqa: E501
+        "survey_object": get_survey_object(application.survey_object, application.get_survey_object_display(), branch_number),  # type: ignore # noqa: E501
+        "city": get_port(application.city, branch_number),
         "date": application.date.strftime("%d.%m.%Y"),
         "company": company,
-        "applicant": f"{get_genitive_case(application.applicant_signer.position)} {get_genitive_case_lastname(application.applicant_signer.second_name)} {application.applicant_signer.first_name[0]}. {application.applicant_signer.patronymic_name[0]}.",  # type: ignore # noqa: E501
-        "applicant_proxy": get_genitive_case_proxy(application.applicant_signer.get_proxy_type_display(), application.applicant_signer.proxy_number, application.applicant_signer.proxy_date),  # type: ignore # noqa: E501
-        "authorized_person": is_authorized_person_none(application.authorized_person),  # type: ignore # noqa: E501
-        "previous_survey_place": is_none(application.vesselextrainfo.city),  # type: ignore # noqa: E501
+        "applicant": get_signer_cased(application.applicant_signer.position, application.applicant_signer.second_name, application.applicant_signer.first_name, application.applicant_signer.patronymic_name, branch_number, application.applicant_signer.position_en),  # type: ignore # noqa: E501
+        "applicant_proxy": get_genitive_case_proxy(application.applicant_signer.get_proxy_type_display(), application.applicant_signer.proxy_number, application.applicant_signer.proxy_date, branch_number),  # type: ignore # noqa: E501
+        "authorized_person": get_authorized_person(application.authorized_person, branch_number),  # type: ignore # noqa: E501
+        "previous_survey_place": get_port(application.vesselextrainfo.city, branch_number),  # type: ignore # noqa: E501
         "previous_survey_date": is_none(application.vesselextrainfo.previous_survey_date),  # type: ignore # noqa: E501
         "last_psc_inspection": f"{is_none(application.vesselextrainfo.last_psc_inspection_date)} {is_none(application.vesselextrainfo.last_psc_inspection_result)}",  # type: ignore # noqa: E501
         "currency": company.bank_accounts.filter(current_bankaccount=True).first().account_currency,  # type: ignore # noqa: E501
@@ -394,24 +782,35 @@ def print_docs(request, **kwargs):
         "phone_number": is_none(company.phone_number),
         "email": is_none(company.email),
         "payment_account": company.bank_accounts.filter(current_bankaccount=True).first(),  # type: ignore # noqa: E501
-        "register": f"{get_genitive_case(application.register_signer.position.name)} {get_genitive_case_lastname(application.register_signer.last_name)} {application.register_signer.first_name[0]}. {application.register_signer.patronymic_name[0]}.",  # type: ignore # noqa: E501
-        "register_signer_position": application.register_signer.position,  # type: ignore # noqa: E501
-        "register_signer_proxy": f"Доверенности № {application.register_signer.proxy_number} от {application.register_signer.proxy_date.strftime("%d.%m.%Y")}",  # type: ignore # noqa: E501
-        "register_signer": f"{application.register_signer.first_name[0]}. {application.register_signer.patronymic_name[0]}. {application.register_signer.last_name}",  # type: ignore # noqa: E501
-        "applicant_signer": f"{application.applicant_signer.first_name[0]}. {application.applicant_signer.patronymic_name[0]}. {application.applicant_signer.second_name}",  # type: ignore # noqa: E501
+        "register": get_signer_cased(application.register_signer.position, application.register_signer.last_name, application.register_signer.first_name, application.register_signer.patronymic_name, branch_number, application.register_signer.position.name_en, True, application.register_signer.first_name_en, application.register_signer.last_name_en),  # type: ignore # noqa: E501
+        "register_signer_position": get_register_staff_position(application.register_signer.position, application.register_signer.position.name_en, branch_number),  # type: ignore # noqa: E501
+        "register_signer_proxy": get_register_signer_proxy(application.register_signer.proxy_number, application.register_signer.proxy_date, branch_number),  # type: ignore # noqa: E501
+        "register_signer": get_signer(application.register_signer.first_name, application.register_signer.last_name, branch_number, True, application.register_signer.patronymic_name, application.register_signer.first_name_en, application.register_signer.last_name_en),  # type: ignore # noqa: E501
+        "applicant_signer": get_signer(application.applicant_signer.first_name, application.applicant_signer.second_name, branch_number, False, application.applicant_signer.patronymic_name),  # type: ignore # noqa: E501
         # for small crafts
         "engine_power": str(is_vessel_none(application.vessel, "power")),  # type: ignore # noqa: E501
         "vessel_departure_estimated_date": is_none(application.vesselextrainfo.completion_expected_date),  # type: ignore # noqa: E501
         "rs_branch_city": rs_branch.addresses.first().city,  # type: ignore # noqa: E501
         # for reports on acceptance-delivery services
-        "surveyor": f"{request.user.position} {request.user.last_name} {request.user.first_name[0]}. {request.user.patronymic_name[0]}.",  # noqa: E501
-        "surveyor_proxy": f"Доверенности № {request.user.proxy_number} от {request.user.proxy_date.strftime("%d.%m.%Y")}",  # type: ignore # noqa: E501
-        "applicant_nominative": f"{application.applicant_signer.position} {application.applicant_signer.second_name} {application.applicant_signer.first_name[0]}. {application.applicant_signer.patronymic_name[0]}.",  # type: ignore # noqa: E501
-        "issued_docs": get_issued_docs(application.documents, application.survey_code, application.completion_date),  # type: ignore # noqa: E501
+        "surveyor": get_surveyor_or_applicant(
+            request.user.position,
+            request.user.last_name,
+            request.user.first_name,
+            request.user.patronymic_name,
+            branch_number,
+            request.user.position.name_en,
+            True,
+            request.user.first_name_en,
+            request.user.last_name_en,
+        ),  # noqa: E501
+        "surveyor_proxy": get_register_signer_proxy(request.user.proxy_number, request.user.proxy_date, branch_number),  # type: ignore # noqa: E501
+        "applicant_nominative": get_surveyor_or_applicant(application.applicant_signer.position, application.applicant_signer.second_name, application.applicant_signer.first_name, application.applicant_signer.patronymic_name, branch_number, application.applicant_signer.position_en),  # type: ignore # noqa: E501
+        "issued_docs": get_issued_docs(application.documents, application.survey_code, application.completion_date, branch_number),  # type: ignore # noqa: E501
         "service_cost": get_sum_in_words(application.account.service_cost, company.bank_accounts.filter(current_bankaccount=True).first().account_currency),  # type: ignore # noqa: E501
         "tax": get_sum_in_words(application.account.service_cost, company.bank_accounts.filter(current_bankaccount=True).first().account_currency, "vat"),  # type: ignore # noqa: E501
         "total": get_sum_in_words(application.account.service_cost, company.bank_accounts.filter(current_bankaccount=True).first().account_currency, "total"),  # type: ignore # noqa: E501
-        "surveyor_signer": f"{request.user.first_name[0]}. {request.user.patronymic_name[0]}. {request.user.last_name}",  # type: ignore # noqa: E501
+        # "surveyor_signer": f"{request.user.first_name[0]}. {request.user.patronymic_name[0]}. {request.user.last_name}",  # type: ignore # noqa: E501
+        "surveyor_signer": get_signer(request.user.first_name, request.user.last_name, branch_number, True, request.user.patronymic_name, request.user.first_name_en, request.user.last_name_en),  # type: ignore # noqa: E501
         # for document checking sheet
         "completion_date": is_none(application.completion_date),
         "g_tonnage": str(is_vessel_none(application.vessel, "gt")),  # type: ignore # noqa: E501
@@ -419,6 +818,10 @@ def print_docs(request, **kwargs):
         "hull_surveyor": get_surveyor_or_none(application.vesselextrainfo.assigned_surveyors, "hull"),  # type: ignore # noqa: E501
         "mech_surveyor": get_surveyor_or_none(application.vesselextrainfo.assigned_surveyors, "mech"),  # type: ignore # noqa: E501
         "elrn_surveyor": get_surveyor_or_none(application.vesselextrainfo.assigned_surveyors, "elrn"),  # type: ignore # noqa: E501
+        # for bilingual forms
+        "month_en": get_month_en(application.date),
+        "city_ru": get_port(application.city, "121"),
+        "city_en": str(application.city).split("/", maxsplit=1)[1],
     }  # noqa: E501
 
     doc.render(context)

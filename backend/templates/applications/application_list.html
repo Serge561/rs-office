@@ -37,21 +37,21 @@
                 >
                   Номер
                 </th>
-                <th
+                {% comment %} <th
                   class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
                 >
                   Дата
+                </th> {% endcomment %}
+                <th
+                  class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+                >
+                  Дата заверш.
                 </th>
                 <th
                   class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
                 >
-                  Дата завершения
+                  Код
                 </th>
-                <th
-                class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
-              >
-                Код
-              </th>
                 <th
                   class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
                 >
@@ -82,11 +82,11 @@
                     </div>
                   </div>
                 </td>
-                <td
+                {% comment %} <td
                   class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
                 >
                   {{ application.date|date:'SHORT_DATE_FORMAT' }}
-                </td>
+                </td> {% endcomment %}
                 <td
                   class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
                 >
@@ -95,17 +95,17 @@
                 <td
                   class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
                 >
-                  {{ application.survey_code}}
+                  {{ application.survey_code }}
                 </td>
                 <td
                 class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
                 >
-                  {{ application.survey_type}}
+                  {{ application.get_survey_type_display }}
                 </td>
                 <td
                 class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
                 >
-                  {{ application.survey_scope}}
+                  {{ application.get_survey_scope_display }}
                 </td>
                 <td
                 class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"

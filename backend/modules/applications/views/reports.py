@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long, too-many-ancestors
+# pylint: disable=line-too-long, too-many-ancestors, no-member
 """Представления для модели applications."""
 
 from datetime import datetime
@@ -42,7 +42,13 @@ class CurrentApplicationsView(LoginRequiredMixin, ListView):
         office_number = user.office_number.number  # type: ignore
         return (
             queryset.exclude(completion_date__isnull=False)
-            .filter(survey_code__in=["00001", "00002", "00121"])
+            .filter(
+                survey_code__in=[
+                    Application.SurveyCode.C00001,
+                    Application.SurveyCode.C00002,
+                    Application.SurveyCode.C00121,
+                ]
+            )
             .filter(
                 # company__responsible_offices__number__icontains=office_number
                 vesselextrainfo__assigned_surveyors__office_number__number__icontains=office_number  # noqa: E501
@@ -73,7 +79,13 @@ class CurrentApplicationsSurveyorView(LoginRequiredMixin, ListView):
         user = self.request.user
         return (
             queryset.exclude(completion_date__isnull=False)
-            .filter(survey_code__in=["00001", "00002", "00121"])
+            .filter(
+                survey_code__in=[
+                    Application.SurveyCode.C00001,
+                    Application.SurveyCode.C00002,
+                    Application.SurveyCode.C00121,
+                ]
+            )
             .filter(
                 vesselextrainfo__assigned_surveyors__pk__in=[user.id]  # type: ignore # noqa: E501
             )  # noqa: E501

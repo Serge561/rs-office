@@ -24,6 +24,7 @@ class PositionAdmin(admin.ModelAdmin):
     list_display = [
         "id",
         "name",
+        "name_en",
     ]
 
 
@@ -49,6 +50,8 @@ class CustomUserAdmin(UserAdmin):
                     "last_name",
                     "first_name",
                     "patronymic_name",
+                    "first_name_en",
+                    "last_name_en",
                     "email",
                     "slug",
                 )
