@@ -50,7 +50,7 @@
                 <th
                   class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
                 >
-                  Добавочный
+                  Доб.
                 </th>
                 <th class="px-6 py-3 border-b-2 border-gray-300"></th>
               </tr>
@@ -62,7 +62,7 @@
                   <div class="flex items-center">
                     <div>
                       <div class="text-sm leading-5 text-gray-800">
-                        {{ employee }}
+                        {{ employee.second_name|default_if_none:'' }} {{ employee.first_name|default_if_none:'' }} {{ employee.patronymic_name|default_if_none:'' }}
                       </div>
                     </div>
                   </div>

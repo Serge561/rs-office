@@ -110,6 +110,7 @@ class ApplicationCreateView(LoginRequiredMixin, CreateView):
             User.objects.filter(
                 Q(position__name__icontains="директор")
                 | Q(position__name__icontains="руководитель филиала")
+                | Q(position__name__icontains="технический менеджер")
             ).filter(
                 office_number__number__icontains=branch_number
             )  # noqa: E501

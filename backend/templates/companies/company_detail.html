@@ -1,4 +1,5 @@
 {% extends 'main.html' %}
+{% load unclosed_apps %}
 <!-- prettier-ignore -->
 {% block content %}
 <!-- breadcrumbs -->
@@ -106,7 +107,7 @@
             {% if company.applications.count == 0 %}
               Показать заявки
             {% else %}
-              Показать заявки ({{ company.applications.count }})
+              Показать заявки ({{ company.applications.all|unclosed_app_count_filter }}/{{ company.applications.count }})
             {% endif %}
           </a>
         </h1>

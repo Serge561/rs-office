@@ -328,31 +328,6 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
         """Полный URL заявки фирмы."""
         return reverse("application_detail", kwargs={"slug": self.company.slug, "pk": self.id})  # type: ignore # noqa: E501
 
-    def get_application_for_reports(self):
-        """Кастомный метод, чтобы передавать в
-        отчёт объём ремонта только на русском."""
-        match self.survey_code:
-            case self.SurveyCode.C00001:
-                if self.survey_scope not in [self.SurveyScope.OCCASL, self.SurveyScope.CONTIN, self.SurveyScope.BOTTOM]:  # noqa: E501
-                    result = f"{self.get_survey_scope_display()} освидетельствование"  # type: ignore # noqa: E501
-                elif self.survey_scope == self.SurveyScope.BOTTOM:
-                    result = f"Освидетельствование {self.get_survey_scope_display().lower()}"  # type: ignore # noqa: E501
-                else:
-                    result = f"{self.get_survey_scope_display()} освидетельствование {self.occasional_cause}"  # type: ignore # noqa: E501
-            case self.SurveyCode.C00002:
-                if self.occasional_cause is not None:
-                    result = f"Технаблюдение за постройкой: {self.occasional_cause}"  # noqa: E501
-                else:
-                    result = f"{self.get_survey_code_display()}"  # type: ignore # noqa: E501
-            case self.SurveyCode.C00121:
-                if self.survey_scope != self.SurveyScope.OCCASL:
-                    result = f"{self.get_survey_scope_display()} освидетельствование маломерного судна"  # type: ignore # noqa: E501
-                else:
-                    result = f"{self.get_survey_scope_display()} осыидетельствование маломерного судна {self.occasional_cause}"  # type: ignore # noqa: E501
-            case _:
-                result = f"Функционал '{self.get_survey_code_display()}' в разработке"  # type: ignore # noqa: E501
-        return result
-
 
 class VesselExtraInfo(PlaceMixin):
     """Модель доп. сведений по судну для договоров-заявок и отчётов."""
