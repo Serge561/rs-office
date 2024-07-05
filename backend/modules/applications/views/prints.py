@@ -2,8 +2,9 @@
 """Представления для модели applications."""
 
 import io
-from decimal import Decimal
 import datetime
+import string
+from decimal import Decimal
 import pymorphy3
 from transliterate import translit, detect_language
 from petrovich.main import Petrovich
@@ -15,7 +16,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils import dateformat
 from docxtpl import DocxTemplate
-from ..models import Application, Company, Form, BankAccount
+from ..models import Application, BankAccount, Company, Employee, Form
 
 User = get_user_model()
 
@@ -172,10 +173,28 @@ def get_genitive_case_lastname(lastname):
 
 def get_genitive_case(phrase):
     """Функция перевода слов в родительный падеж."""
-    # parse a phrase with several words without punctuation, conj and prepos
+    # parse a phrase with punctuation, conj and prepos
+    common_list = []
     morph = pymorphy3.MorphAnalyzer()
-    result = " ".join(morph.parse(word)[0].inflect({"gent"}).word for word in phrase.split())  # type: ignore # noqa: E501
-    return result
+    words = phrase.split()
+    not_caseable_char_list = [
+        word
+        for word in words
+        if len(word) <= 5
+        or word[-1] in string.punctuation
+        or detect_language(word) != "ru"
+        or word.isdigit()
+    ]
+    for word in words:
+        if word not in not_caseable_char_list:
+            common_list.append(morph.parse(word)[0].inflect({"gent"}).word)  # type: ignore # noqa: E501
+        else:
+            if word != "Устав":
+                common_list.append(word)
+            else:
+                common_list.append("Устава")
+    phrase_cased = " ".join(common_list)
+    return phrase_cased
 
 
 def get_signer_cased(
@@ -207,25 +226,49 @@ def get_signer_cased(
     return f"{get_genitive_case(str(position))} {get_genitive_case_lastname(lastname)} {firstname[0]}. {middlename[0]}. / {position_en} {firstname_en[0]}. {lastname_en}"  # type: ignore # noqa: E501
 
 
-def get_genitive_case_proxy(proxy, number=None, date=None, rs_branch=None):
+def get_proxy_en(proxy_value):
+    """Получить перевод документ-основание
+    на английский язык для двуязычных форм."""
+    match proxy_value:
+        case Employee.ProxyType.ORDER:
+            result = "Order"
+        case Employee.ProxyType.CHARTER:
+            result = "Charter"
+        case Employee.ProxyType.PROXY:
+            result = "Power of attorney"
+        case Employee.ProxyType.REGISTERCERT:
+            result = "Certificate of registry"
+        case Employee.ProxyType.MMCRF:
+            result = "Merchant shipping code (MSC RF)"
+        case _:
+            return ""
+    return result
+
+
+def get_genitive_case_proxy(
+    proxy, proxy_label, number=None, date=None, rs_branch=None
+):  # noqa: E501
     """Функция перевода названий документов,
     на основании которых действует заявитель,
     в родительный падеж."""
+    proxy_label_cased = get_genitive_case(proxy_label)
+    proxy_label_cased_capitalized = (
+        proxy_label_cased[0].upper() + proxy_label_cased[1:]
+    )  # noqa: E501
     match proxy:
-        case "Устав":
-            power_of_attoney_gen = "Устава / Charter"
-        case "Кодекс торгового мореплавания (КТМ РФ)":
-            power_of_attoney_gen = "Кодекса торгового мореплавания (КТМ РФ) / Merchant shipping code (MSC RF)"  # noqa: E501
-        case "Доверенность":
-            power_of_attoney_gen = f"Доверенности № {number} от {is_none(date)} / Power of attorney No. {number} dd {is_none(date)}"  # type: ignore # noqa: E501
-        case "Приказ":
-            power_of_attoney_gen = "Приказа / Order"
-        case "Свидетельство о регистрации":
+        case (
+            Employee.ProxyType.CHARTER
+            | Employee.ProxyType.MMCRF
+            | Employee.ProxyType.ORDER
+            | Employee.ProxyType.REGISTERCERT
+        ):
             power_of_attoney_gen = (
-                "Свидетельства о регистрации / Certificate of registry"  # noqa: E501
+                f"{proxy_label_cased_capitalized} / {get_proxy_en(proxy)}"  # noqa: E501
             )
+        case Employee.ProxyType.PROXY:
+            power_of_attoney_gen = f"{proxy_label_cased_capitalized} № {number} от {is_none(date)} / {get_proxy_en(proxy)} No. {number} dd {is_none(date)}"  # type: ignore # noqa: E501
         case _:
-            power_of_attoney_gen = proxy
+            power_of_attoney_gen = proxy_label
     if rs_branch not in RS_RU_BRANCHES:
         return power_of_attoney_gen
     return power_of_attoney_gen.split("/", maxsplit=1)[0]
@@ -491,20 +534,19 @@ def replace_dollar_by_rnb(curr_in_words_input):
         if item == "доллара":
             new_list.append("юаня")
             continue
-        elif item == "доллар":
+        if item == "доллар":
             new_list.append("юань")
             continue
-        elif item in ["центов", "цента", "цент"]:
+        if item in ["центов", "цента", "цент"]:
             new_list.append("цзяо")
             continue
         if item in ["dollars", "dollar"]:
             new_list.append("yuan")
             continue
-        elif item in ["cents", "cent"]:
+        if item in ["cents", "cent"]:
             new_list.append("jiao")
             continue
-        else:
-            new_list.append(item)
+        new_list.append(item)
     result = (" ").join(new_list)
     return result
 
@@ -760,7 +802,7 @@ def print_docs(request, **kwargs):
         "date": application.date.strftime("%d.%m.%Y"),
         "company": company,
         "applicant": get_signer_cased(application.applicant_signer.position, application.applicant_signer.second_name, application.applicant_signer.first_name, application.applicant_signer.patronymic_name, branch_number, application.applicant_signer.position_en),  # type: ignore # noqa: E501
-        "applicant_proxy": get_genitive_case_proxy(application.applicant_signer.get_proxy_type_display(), application.applicant_signer.proxy_number, application.applicant_signer.proxy_date, branch_number),  # type: ignore # noqa: E501
+        "applicant_proxy": get_genitive_case_proxy(application.applicant_signer.proxy_type, application.applicant_signer.get_proxy_type_display(), application.applicant_signer.proxy_number, application.applicant_signer.proxy_date, branch_number),  # type: ignore # noqa: E501
         "authorized_person": get_authorized_person(application.authorized_person, branch_number),  # type: ignore # noqa: E501
         "previous_survey_place": get_port(application.vesselextrainfo.city, branch_number),  # type: ignore # noqa: E501
         "previous_survey_date": is_none(application.vesselextrainfo.previous_survey_date),  # type: ignore # noqa: E501
