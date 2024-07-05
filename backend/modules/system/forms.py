@@ -151,6 +151,28 @@ class UserRegisterForm(UserCreationForm):
             )
 
 
+# class UserLoginForm(AuthenticationForm):
+#     """Форма авторизации на сайте."""
+
+#     def __init__(self, *args, **kwargs):
+#         """Обновление стилей формы авторизации."""
+#         super().__init__(*args, **kwargs)
+#         self.fields["username"].widget.attrs[
+#             "placeholder"
+#         ] = "Логин пользователя"  # noqa: E501
+#         self.fields["password"].widget.attrs[
+#             "placeholder"
+#         ] = "Пароль пользователя"  # noqa: E501
+#         self.fields["username"].label = "Логин"
+#         for field in self.fields:
+#             self.fields[field].widget.attrs.update(
+#                 {
+#                     "class": "border rounded-lg px-3 py-2 mt-1 mb-2 text-sm w-full",  # noqa: E501
+#                     "autocomplete": "off",
+#                 }
+#             )
+
+
 class UserLoginForm(AuthenticationForm):
     """Форма авторизации на сайте."""
 
@@ -158,16 +180,9 @@ class UserLoginForm(AuthenticationForm):
         """Обновление стилей формы авторизации."""
         super().__init__(*args, **kwargs)
         for field in self.fields:
-            self.fields["username"].widget.attrs[
-                "placeholder"
-            ] = "Логин пользователя"  # noqa: E501
-            self.fields["password"].widget.attrs[
-                "placeholder"
-            ] = "Пароль пользователя"  # noqa: E501
-            self.fields["username"].label = "Логин"
             self.fields[field].widget.attrs.update(
                 {
-                    "class": "border rounded-lg px-3 py-2 mt-1 mb-2 text-sm w-full",  # noqa: E501
+                    "class": "block w-full px-4 py-2 mt-1 mb-3 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-md dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40",  # noqa: E501
                     "autocomplete": "off",
                 }
             )
