@@ -121,7 +121,14 @@ class UserLoginView(SuccessMessageMixin, LoginView):
     form_class = UserLoginForm
     template_name = "system/registration/user_login.html"
     next_page = "home"
-    success_message = "Добро пожаловать на сайт, %(username)s!"
+    # success_message = "Добро пожаловать на сайт, %(username)s!"
+    success_message = "Добро пожаловать на сайт, %(calculated_field)s."
+
+    def get_success_message(self, cleaned_data):
+        return self.success_message % dict(
+            cleaned_data,
+            calculated_field=f"{self.request.user.first_name} {self.request.user.patronymic_name}",  # type: ignore # noqa: E501
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

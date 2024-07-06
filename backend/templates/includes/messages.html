@@ -1,29 +1,45 @@
+<script>
+  toastr.options = {
+    closeButton: true,
+    debug: false,
+    newestOnTop: true,
+    progressBar: false,
+    positionClass: 'toast-bottom-right',
+    preventDuplicates: true,
+    onclick: null,
+    showDuration: '300',
+    hideDuration: '1000',
+    timeOut: '5000',
+    extendedTimeOut: '1000',
+    showEasing: 'swing',
+    hideEasing: 'linear',
+    showMethod: 'fadeIn',
+    hideMethod: 'fadeOut',
+  }
+</script>
+
 {% if messages %}
 <!-- prettier-ignore -->
 {% for message in messages %}
-<div class="{% if message.tags %}{{ message.tags }}{% endif %}" id="msg">
-  <div class="mr-12">{{message|safe|escape}}</div>
-  <div
-    class="absolute top-2.5 right-3 w-max rounded-lg transition-all hover:bg-white hover:bg-opacity-20"
-  >
-    <button type="button" class="w-max rounded-lg p-1" id="btn">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="h-6 w-6"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        stroke-width="2"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M6 18L18 6M6 6l12 12"
-        ></path>
-      </svg>
-    </button>
-  </div>
-</div>
+<!-- prettier-ignore -->
+{% if message.tags == "success" %}
+<script>
+  toastr.{{ message.tags }}('{{ message|safe|escape }}')
+</script>
+{% elif message.tags == 'info' %}
+<script>
+  toastr.{{ message.tags }}('{{ message|safe|escape }}')
+</script>
+{% elif message.tags == 'warning' %}
+<script>
+  toastr.{{ message.tags }}('{{ message|safe|escape }}')
+</script>
+{% elif message.tags == 'error' %}
+<script>
+  toastr.{{ message.tags }}('{{ message|safe|escape }}')
+</script>
+{% endif %}
+<!-- prettier-ignore -->
 {% endfor %}
 <!-- prettier-ignore -->
 {% endif %}

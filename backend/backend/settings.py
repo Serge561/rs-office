@@ -8,19 +8,11 @@ import os
 from pathlib import Path
 from celery.schedules import crontab
 from decouple import Config, RepositoryEnv, Csv
-from django.contrib.messages import constants as messages
+
 import pycountry
 
-config = Config(RepositoryEnv("docker/env/.env.dev"))
-# config = Config(RepositoryEnv("docker/env/.env.prod"))
-
-MESSAGE_TAGS = {
-    messages.DEBUG: "h-14 font-regular relative block w-full rounded-b-lg bg-blue-200 p-4 text-base leading-5 text-pink-600 opacity-100",  # noqa: E501
-    messages.INFO: "h-14 font-regular relative block w-full rounded-b-lg bg-blue-200 p-4 text-base leading-5 text-blue-800 opacity-100",  # noqa: E501
-    messages.SUCCESS: "h-14 font-regular relative block w-full rounded-b-lg bg-green-200 p-4 text-base leading-5 text-green-800 opacity-100",  # noqa: E501
-    messages.WARNING: "h-14 font-regular relative block w-full rounded-b-lg bg-red-100 p-4 text-base leading-5 text-red-500 opacity-100",  # noqa: E501
-    messages.ERROR: "h-14 font-regular relative block w-full rounded-b-lg bg-red-200 p-4 text-base leading-5 text-red-800 opacity-100",  # noqa: E501
-}
+# config = Config(RepositoryEnv("docker/env/.env.dev"))
+config = Config(RepositoryEnv("docker/env/.env.prod"))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
