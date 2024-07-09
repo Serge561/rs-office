@@ -18,6 +18,7 @@ from django.contrib.postgres.search import (
     SearchRank,
 )  # noqa: E501
 from django.urls import reverse_lazy
+from django.db.models import Q
 
 # from localflavor.ru.ru_regions import RU_REGIONS_CHOICES
 from .models import (
@@ -188,7 +189,9 @@ class CityAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         qs = City.objects.all()
         if self.q:
-            qs = qs.filter(name__istartswith=self.q)
+            qs = qs.filter(  # type: ignore
+                Q(name__istartswith=self.q) | Q(name_en__icontains=self.q)
+            )  # noqa: E501
         return qs
 
 

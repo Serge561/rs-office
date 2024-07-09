@@ -173,7 +173,9 @@ class City(CreatorMixin, UpdaterMixin):
     COUNTRIES = [(country.alpha_2, _(country.name)) for country in pycountry.countries]  # type: ignore # noqa: E501
     COUNTRIES_EN = [(country.alpha_2, country.name) for country in pycountry.countries]  # type: ignore # noqa: E501
 
-    name = models.CharField("Название", max_length=40, db_index=True)
+    name = models.CharField(
+        "Название", unique=True, max_length=40, db_index=True
+    )  # noqa: E501
     name_en = models.CharField(
         "Английское название", max_length=40, blank=True
     )  # noqa: E501

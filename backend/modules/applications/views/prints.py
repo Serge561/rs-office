@@ -20,7 +20,7 @@ from ..models import Application, BankAccount, Company, Employee, Form
 
 User = get_user_model()
 
-RS_RU_BRANCHES = [
+RS_RU_BRANCHES = (
     "110",
     "112",
     "120",
@@ -37,7 +37,7 @@ RS_RU_BRANCHES = [
     "174",
     "184",
     "190",
-]  # noqa: E501
+)  # noqa: E501
 
 AGREEMENT_APPLICATION = "agreement"
 ACCEPTANCE = "acceptance"
@@ -83,35 +83,35 @@ def get_docx_template(
                 | Application.SurveyCode.C00011
             ):  # noqa: E501
                 if report_type == AGREEMENT_APPLICATION:
-                    template = TEMPLATES.get("T81011E")
+                    template = TEMPLATES["T81011E"]
                 elif report_type == ACCEPTANCE:
-                    template = TEMPLATES.get("T43035")
+                    template = TEMPLATES["T43035"]
                 else:
-                    template = TEMPLATES.get("LISTREGI")
+                    template = TEMPLATES["LISTREGI"]
             case Application.SurveyCode.C00006:
                 if report_type == AGREEMENT_APPLICATION:
-                    template = TEMPLATES.get("T810111E")
+                    template = TEMPLATES["T810111E"]
                 else:
-                    template = TEMPLATES.get("T43035")
+                    template = TEMPLATES["T43035"]
             case Application.SurveyCode.C00015:
                 if report_type == AGREEMENT_APPLICATION:
-                    template = TEMPLATES.get("T81012PE")
+                    template = TEMPLATES["T81012PE"]
                 else:
-                    template = TEMPLATES.get("T43035")
+                    template = TEMPLATES["T43035"]
             case Application.SurveyCode.C00101:
                 if report_type == AGREEMENT_APPLICATION:
-                    template = TEMPLATES.get("T81012WE")
+                    template = TEMPLATES["T81012WE"]
                 else:
-                    template = TEMPLATES.get("T43035")
+                    template = TEMPLATES["T43035"]
             case Application.SurveyCode.C00104:
                 if report_type == AGREEMENT_APPLICATION:
-                    template = TEMPLATES.get("T81012SE")
+                    template = TEMPLATES["T81012SE"]
                 else:
-                    template = TEMPLATES.get("T43035")
+                    template = TEMPLATES["T43035"]
             case _:
                 # создать логику вывода сообщения на
                 # экран или все шаблоны сделать
-                template = TEMPLATES.get("PAGE404R")
+                template = TEMPLATES["PAGE404R"]
         return template
     match survey_code:
         case (
@@ -120,45 +120,45 @@ def get_docx_template(
             | Application.SurveyCode.C00011
         ):  # noqa: E501
             if report_type == AGREEMENT_APPLICATION:
-                template = TEMPLATES.get("T81011")
+                template = TEMPLATES["T81011"]
             elif report_type == ACCEPTANCE:
-                template = TEMPLATES.get("T43034")
+                template = TEMPLATES["T43034"]
             else:
-                template = TEMPLATES.get("LISTREGI")
+                template = TEMPLATES["LISTREGI"]
         case Application.SurveyCode.C00006:
             if report_type == AGREEMENT_APPLICATION:
-                template = TEMPLATES.get("T810111")
+                template = TEMPLATES["T810111"]
             else:
-                template = TEMPLATES.get("T43031")
+                template = TEMPLATES["T43031"]
         case Application.SurveyCode.C00015:  # noqa: E501
             if report_type == AGREEMENT_APPLICATION:
-                template = TEMPLATES.get("T81012P")
+                template = TEMPLATES["T81012P"]
             else:
-                template = TEMPLATES.get("T43033")
+                template = TEMPLATES["T43033"]
         case Application.SurveyCode.C00101:  # noqa: E501
             if report_type == AGREEMENT_APPLICATION:
-                template = TEMPLATES.get("T81012W")
+                template = TEMPLATES["T81012W"]
             else:
-                template = TEMPLATES.get("T43031")
+                template = TEMPLATES["T43031"]
         case Application.SurveyCode.C00103:  # noqa: E501
             if report_type == AGREEMENT_APPLICATION:
-                template = TEMPLATES.get("T81012S")
+                template = TEMPLATES["T81012S"]
             else:
-                template = TEMPLATES.get("T43031")
+                template = TEMPLATES["T43031"]
         case Application.SurveyCode.C00121:
             if report_type == AGREEMENT_APPLICATION:
                 if survey_scope == Application.SurveyScope.INITIL:
-                    template = TEMPLATES.get("T810110")
+                    template = TEMPLATES["T810110"]
                 else:
-                    template = TEMPLATES.get("T8101101")
+                    template = TEMPLATES["T8101101"]
             elif report_type == ACCEPTANCE:
-                template = TEMPLATES.get("T43034")
+                template = TEMPLATES["T43034"]
             else:
-                template = TEMPLATES.get("LISTREGI")
+                template = TEMPLATES["LISTREGI"]
         case _:
             # создать логику вывода сообщения на
             # экран или все шаблоны сделать
-            template = TEMPLATES.get("PAGE404R")
+            template = TEMPLATES["PAGE404R"]
     return template
 
 
@@ -227,7 +227,7 @@ def get_signer_cased(
 
 
 def get_proxy_en(proxy_value):
-    """Получить перевод документ-основание
+    """Получить перевод документа-основания
     на английский язык для двуязычных форм."""
     match proxy_value:
         case Employee.ProxyType.ORDER:
@@ -313,22 +313,23 @@ def get_surveyor_or_none(surveyors_qs, specialty=None):
     """Получить инспектора из списка назначенных инспекторов по заявке."""
     if not surveyors_qs.exists():
         return ""
-    surveyors = surveyors_qs.all()
+    # surveyors = surveyors_qs.all()
+    surveyors = surveyors_qs.order_by("last_name").all()
     match specialty:
         case "hull":
-            surveyor = f"{surveyors_qs.first().last_name} {surveyors_qs.first().first_name[0]}. {surveyors_qs.first().patronymic_name[0]}."  # noqa: E501
+            surveyor = f"{surveyors.first().last_name} {surveyors.first().first_name[0]}. {surveyors.first().patronymic_name[0]}."  # noqa: E501
         case "mech":
             if surveyors_qs.count() > 1:
                 surveyor = f"{surveyors[1].last_name} {surveyors[1].first_name[0]}. {surveyors[1].patronymic_name[0]}."  # noqa: E501
             else:
-                surveyor = f"{surveyors_qs.first().last_name} {surveyors_qs.first().first_name[0]}. {surveyors_qs.first().patronymic_name[0]}."  # noqa: E501
+                surveyor = f"{surveyors.first().last_name} {surveyors.first().first_name[0]}. {surveyors.first().patronymic_name[0]}."  # noqa: E501
         case _:
             if surveyors_qs.count() > 2:
                 surveyor = f"{surveyors[2].last_name} {surveyors[2].first_name[0]}. {surveyors[2].patronymic_name[0]}."  # noqa: E501
             elif surveyors_qs.count() == 2:
                 surveyor = f"{surveyors[1].last_name} {surveyors[1].first_name[0]}. {surveyors[1].patronymic_name[0]}."  # noqa: E501
             else:
-                surveyor = f"{surveyors_qs.last().last_name} {surveyors_qs.last().first_name[0]}. {surveyors_qs.last().patronymic_name[0]}."  # noqa: E501
+                surveyor = f"{surveyors.last().last_name} {surveyors.last().first_name[0]}. {surveyors.last().patronymic_name[0]}."  # noqa: E501
     return surveyor
 
 
