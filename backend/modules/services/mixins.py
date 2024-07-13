@@ -21,7 +21,7 @@ class AdminRequiredMixin(AccessMixin):
             if not request.user.is_staff:
                 messages.info(
                     request,
-                    "Удаление карточки доступно только администратору.",  # noqa: E501
+                    "Удаление этого объекта доступно только администратору.",  # noqa: E501
                 )  # noqa: E501
                 return redirect("home")
         return super().dispatch(request, *args, **kwargs)  # type: ignore

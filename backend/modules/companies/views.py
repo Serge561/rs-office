@@ -552,7 +552,7 @@ class EmployeeDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["title"] = f"{self.object.second_name} {self.object.first_name[0]}. {self.object.patronymic_name[0]}."  # type: ignore # noqa: E501
+        context["title"] = self.object  # type: ignore
         return context
 
 

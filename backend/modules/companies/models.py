@@ -368,7 +368,6 @@ class Address(PlaceMixin, UpdaterMixin):
 
     def __str__(self):
         """Возвращение строки."""
-        # return f"{self.address_line}, {self.city} {self.postal_code}"  # noqa: E501
         city_ru = str(self.city).split("/", maxsplit=1)[0]
         if self.address_line_en == "":
             return f"{self.address_line}, {city_ru} {self.postal_code}"  # noqa: E501
@@ -606,6 +605,24 @@ class Employee(CreatorMixin, UpdaterMixin):
 
     def __str__(self):
         """Возвращение строки."""
+        if not self.first_name and not self.second_name:
+            return ""
+        if not self.first_name and self.second_name:
+            return f"{self.second_name}"
+        if (
+            not self.second_name
+            and not self.patronymic_name
+            and self.first_name  # noqa: E501
+        ):  # noqa: E501
+            return f"{self.first_name}"
+        if (
+            not self.second_name and self.first_name and self.patronymic_name
+        ):  # noqa: E501:
+            return f"{self.first_name} {self.patronymic_name}"  # noqa: E501
+        if (
+            self.second_name and self.first_name and not self.patronymic_name
+        ):  # noqa: E501:
+            return f"{self.second_name} {self.first_name[:1]}."  # noqa: E501
         return f"{self.second_name} {self.first_name[:1]}. {self.patronymic_name[:1]}."  # noqa: E501
 
     def get_absolute_url(self):

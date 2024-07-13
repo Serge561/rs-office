@@ -1,5 +1,7 @@
 {% extends 'main.html' %}
 <!-- prettier-ignore -->
+{% load cut_en_part_in_apps %}
+<!-- prettier-ignore -->
 {% block content %}
 <!-- breadcrumbs -->
 {% block breadcrumbs %}
@@ -49,7 +51,7 @@
                     Место освидетельствования
                 </p>
                 <p class="px-4">
-                    {{ application.city.name }}
+                    {{ application.city|cut_en_part_filter  }}
                 </p>
             </div>
             <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-1 p-4 border-b">

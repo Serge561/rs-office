@@ -392,11 +392,13 @@ def get_authorized_person(person=None, rs_branch=None):
     return authorized_person
 
 
-def is_legal_address_same(is_same_check, postal_address, legal_address=None):
+def is_legal_address_same(
+    is_same_check, postal_address, rs_branch, legal_address=None
+):  # noqa: E501
     """Проверка на совпадение почтового и юридического адресов."""
     if is_same_check is True:
-        return postal_address
-    return legal_address
+        return get_port_or_address(postal_address, rs_branch)
+    return get_port_or_address(legal_address, rs_branch)
 
 
 def get_form_type_en(f_type):
@@ -438,7 +440,7 @@ def get_issued_docs(
 ):  # noqa: E501
     """Выданные документы в зависимости от кода услуги."""
     if not document_qs.exists():
-        return ""
+        return "--"
     match survey_code:
         case (
             Application.SurveyCode.C00001
@@ -644,13 +646,13 @@ def get_month_en(app_date):
     return month_in_en
 
 
-def get_port(port, rs_branch=None):
+def get_port_or_address(port_or_address, rs_branch=None):
     """Возвращает город на русском или русско-
     английском в зависимости от филиала."""
-    if port is not None:
+    if port_or_address is not None:
         if rs_branch not in RS_RU_BRANCHES:
-            return port
-        return str(port).split("/", maxsplit=1)[0]
+            return port_or_address
+        return str(port_or_address).split("/", maxsplit=1)[0]
     return "--"
 
 
@@ -799,26 +801,26 @@ def print_docs(request, **kwargs):
             application, branch_number, button_name
         ),  # noqa: E501
         "survey_object": get_survey_object(application.survey_object, application.get_survey_object_display(), branch_number),  # type: ignore # noqa: E501
-        "city": get_port(application.city, branch_number),
+        "city": get_port_or_address(application.city, branch_number),
         "date": application.date.strftime("%d.%m.%Y"),
         "company": company,
         "applicant": get_signer_cased(application.applicant_signer.position, application.applicant_signer.second_name, application.applicant_signer.first_name, application.applicant_signer.patronymic_name, branch_number, application.applicant_signer.position_en),  # type: ignore # noqa: E501
         "applicant_proxy": get_genitive_case_proxy(application.applicant_signer.proxy_type, application.applicant_signer.get_proxy_type_display(), application.applicant_signer.proxy_number, application.applicant_signer.proxy_date, branch_number),  # type: ignore # noqa: E501
         "authorized_person": get_authorized_person(application.authorized_person, branch_number),  # type: ignore # noqa: E501
-        "previous_survey_place": get_port(application.vesselextrainfo.city, branch_number),  # type: ignore # noqa: E501
+        "previous_survey_place": get_port_or_address(application.vesselextrainfo.city, branch_number),  # type: ignore # noqa: E501
         "previous_survey_date": is_none(application.vesselextrainfo.previous_survey_date),  # type: ignore # noqa: E501
         "last_psc_inspection": f"{is_none(application.vesselextrainfo.last_psc_inspection_date)} {is_none(application.vesselextrainfo.last_psc_inspection_result)}",  # type: ignore # noqa: E501
         "currency": company.bank_accounts.filter(current_bankaccount=True).first().account_currency,  # type: ignore # noqa: E501
         "postal_address_rs": rs_branch.addresses.first(),  # type: ignore # noqa: E501
-        "legal_address_rs": is_legal_address_same(rs_branch.addresses.first().is_same, rs_branch.addresses.first(), rs_branch.addresses.last()),  # type: ignore # noqa: E501
+        "legal_address_rs": is_legal_address_same(rs_branch.addresses.first().is_same, rs_branch.addresses.first(), branch_number, rs_branch.addresses.last()),  # type: ignore # noqa: E501
         "inn_rs": is_none(rs_branch.inn),  # type: ignore
         "kpp_rs": is_none(rs_branch.kpp),  # type: ignore
         "ogrn_rs": is_none(rs_branch.ogrn),  # type: ignore
         "phone_number_rs": is_none(rs_branch.phone_number),  # type: ignore
         "email_rs": is_none(rs_branch.email),  # type: ignore
         "payment_account_rs": rs_branch.bank_accounts.first(),  # type: ignore # noqa: E501
-        "postal_address": company.addresses.first(),  # type: ignore # noqa: E501
-        "legal_address": is_legal_address_same(company.addresses.first().is_same, company.addresses.first(), company.addresses.last()),  # type: ignore # noqa: E501
+        "postal_address": get_port_or_address(company.addresses.first(), branch_number),  # type: ignore # noqa: E501
+        "legal_address": is_legal_address_same(company.addresses.first().is_same, company.addresses.first(), branch_number, company.addresses.last()),  # type: ignore # noqa: E501
         "inn": is_none(company.inn),
         "kpp": is_none(company.kpp),
         "ogrn": is_none(company.ogrn),
@@ -863,7 +865,7 @@ def print_docs(request, **kwargs):
         "elrn_surveyor": get_surveyor_or_none(application.vesselextrainfo.assigned_surveyors, "elrn"),  # type: ignore # noqa: E501
         # for bilingual forms
         "month_en": get_month_en(application.date),
-        "city_ru": get_port(application.city, "121"),
+        "city_ru": get_port_or_address(application.city, "121"),
         "city_en": str(application.city).split("/", maxsplit=1)[1],
     }  # noqa: E501
 

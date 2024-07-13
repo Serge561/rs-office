@@ -16,7 +16,7 @@ def unique_slugify(instance, slug):
 
 
 def get_client_ip(request):
-    """Полусить ip пользователя."""
+    """Получить ip пользователя."""
     x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
     ip = (
         x_forwarded_for.split(",")[0]

@@ -292,11 +292,17 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
             case SURVEY_CODES.C00011:
                 if self.survey_scope not in [SURVEY_SCOPES.ADDITL, SURVEY_SCOPES.INTERI]:  # noqa: E501
                     if self.survey_type != SURVEY_TYPES.DII:  # noqa: E501
-                        result = f"{self.get_survey_scope_display()} {SURVEY} {self.get_survey_type_display()[0].lower()}{self.get_survey_type_display()[1:]} / {survey_scope_en} {SURVEY_EN} {survey_type_en[0].lower()}{survey_type_en[1:]}"  # type: ignore # noqa: E501
+                        try:
+                            result = f"{self.get_survey_scope_display()} {SURVEY} {self.get_survey_type_display()[0].lower()}{self.get_survey_type_display()[1:]} / {survey_scope_en} {SURVEY_EN} {survey_type_en[0].lower()}{survey_type_en[1:]}"  # type: ignore # noqa: E501
+                        except IndexError:
+                            result = f"{self.get_survey_scope_display()} {SURVEY} (выберите вид освидетельствования) / {survey_scope_en} {SURVEY_EN} (choose type of survey)"  # type: ignore # noqa: E501
                     else:
                         result = f"{self.get_survey_type_display()} / {survey_type_en}"  # type: ignore # noqa: E501
                 else:
-                    result = f"{self.get_survey_scope_display().split()[0]} {SURVEY} {self.get_survey_type_display()[0].lower()}{self.get_survey_type_display()[1:]} / {survey_scope_en.split()[0]} {SURVEY_EN} {survey_type_en[0].lower()}{survey_type_en[1:]}"  # type: ignore # noqa: E501
+                    try:
+                        result = f"{self.get_survey_scope_display().split()[0]} {SURVEY} {self.get_survey_type_display()[0].lower()}{self.get_survey_type_display()[1:]} / {survey_scope_en.split()[0]} {SURVEY_EN} {survey_type_en[0].lower()}{survey_type_en[1:]}"  # type: ignore # noqa: E501
+                    except IndexError:
+                        result = f"{self.get_survey_scope_display().split()[0]} {SURVEY} (выберите вид освидетельствования) / {survey_scope_en.split()[0]} {SURVEY_EN} (choose type of survey)"  # type: ignore # noqa: E501
             case SURVEY_CODES.C00015:
                 result = f"{SURVEY.capitalize()} / {SURVEY_EN.capitalize()} of"  # noqa: E501
             case SURVEY_CODES.C00101:
@@ -314,7 +320,10 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
                 if self.survey_type not in [SURVEY_TYPES.EXP, SURVEY_TYPES.CHA]:  # noqa: E501
                     result = f"{self.get_survey_scope_display()} {SURVEY} {self.occasional_cause} / {survey_scope_en} {SURVEY_EN} {self.occasional_cause}"  # type: ignore # noqa: E501
                 else:
-                    result = f"{self.get_survey_scope_display()} {SURVEY} в связи с {self.get_survey_type_display().split()[0].lower()}м {self.get_survey_type_display().split()[1]} {self.get_survey_type_display().split()[2]} {self.occasional_cause} / {survey_scope_en} {SURVEY_EN} in connection with {survey_type_en.split()[0].lower()} {survey_type_en.split()[1:]} {self.occasional_cause}"  # type: ignore # noqa: E501
+                    try:
+                        result = f"{self.get_survey_scope_display()} {SURVEY} в связи с {self.get_survey_type_display().split()[0].lower()}м {self.get_survey_type_display().split()[1]} {self.get_survey_type_display().split()[2]} {self.occasional_cause} / {survey_scope_en} {SURVEY_EN} in connection with {survey_type_en.split()[0].lower()} {survey_type_en.split()[1:]} {self.occasional_cause}"  # type: ignore # noqa: E501
+                    except IndexError:
+                        result = f"{self.get_survey_scope_display()} {SURVEY} в связи с (выберите вид освидетельствования) {self.occasional_cause} / {survey_scope_en} {SURVEY_EN} in connection with (choose type of survey) {self.occasional_cause}"  # type: ignore # noqa: E501
             case SURVEY_CODES.C00121:
                 if self.survey_scope != SURVEY_SCOPES.OCCASL:
                     result = f"{self.get_survey_scope_display()} {SURVEY} маломерного судна"  # type: ignore # noqa: E501
