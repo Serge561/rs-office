@@ -41,118 +41,140 @@
       <tbody class="text-blue-gray-900">
         <tr class="border-b border-blue-gray-200">
           <td class="py-3 px-4">Нефтеналивные</td>
-          <td class="py-3 px-4 text-center">{{ oiltanker }}</td>
-          <td class="py-3 px-4 text-center">{{ oiltanker_b }}</td>
+          <td class="py-3 px-4 text-center">{{ oiltanker|default:"" }}</td>
+          <td class="py-3 px-4 text-center">{{ oiltanker_b|default:"" }}</td>
         </tr>
         <tr class="border-b border-blue-gray-200">
           <td class="py-3 px-4">Нефтеналивные/Химовозы</td>
-          <td class="py-3 px-4 text-center">{{ oilchemicaltanker }}</td>
-          <td class="py-3 px-4 text-center">{{ oilchemicaltanker_b }}</td>
+          <td class="py-3 px-4 text-center">
+            {{ oilchemicaltanker|default:"" }}
+          </td>
+          <td class="py-3 px-4 text-center">
+            {{ oilchemicaltanker_b|default:"" }}
+          </td>
         </tr>
         <tr class="border-b border-blue-gray-200">
           <td class="py-3 px-4">Химовозы</td>
-          <td class="py-3 px-4 text-center">{{ chemicaltanker }}</td>
-          <td class="py-3 px-4 text-center">{{ chemicaltanker_b }}</td>
+          <td class="py-3 px-4 text-center">{{ chemicaltanker|default:"" }}</td>
+          <td class="py-3 px-4 text-center">
+            {{ chemicaltanker_b|default:"" }}
+          </td>
         </tr>
         <tr class="border-b border-blue-gray-200">
           <td class="py-3 px-4">Газовозы</td>
-          <td class="py-3 px-4 text-center">{{ gascarrier }}</td>
-          <td class="py-3 px-4 text-center">{{ gascarrier_b }}</td>
+          <td class="py-3 px-4 text-center">{{ gascarrier|default:"" }}</td>
+          <td class="py-3 px-4 text-center">{{ gascarrier_b|default:"" }}</td>
         </tr>
         <tr class="border-b border-blue-gray-200">
           <td class="py-3 px-4">Наливные прочие</td>
-          <td class="py-3 px-4 text-center">{{ othertanker }}</td>
-          <td class="py-3 px-4 text-center">{{ othertanker_b }}</td>
+          <td class="py-3 px-4 text-center">{{ othertanker|default:"" }}</td>
+          <td class="py-3 px-4 text-center">{{ othertanker_b|default:"" }}</td>
         </tr>
         <tr class="border-b border-blue-gray-200">
           <td class="py-3 px-4">Нефтенавалочные и нефтерудовозы</td>
-          <td class="py-3 px-4 text-center">{{ oilorecarrier }}</td>
-          <td class="py-3 px-4 text-center">{{ oilorecarrier_b }}</td>
+          <td class="py-3 px-4 text-center">{{ oilorecarrier|default:"" }}</td>
+          <td class="py-3 px-4 text-center">
+            {{ oilorecarrier_b|default:"" }}
+          </td>
         </tr>
         <tr class="border-b border-blue-gray-200">
           <td class="py-3 px-4">Рудовозы и навалочные</td>
-          <td class="py-3 px-4 text-center">{{ oilcarrierbulker }}</td>
-          <td class="py-3 px-4 text-center">{{ oilcarrierbulker_b }}</td>
+          <td class="py-3 px-4 text-center">
+            {{ oilcarrierbulker|default:"" }}
+          </td>
+          <td class="py-3 px-4 text-center">
+            {{ oilcarrierbulker_b|default:"" }}
+          </td>
         </tr>
         <tr class="border-b border-blue-gray-200">
           <td class="py-3 px-4">Суда для генгруза</td>
-          <td class="py-3 px-4 text-center">{{ generalcargo }}</td>
-          <td class="py-3 px-4 text-center">{{ generalcargo_b }}</td>
+          <td class="py-3 px-4 text-center">{{ generalcargo|default:"" }}</td>
+          <td class="py-3 px-4 text-center">{{ generalcargo_b|default:"" }}</td>
         </tr>
         <tr class="border-b border-blue-gray-200">
           <td class="py-3 px-4">Грузопассажирские</td>
-          <td class="py-3 px-4 text-center">{{ cargopassanger }}</td>
-          <td class="py-3 px-4 text-center">{{ cargopassanger_b }}</td>
+          <td class="py-3 px-4 text-center">{{ cargopassanger|default:"" }}</td>
+          <td class="py-3 px-4 text-center">
+            {{ cargopassanger_b|default:"" }}
+          </td>
         </tr>
         <tr class="border-b border-blue-gray-200">
           <td class="py-3 px-4">Контейнерные, баржевозы, доковые</td>
-          <td class="py-3 px-4 text-center">{{ containership }}</td>
-          <td class="py-3 px-4 text-center">{{ containership_b }}</td>
+          <td class="py-3 px-4 text-center">{{ containership|default:"" }}</td>
+          <td class="py-3 px-4 text-center">
+            {{ containership_b|default:"" }}
+          </td>
         </tr>
         <tr class="border-b border-blue-gray-200">
           <td class="py-3 px-4">Суда для перевозки транспортных средств</td>
-          <td class="py-3 px-4 text-center">{{ carcarrier }}</td>
-          <td class="py-3 px-4 text-center">{{ carcarrier_b }}</td>
+          <td class="py-3 px-4 text-center">{{ carcarrier|default:"" }}</td>
+          <td class="py-3 px-4 text-center">{{ carcarrier_b|default:"" }}</td>
         </tr>
         <tr class="border-b border-blue-gray-200">
           <td class="py-3 px-4">Рыбопромысловые базы, рыботранспортные суда</td>
-          <td class="py-3 px-4 text-center">{{ fishtransport }}</td>
-          <td class="py-3 px-4 text-center">{{ fishtransport_b }}</td>
+          <td class="py-3 px-4 text-center">{{ fishtransport|default:"" }}</td>
+          <td class="py-3 px-4 text-center">
+            {{ fishtransport_b|default:"" }}
+          </td>
         </tr>
         <tr class="border-b border-blue-gray-200">
           <td class="py-3 px-4">Рыболовные</td>
-          <td class="py-3 px-4 text-center">{{ fishingvessel }}</td>
-          <td class="py-3 px-4 text-center">{{ fishingvessel_b }}</td>
+          <td class="py-3 px-4 text-center">{{ fishingvessel|default:"" }}</td>
+          <td class="py-3 px-4 text-center">
+            {{ fishingvessel_b|default:"" }}
+          </td>
         </tr>
         <tr class="border-b border-blue-gray-200">
           <td class="py-3 px-4">Пассажирские и пассажирские бескоечные</td>
-          <td class="py-3 px-4 text-center">{{ passangership }}</td>
-          <td class="py-3 px-4 text-center">{{ passangership_b }}</td>
+          <td class="py-3 px-4 text-center">{{ passangership|default:"" }}</td>
+          <td class="py-3 px-4 text-center">
+            {{ passangership_b|default:"" }}
+          </td>
         </tr>
         <tr class="border-b border-blue-gray-200">
           <td class="py-3 px-4">Суда обеспечения, обслуживающие суда</td>
-          <td class="py-3 px-4 text-center">{{ supplier }}</td>
-          <td class="py-3 px-4 text-center">{{ supplier_b }}</td>
+          <td class="py-3 px-4 text-center">{{ supplier|default:"" }}</td>
+          <td class="py-3 px-4 text-center">{{ supplier_b|default:"" }}</td>
         </tr>
         <tr class="border-b border-blue-gray-200">
           <td class="py-3 px-4">Буксиры</td>
-          <td class="py-3 px-4 text-center">{{ tug }}</td>
-          <td class="py-3 px-4 text-center">{{ tug_b }}</td>
+          <td class="py-3 px-4 text-center">{{ tug|default:"" }}</td>
+          <td class="py-3 px-4 text-center">{{ tug_b|default:"" }}</td>
         </tr>
         <tr class="border-b border-blue-gray-200">
           <td class="py-3 px-4">Земснаряды</td>
-          <td class="py-3 px-4 text-center">{{ dradger }}</td>
-          <td class="py-3 px-4 text-center">{{ dradger_b }}</td>
+          <td class="py-3 px-4 text-center">{{ dradger|default:"" }}</td>
+          <td class="py-3 px-4 text-center">{{ dradger_b|default:"" }}</td>
         </tr>
         <tr class="border-b border-blue-gray-200">
           <td class="py-3 px-4">Рефрижераторные</td>
-          <td class="py-3 px-4 text-center">{{ reefer }}</td>
-          <td class="py-3 px-4 text-center">{{ reefer_b }}</td>
+          <td class="py-3 px-4 text-center">{{ reefer|default:"" }}</td>
+          <td class="py-3 px-4 text-center">{{ reefer_b|default:"" }}</td>
         </tr>
         <tr class="border-b border-blue-gray-200">
           <td class="py-3 px-4">Ледоколы</td>
-          <td class="py-3 px-4 text-center">{{ icebreaker }}</td>
-          <td class="py-3 px-4 text-center">{{ icebreaker_b }}</td>
+          <td class="py-3 px-4 text-center">{{ icebreaker|default:"" }}</td>
+          <td class="py-3 px-4 text-center">{{ icebreaker_b|default:"" }}</td>
         </tr>
         <tr class="border-b border-blue-gray-200">
           <td class="py-3 px-4">Научно-исследовательские</td>
-          <td class="py-3 px-4 text-center">{{ researchship }}</td>
-          <td class="py-3 px-4 text-center">{{ researchship_b }}</td>
+          <td class="py-3 px-4 text-center">{{ researchship|default:"" }}</td>
+          <td class="py-3 px-4 text-center">{{ researchship_b|default:"" }}</td>
         </tr>
         <tr class="border-b border-blue-gray-200">
           <td class="py-3 px-4">Прочие суда</td>
-          <td class="py-3 px-4 text-center">{{ othership }}</td>
-          <td class="py-3 px-4 text-center">{{ othership_b }}</td>
+          <td class="py-3 px-4 text-center">{{ othership|default:"" }}</td>
+          <td class="py-3 px-4 text-center">{{ othership_b|default:"" }}</td>
         </tr>
         <tr class="border-b border-blue-gray-200">
           <td class="py-3 px-4">Маломерные/прогулочные</td>
-          <td class="py-3 px-4 text-center">{{ smallcraft }}</td>
-          <td class="py-3 px-4 text-center">{{ smallcraft_b }}</td>
+          <td class="py-3 px-4 text-center">{{ smallcraft|default:"" }}</td>
+          <td class="py-3 px-4 text-center">{{ smallcraft_b|default:"" }}</td>
         </tr>
         <tr class="border-b border-blue-gray-200">
           <td class="py-3 px-4">Трубопроводы/ПДК</td>
-          <td class="py-3 px-4 text-center">{{ pipeline }}</td>
-          <td class="py-3 px-4 text-center">{{ pipeline }}</td>
+          <td class="py-3 px-4 text-center">{{ pipeline|default:"" }}</td>
+          <td class="py-3 px-4 text-center">{{ pipeline|default:"" }}</td>
         </tr>
         <!-- Add more rows as needed -->
         <tr class="border-b border-blue-gray-200">
@@ -183,28 +205,28 @@
       <tbody class="text-blue-gray-900">
         <tr class="border-b border-blue-gray-200">
           <td class="py-3 px-4">Первоначальное</td>
-          <td class="py-3 px-4 text-center">{{ initial }}</td>
-          <td class="py-3 px-4 text-center">{{ initial }}</td>
+          <td class="py-3 px-4 text-center">{{ initial|default:"" }}</td>
+          <td class="py-3 px-4 text-center">{{ initial|default:"" }}</td>
         </tr>
         <tr class="border-b border-blue-gray-200">
           <td class="py-3 px-4">Очередное</td>
-          <td class="py-3 px-4 text-center">{{ special }}</td>
-          <td class="py-3 px-4 text-center">{{ special }}</td>
+          <td class="py-3 px-4 text-center">{{ special|default:"" }}</td>
+          <td class="py-3 px-4 text-center">{{ special|default:"" }}</td>
         </tr>
         <tr class="border-b border-blue-gray-200">
           <td class="py-3 px-4">Промежуточное</td>
-          <td class="py-3 px-4 text-center">{{ intermediate }}</td>
-          <td class="py-3 px-4 text-center">{{ intermediate_b }}</td>
+          <td class="py-3 px-4 text-center">{{ intermediate|default:"" }}</td>
+          <td class="py-3 px-4 text-center">{{ intermediate_b|default:"" }}</td>
         </tr>
         <tr class="border-b border-blue-gray-200">
           <td class="py-3 px-4">Ежегодное</td>
-          <td class="py-3 px-4 text-center">{{ annual }}</td>
-          <td class="py-3 px-4 text-center">{{ 0 }}</td>
+          <td class="py-3 px-4 text-center">{{ annual|default:"" }}</td>
+          <td class="py-3 px-4 text-center"></td>
         </tr>
         <tr class="border-b border-blue-gray-200">
           <td class="py-3 px-4">Внеочередное</td>
-          <td class="py-3 px-4 text-center">{{ occasional }}</td>
-          <td class="py-3 px-4 text-center">{{ 0 }}</td>
+          <td class="py-3 px-4 text-center">{{ occasional|default:"" }}</td>
+          <td class="py-3 px-4 text-center"></td>
         </tr>
         <!-- Add more rows as needed -->
         <tr class="border-b border-blue-gray-200">

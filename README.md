@@ -12,8 +12,8 @@ Django, Tailwind, Celery, Redis, Docker.
 
 ### Сайт-tutorial
 
-proghunter.ru
+[proghunter.ru](https://www.proghunter.ru)
 
 ### Шаблоны front-end
 
-tailwindcomponents.com
+[tailwindcomponents.com](https://www.tailwindcomponents.com)

@@ -499,12 +499,18 @@ class AnnualReportA1View(LoginRequiredMixin, ListView):
         ).count()
         context["occasional"] = occasional_sur_count
 
+        # Количество освидетельствований судов
+        # без учёта заявок только на освидетельствование
+        # подводной части.
         total_sur_without_only_bottom = qs.exclude(
             survey_scope=Application.SurveyScope.BOTTOM
         ).count()
         context["total_without_only_bottom"] = total_sur_without_only_bottom
-
-        total_sur_including_bottom = (
+        # Количество освидетельствований подводной части
+        # при первоначальных, очередных и промежуточных
+        # освидетельствованиях (без учёта заявок только
+        # на освидетельствование подводной части).
+        total_sur_wo_only_b_including_bottom = (
             qs.filter(survey_scope__in=HIGHLY_LIKELY_BOTTOM_SURVEY)
             .exclude(survey_scope=Application.SurveyScope.BOTTOM)
             .exclude(
@@ -513,6 +519,8 @@ class AnnualReportA1View(LoginRequiredMixin, ListView):
             )  # noqa: E501
             .count()
         )
-        context["total_including_bottom"] = total_sur_including_bottom
+        context["total_including_bottom"] = (
+            total_sur_wo_only_b_including_bottom  # noqa: E501
+        )
 
         return context
