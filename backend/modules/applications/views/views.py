@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long, unused-argument, too-many-ancestors
+# pylint: disable=line-too-long, unused-argument, too-many-ancestors, import-error # noqa: E501
 """Представления для модели applications."""
 
 from dal import autocomplete
@@ -20,9 +20,7 @@ from django.views.generic import (
     UpdateView,
     DeleteView,
 )
-
-# from docxtpl import DocxTemplate
-
+from modules.services.mixins import AdminRequiredMixin
 from ..forms import (
     AccountUpdateForm,
     ApplicationCreateForm,
@@ -181,6 +179,26 @@ class ApplicationUpdateView(
         )  # noqa: E501
         form.save()  # type: ignore
         return super().form_valid(form)
+
+
+class ApplicationDeleteView(AdminRequiredMixin, DeleteView):
+    """Представление удаления заявки компании."""
+
+    model = Application
+    login_url = "login"
+    context_object_name = "application"
+    template_name = "applications/application_delete.html"
+
+    def get_success_url(self):
+        company = get_object_or_404(Company, slug=self.kwargs["slug"])
+        return reverse_lazy(
+            "company_application_list", kwargs={"slug": company.slug}
+        )  # noqa: E501
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = f"Удаление заявки компании № {self.object.number}"  # type: ignore # noqa: E501
+        return context
 
 
 class VesselCreateView(LoginRequiredMixin, CreateView):

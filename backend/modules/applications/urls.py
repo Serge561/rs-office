@@ -11,6 +11,7 @@ from .views import (
     ApplicationDetailView,
     ApplicationListView,
     ApplicationUpdateView,
+    ApplicationDeleteView,
     DocumentCreateView,
     DocumentDeleteView,
     DocumentDetailView,
@@ -28,7 +29,7 @@ from .views import (
     DashboardView,
     CurrentApplicationsView,
     CurrentApplicationsSurveyorView,
-    AnnualReportA1View,
+    AnnualReportView,
     print_docs,
 )
 
@@ -53,11 +54,11 @@ urlpatterns = [
         ApplicationUpdateView.as_view(),
         name="application_update",
     ),
-    # path(
-    #     "companies/<str:slug>/application/<int:pk>/delete/",
-    #     ApplicationDeleteView.as_view(),
-    #     name="application_delete",
-    # ),
+    path(
+        "companies/<str:slug>/application/<int:pk>/delete/",
+        ApplicationDeleteView.as_view(),
+        name="application_delete",
+    ),
     url(
         r"^vessel-autocomplete/$",
         VesselAutocomplete.as_view(),
@@ -163,8 +164,8 @@ urlpatterns = [
         name="current_applications_surveyor",
     ),
     path(
-        "dashboard_report/annual_report_a1/",
-        AnnualReportA1View.as_view(),
-        name="annual_report_a1",
+        "dashboard_report/annual_report/",
+        AnnualReportView.as_view(),
+        name="annual_report",
     ),
 ]

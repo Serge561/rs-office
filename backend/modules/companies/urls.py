@@ -30,6 +30,7 @@ from .views import (
     EmployeeListView,
     EmployeeSearchResultView,
     EmployeeUpdateView,
+    EmployeeDeleteView,
     RegionAutocomplete,
     CityCreateView,
     StaffSearchResultView,
@@ -56,7 +57,6 @@ urlpatterns = [
         name="company_detail",  # noqa: E501
     ),  # noqa: E501
     path("search/", CompanySearchResultView.as_view(), name="search"),
-    # path("autosuggest/", autosuggest, name="autosuggest"),
     # ================== address =====================
     path(
         "companies/<str:slug>/addresses/",
@@ -160,11 +160,11 @@ urlpatterns = [
         EmployeeUpdateView.as_view(),
         name="employee_update",
     ),
-    # path(
-    #     "companies/<str:slug>/employees/<int:pk>/delete/",
-    #     BankAccountDeleteView.as_view(),
-    #     name="bankaccount_delete",
-    # ),
+    path(
+        "companies/<str:slug>/employees/<int:pk>/delete/",
+        EmployeeDeleteView.as_view(),
+        name="employee_delete",
+    ),
     path(
         "companies/<str:slug>/employees/employee_create/",
         EmployeeCreateView.as_view(),

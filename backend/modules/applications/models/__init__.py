@@ -1,4 +1,4 @@
-# pylint: disable=too-few-public-methods, invalid-str-returned, import-error, line-too-long # noqa: E501
+# pylint: disable=import-error
 """Пакет ОРМ модели applications."""
 
 from modules.companies.models import (  # noqa: F401

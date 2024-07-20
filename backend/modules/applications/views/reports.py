@@ -110,11 +110,11 @@ HIGHLY_LIKELY_BOTTOM_SURVEY = (
 )
 
 
-class AnnualReportA1View(LoginRequiredMixin, ListView):
-    """Представление для вывода таблицы А1 годового отчёта."""
+class AnnualReportView(LoginRequiredMixin, ListView):
+    """Представление для вывода годового отчёта."""
 
     model = Application
-    template_name = "applications/reports/annual_report_tbl_A1.html"
+    template_name = "applications/reports/annual_report.html"
     login_url = "login"
     context_object_name = "applications"
 
@@ -124,8 +124,8 @@ class AnnualReportA1View(LoginRequiredMixin, ListView):
         office_number = user.office_number.number  # type: ignore
         current_year = datetime.date.today().year
         current_month = datetime.date.today().month
-        if current_month <= 2:
-            current_or_last_year = current_year - 1
+        if current_month == 1:
+            current_or_last_year = current_year - 1  # type: ignore
         else:
             current_or_last_year = current_year
         return (
@@ -152,7 +152,7 @@ class AnnualReportA1View(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["title"] = (
-            f"Освидетельствование судов в эксплуатации за {datetime.date.today().year} год"  # type: ignore # noqa: E501
+            f"Освидетельствование судов в эксплуатации в {datetime.date.today().year} году."  # type: ignore # noqa: E501
         )
         qs = self.object_list  # type: ignore
 

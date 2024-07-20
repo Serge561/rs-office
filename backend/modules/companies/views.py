@@ -39,7 +39,6 @@ from .forms import (
     BankCreateForm,
     CityCreateForm,
     CompanyCreateForm,
-    # CompanyDetailViewForm,
     CompanyUpdateForm,
     EmployeeCreateForm,
     EmployeeUpdateForm,
@@ -271,7 +270,7 @@ class AddressUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
         return super().form_valid(form)
 
 
-class AddressDeleteView(AdminRequiredMixin, DeleteView):
+class AddressDeleteView(LoginRequiredMixin, DeleteView):
     """Представление удаления адреса компании."""
 
     model = Address
@@ -441,7 +440,7 @@ class BankAccountUpdateView(
         return super().form_valid(form)
 
 
-class BankAccountDeleteView(AdminRequiredMixin, DeleteView):
+class BankAccountDeleteView(LoginRequiredMixin, DeleteView):
     """Представление удаления счёта в банке."""
 
     model = BankAccount
@@ -673,4 +672,24 @@ class StaffSearchResultView(LoginRequiredMixin, ListView):
             Company, slug=self.kwargs["slug"]
         )  # noqa: E501
         context["title"] = f'Результаты поиска: {self.request.GET.get("do")}'
+        return context
+
+
+class EmployeeDeleteView(AdminRequiredMixin, DeleteView):
+    """Представление удаления работника компании."""
+
+    model = Employee
+    login_url = "login"
+    context_object_name = "employee"
+    template_name = "companies/employees/employee_delete.html"
+
+    def get_success_url(self):
+        company = get_object_or_404(Company, slug=self.kwargs["slug"])
+        return reverse_lazy(
+            "company_employee_list", kwargs={"slug": company.slug}
+        )  # noqa: E501
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = f"Удаление работника компании: {self.object}"  # type: ignore # noqa: E501
         return context

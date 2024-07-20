@@ -135,13 +135,13 @@
         </div>
         <div class="md:col-span-4 text-right px-4 py-3">
             <div class="inline-flex items-end">
-              {% comment %} <a
-                href="{% url "employee_delete" company.slug %}"
+              <a
+                href="{% url "employee_delete" employee.company.slug employee.id %}"
                 type="button"
                 class="mr-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
               >
-                Удалить карточку
-              </a> {% endcomment %}
+                Удалить профиль
+              </a>
               <a
                 href="{% url "employee_update" employee.company.slug employee.id %}"
                 type="button"
