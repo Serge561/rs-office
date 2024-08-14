@@ -395,36 +395,11 @@ class EmployeeUpdateForm(EmployeeCreateForm):
 
 # from localflavor.generic.forms import BICFormField, IBANFormField
 
-# class CompanyDetailViewForm(forms.ModelForm):
+
+# class EmployeeDetailForm(forms.ModelForm):
 #     """Добавить phonenumber."""
 
 #     phone_number = PhoneNumberField(region="RU")
 
-# self.fields["city"].widget.attrs.update(
-#     {
-#         "id": "tags",
-#     }
-# )
-
-# self.fields["responsible_offices"].initial = "?"
-
-# region = RURegionSelect()
-
-
-# class UserProfileGoalForm(forms.ModelForm):
-#     class Meta:
-#     model = UserProfileGoal
-#     ...
-
-#     def clean(self):
-#         cleaned_data = super(UserProfileGoalForm, self).clean()
-#         if self.instance.pk is not None:
-#             return cleaned_data
-#         user_profile = self.cleaned_data.get('user_profile')
-#         goal_count = user_profile.goals.count()
-#         goal_limit = UserGoalConstraint.objects.get(user_profile=user_profile).max_goals # removed try catch for get for easier reading # noqa: E501
-#         if goal_count >= goal_limit:
-#             raise ValidationError('Maximum limit reached for goals')
-#         return cleaned_data
 
 # ============================ end msc ==============================

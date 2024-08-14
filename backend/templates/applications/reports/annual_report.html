@@ -22,7 +22,7 @@
   <div class="overflow-x-auto">
     <table class="min-w-full bg-white shadow-md rounded-xl">
       <p
-        class="mt-6 text-gray-700 font-semibold border-b border-blue-gray-200 text-lg"
+        class="mt-6 text-gray-700 font-semibold border-b border-blue-gray-200 text-base"
       >
         Таблица А.1 - Освидетельствование судов в эксплуатации (типы судов,
         <br />количество освидетельствований, виды освидетельствований)
@@ -120,7 +120,9 @@
           <td class="py-3 px-4 text-center">{{ carcarrier_b|default:"" }}</td>
         </tr>
         <tr class="border-b border-blue-gray-200">
-          <td class="py-3 px-4">Рыбопромысловые базы, рыботранспортные суда</td>
+          <td class="py-3 px-4">
+            Рыбопромысловые базы,<br />рыботранспортные суда
+          </td>
           <td class="py-3 px-4 text-center">{{ fishtransport|default:"" }}</td>
           <td class="py-3 px-4 text-center">
             {{ fishtransport_b|default:"" }}
@@ -195,8 +197,12 @@
     </table>
     <table class="min-w-full bg-white shadow-md rounded-xl mt-4">
       <thead>
-        <tr class="bg-blue-gray-100 leading-4 text-blue-500 tracking-wider">
-          <th class="py-3 px-4 text-center" rowspan="2">Вид освид.</th>
+        <tr
+          class="bg-blue-gray-100 leading-4 text-blue-500 tracking-wider border-t border-blue-gray-200"
+        >
+          <th class="py-3 px-4 text-center" rowspan="2">
+            Вид освидетельствования
+          </th>
           <th
             class="py-3 px-4 text-center border-b border-blue-gray-200"
             colspan="2"
@@ -242,7 +248,7 @@
         </tr>
         <!-- Add more rows as needed -->
         <tr class="border-b border-blue-gray-200">
-          <td class="py-3 px-4 font-medium">Всего освид.:</td>
+          <td class="py-3 px-4 font-medium">Всего освидетельствований:</td>
           <td class="py-3 px-4 font-medium text-center">
             {{ total_without_only_bottom }}
           </td>

@@ -26,56 +26,67 @@
       <thead>
         <tr>
           <th
-            class="px-6 py-3 border-b-2 border-gray-300 text-left leading-4 text-blue-500 tracking-wider"
+            class="px-4 py-3 border-b-2 border-gray-300 text-left leading-4 text-blue-500 tracking-wider"
+          >
+            №<br />п/п
+          </th>
+          <th
+            class="px-4 py-3 border-b-2 border-gray-300 text-left leading-4 text-blue-500 tracking-wider"
           >
             Название судна
           </th>
           <th
-            class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+            class="px-4 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
           >
             Судовладелец
           </th>
           <th
-            class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+            class="px-4 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
           >
-            РС, ИМО, флаг
+            РС, ИМО,<br />
+            флаг
           </th>
           <th
-            class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+            class="px-4 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
           >
             Тип и год постройки
           </th>
           <th
-            class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+            class="px-4 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
           >
             Сост. класса и срок осв./вып. треб.
           </th>
           <th
-            class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+            class="px-4 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
           >
-            Объём и место освид.
+            Объём и место<br />освид.
           </th>
           <th
-            class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+            class="px-4 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
           >
-            Иcполнители заявки
+            Иcполнители<br />заявки
           </th>
           <th
-            class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+            class="px-4 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
           >
-            Дата оконч. рем./строит.
+            Дата оконч.<br />рем./строит.
           </th>
           <th
-            class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+            class="px-4 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
           >
-            Стоим. услуги (предв.)
+            Стоим. услуги<br />(предв.)
           </th>
         </tr>
       </thead>
       <tbody class="bg-white">
         {% for application in applications %}
         <tr>
-          <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
+          <td
+            class="px-4 py-4 whitespace-nowrap border-b text-blue-900 border-gray-500 text-sm leading-5"
+          >
+            {{ forloop.counter }}
+          </td>
+          <td class="px-4 py-4 border-b border-gray-500">
             <div class="flex items-center">
               <div>
                 <div class="text-sm leading-5 text-gray-800">
@@ -91,13 +102,13 @@
             </div>
           </td>
           <td
-            class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
+            class="px-4 py-4 border-b text-blue-900 border-gray-500 text-sm leading-5"
           >
             <!-- prettier-ignore -->
             {{ application.company.name|truncatechars:50 }}
           </td>
           <td
-            class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
+            class="px-4 py-4 border-b text-blue-900 border-gray-500 text-sm leading-5"
           >
             <p>{{ application.vessel.rs_number|default_if_none:'--' }}</p>
             <p>{{ application.vessel.imo_number|default_if_none:'--' }}</p>
@@ -108,13 +119,13 @@
             {% endif %}
           </td>
           <td
-            class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
+            class="px-4 py-4 border-b text-blue-900 border-gray-500 text-sm leading-5"
           >
             <p>{{ application.vessel.get_vessel_stat_group_display }}</p>
             <p>{{ application.vessel.build_date|date:"Y" }}</p>
           </td>
           <td
-            class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
+            class="px-4 py-4 border-b text-blue-900 border-gray-500 text-sm leading-5"
           >
             <!-- prettier-ignore -->
             {{ application.vesselextrainfo.get_class_status_display|truncatechars:21|lower }}
@@ -122,29 +133,29 @@
             <p>{{ application.vesselextrainfo.due_date|date:'SHORT_DATE_FORMAT'}}</p>
           </td>
           <td
-            class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
+            class="px-4 py-4 border-b text-blue-900 border-gray-500 text-sm leading-5"
           >
             <p>{{ application|cut_en_part_filter }}</p>
             <p>{{ application.city|cut_en_part_filter }}</p>
           </td>
           <td
-            class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
+            class="px-4 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
           >
             <!-- prettier-ignore -->
             {% for assigned_surveyor in application.vesselextrainfo.assigned_surveyors.all %}
             <!-- prettier-ignore -->
-            <p>{{ assigned_surveyor.last_name }} {{ assigned_surveyor.first_name|slice:"1" }}. {{ assigned_surveyor.patronymic_name|slice:"1" }}.</p>
+            <p class="whitespace-nowrap">{{ assigned_surveyor.last_name }} {{ assigned_surveyor.first_name|slice:"1" }}. {{ assigned_surveyor.patronymic_name|slice:"1" }}.</p>
             <!-- prettier-ignore -->
             {% endfor %}
           </td>
           <td
-            class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
+            class="px-4 py-4 whitespace-nowrap border-b text-blue-900 border-gray-500 text-sm leading-5"
           >
             <!-- prettier-ignore -->
             {{ application.vesselextrainfo.completion_expected_date|date:'SHORT_DATE_FORMAT' }}
           </td>
           <td
-            class="px-5 py-2 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
+            class="px-4 py-2 whitespace-nowrap border-b text-blue-900 border-gray-500 text-sm leading-5"
           >
             {{ application.account.service_cost }}
           </td>

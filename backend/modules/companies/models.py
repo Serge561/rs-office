@@ -155,6 +155,9 @@ russian = gettext.translation(
 russian.install()
 _ = russian.gettext
 
+RUSSIA_RU = "Россия"
+RUSSIA_EN = "Russia"
+
 
 class City(CreatorMixin, UpdaterMixin):
     """Модель городов."""
@@ -217,12 +220,21 @@ class City(CreatorMixin, UpdaterMixin):
 
     def __str__(self):
         """Возвращение строки."""
+        # if self.region and not self.district:
+        #     return f"{self.name}, {self.get_region_display()} / {self.name_en}, {self.region}"  # type: ignore # noqa: E501
+        # if self.region and self.district:
+        #     return f"{self.name}, {self.district}, {self.get_region_display()} / {self.name_en}, {self.district_en}, {self.region}"  # type: ignore # noqa: E501
+        # if not self.region and self.country == "RU":  # type: ignore
+        #     return f"{self.name} / {self.name_en}"
+        # if self.district:
+        #     return f"{self.name}, {self.district}, {self.get_country_display()} / {self.name_en}, {self.district_en}, {self.get_country_en_display()}"  # type: ignore # noqa: E501
+        # return f"{self.name}, {self.get_country_display()} / {self.name_en}, {self.get_country_en_display()}"  # type: ignore # noqa: E501
         if self.region and not self.district:
-            return f"{self.name}, {self.get_region_display()} / {self.name_en}, {self.region}"  # type: ignore # noqa: E501
+            return f"{self.name}, {self.get_region_display()}, {RUSSIA_RU} / {self.name_en}, {self.region}, {RUSSIA_EN}"  # type: ignore # noqa: E501
         if self.region and self.district:
-            return f"{self.name}, {self.district}, {self.get_region_display()} / {self.name_en}, {self.district_en}, {self.region}"  # type: ignore # noqa: E501
+            return f"{self.name}, {self.district}, {self.get_region_display()}, {RUSSIA_RU} / {self.name_en}, {self.district_en}, {self.region}, {RUSSIA_EN}"  # type: ignore # noqa: E501
         if not self.region and self.country == "RU":  # type: ignore
-            return f"{self.name} / {self.name_en}"
+            return f"{self.name}, {RUSSIA_RU} / {self.name_en}, {RUSSIA_EN}"
         if self.district:
             return f"{self.name}, {self.district}, {self.get_country_display()} / {self.name_en}, {self.district_en}, {self.get_country_en_display()}"  # type: ignore # noqa: E501
         return f"{self.name}, {self.get_country_display()} / {self.name_en}, {self.get_country_en_display()}"  # type: ignore # noqa: E501
@@ -369,13 +381,15 @@ class Address(PlaceMixin, UpdaterMixin):
     def __str__(self):
         """Возвращение строки."""
         city_ru = str(self.city).split("/", maxsplit=1)[0]
+        city_en = str(self.city).split("/", maxsplit=1)[1]
         if self.address_line_en == "":
             return f"{self.address_line}, {city_ru} {self.postal_code}"  # noqa: E501
-        if self.address_line == "":
+        if self.address_line == "" and self.address_line_en != "":
             return (
                 f"{self.address_line_en}, {self.city} {self.postal_code}"  # noqa: E501
             )
-        return f"{self.address_line} / {self.address_line_en}, {self.city} {self.postal_code}"  # noqa: E501
+        # return f"{self.address_line} / {self.address_line_en}, {self.city} {self.postal_code}"  # noqa: E501
+        return f"{self.address_line}, {city_ru} {self.postal_code} / {self.address_line_en}, {city_en} {self.postal_code}"  # noqa: E501
 
     def get_absolute_url(self):
         """Полный URL адресов компании."""

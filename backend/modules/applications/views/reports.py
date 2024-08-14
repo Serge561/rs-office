@@ -524,3 +524,105 @@ class AnnualReportView(LoginRequiredMixin, ListView):
         )
 
         return context
+
+
+class IndustryApplicationsSurveyorView(LoginRequiredMixin, ListView):
+    """Представление для вывода списка заявок инспектора
+    в промышленности за определённый период."""
+
+    model = Application
+    template_name = "applications/reports/industry_applications_surveyor.html"
+    login_url = "login"
+    context_object_name = "applications"
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        user = self.request.user
+        current_year = datetime.date.today().year
+        current_month = datetime.date.today().month
+        return (
+            queryset.exclude(completion_date__isnull=True)
+            .filter(
+                survey_code__in=[
+                    Application.SurveyCode.C00004,
+                    Application.SurveyCode.C00005,
+                    Application.SurveyCode.C00009,
+                    Application.SurveyCode.C00010,
+                    Application.SurveyCode.C00013,
+                    Application.SurveyCode.C00015,
+                    Application.SurveyCode.C00101,
+                    Application.SurveyCode.C00102,
+                    Application.SurveyCode.C00103,
+                    Application.SurveyCode.C00104,
+                    Application.SurveyCode.C00105,
+                ]
+            )
+            .filter(
+                vesselextrainfo__assigned_surveyors__pk__in=[user.id]  # type: ignore # noqa: E501
+            )  # noqa: E501
+            .filter(
+                completion_date__range=(
+                    datetime.date(current_year, current_month, 1),
+                    datetime.date.today(),
+                )
+            )
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        current_year = datetime.date.today().year
+        current_month = datetime.date.today().month
+        start_date = datetime.date(current_year, current_month, 1).strftime(
+            "%d.%m.%Y"
+        )  # noqa: E501
+        context["title"] = (
+            f'Перечень выполненных заявок в промышленности инспектором {self.request.user.username} c {start_date} по {datetime.date.today().strftime("%d.%m.%Y")}'  # type: ignore # noqa: E501
+        )
+        return context
+
+
+class DocReviewApplicationsSurveyorView(LoginRequiredMixin, ListView):
+    """Представление для вывода списка выполненных заявок инспектора
+    по рассмотрению документации за определённый период."""
+
+    model = Application
+    template_name = (
+        "applications/reports/doc_review_applications_surveyor.html"  # noqa: E501
+    )
+    login_url = "login"
+    context_object_name = "applications"
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        user = self.request.user
+        current_year = datetime.date.today().year
+        current_month = datetime.date.today().month
+        return (
+            queryset.exclude(completion_date__isnull=True)
+            .filter(
+                survey_code__in=[
+                    Application.SurveyCode.C00006,
+                ]
+            )
+            .filter(
+                vesselextrainfo__assigned_surveyors__pk__in=[user.id]  # type: ignore # noqa: E501
+            )  # noqa: E501
+            .filter(
+                completion_date__range=(
+                    datetime.date(current_year, current_month, 1),
+                    datetime.date.today(),
+                )
+            )
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        current_year = datetime.date.today().year
+        current_month = datetime.date.today().month
+        start_date = datetime.date(current_year, current_month, 1).strftime(
+            "%d.%m.%Y"
+        )  # noqa: E501
+        context["title"] = (
+            f'Перечень выполненных заявок по рассмотрению документации инспектором {self.request.user.username} c {start_date} по {datetime.date.today().strftime("%d.%m.%Y")}'  # type: ignore # noqa: E501
+        )
+        return context

@@ -308,7 +308,7 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
             case SURVEY_CODES.C00101:
                 if self.survey_type == SURVEY_TYPES.WAC:
                     if self.survey_scope == SURVEY_SCOPES.PRIMAR:
-                        result = f"Первичная {QUALIFICATION} сваршиков - {self.occasional_cause} чел. / Primary {QUALIFICATION_EN} of welders - {self.occasional_cause} prs"  # noqa: E501
+                        result = f"Первичная {QUALIFICATION} сварщиков - {self.occasional_cause} чел. / Primary {QUALIFICATION_EN} of welders - {self.occasional_cause} prs"  # noqa: E501
                     else:
                         result = f"Периодическая {QUALIFICATION} сварщиков без проведения практических испытаний - {self.occasional_cause} чел. / Periodical {QUALIFICATION_EN} of welders without conducting practical tests - {self.occasional_cause} prs"  # noqa: E501
                 else:

@@ -17,3 +17,7 @@ Django, Tailwind, Celery, Redis, Docker.
 ### Шаблоны front-end
 
 [tailwindcomponents.com](https://www.tailwindcomponents.com)
+
+### Интеграция фреймворка Tailwind в проект Django
+
+[Cloud With Django](https://www.youtube.com/watch?v=76n7sqZocSk)

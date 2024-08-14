@@ -1,0 +1,89 @@
+{% extends 'main.html' %}
+<!-- prettier-ignore -->
+{% load cut_en_part_in_apps %}
+<!-- prettier-ignore -->
+{% block content %}
+<!-- breadcrumbs -->
+{% block breadcrumbs %}
+<div>
+  <a href="{% url 'home' %}" class="breadcrumbs font-medium">Главная</a>
+  <a href="{% url 'dashboard_report' %}" class="breadcrumbs font-medium">
+    &rsaquo; Панель управления отчётами &rsaquo;</a
+  >
+  {% block crumbs %}
+  <div class="breadcrumbs">
+    <!-- prettier-ignore -->
+    {% if title %} {{ title }} {% endif %}
+  </div>
+  <!-- prettier-ignore -->
+  {% endblock%}
+</div>
+{% endblock %}
+<!-- end of breadcrumbs -->
+<div class="my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 pr-10 lg:px-8">
+  <div class="align-middle inline-block min-w-full overflow-hidden bg-white">
+    <table class="min-w-full">
+      <thead>
+        <tr>
+          <th
+            class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+          >
+            № п/п
+          </th>
+          <th
+            class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+          >
+            № заявки
+          </th>
+          <th
+            class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+          >
+            Дата завершения
+          </th>
+          <th
+            class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+          >
+            Компания
+          </th>
+          <th
+            class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+          >
+            Вид и объём освидетельствования
+          </th>
+        </tr>
+      </thead>
+      <tbody class="bg-white">
+        {% for application in applications %}
+        <tr>
+          <td
+            class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
+          >
+            {{ forloop.counter }}
+          </td>
+          <td
+            class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
+          >
+            {{ application.number }}
+          </td>
+          <td
+            class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
+          >
+            {{ application.completion_date|date:'SHORT_DATE_FORMAT' }}
+          </td>
+          <td
+            class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
+          >
+            {{ application.company.name|truncatechars:50 }}
+          </td>
+          <td
+            class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
+          >
+            {{ application|cut_en_part_filter }}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

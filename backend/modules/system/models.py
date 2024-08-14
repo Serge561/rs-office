@@ -69,7 +69,14 @@ class StaffQuerySet(models.QuerySet):
     def surveyors(self):
         """Инспекторы."""
         return self.filter(
-            Q(position=1) | Q(position=2) | Q(position=3) | Q(position=9)
+            Q(position=1)
+            | Q(position=2)
+            | Q(position=3)
+            | Q(position=9)
+            | Q(position=10)
+            | Q(position=12)
+            | Q(position=13)
+            | Q(position=14)
         ).exclude(  # noqa: E501
             is_active=False
         )
