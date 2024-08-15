@@ -29,6 +29,7 @@ from .views import (
     DashboardView,
     CurrentApplicationsView,
     CurrentApplicationsSurveyorView,
+    ShipsInServiceApplicationsSurveyorView,
     IndustryApplicationsSurveyorView,
     DocReviewApplicationsSurveyorView,
     AnnualReportView,
@@ -164,6 +165,11 @@ urlpatterns = [
         "dashboard_report/current_applications_surveyor/",
         CurrentApplicationsSurveyorView.as_view(),
         name="current_applications_surveyor",
+    ),
+    path(
+        "dashboard_report/ships_in_service_applications_surveyor/",
+        ShipsInServiceApplicationsSurveyorView.as_view(),
+        name="ships_in_service_applications_surveyor",
     ),
     path(
         "dashboard_report/industry_applications_surveyor/",

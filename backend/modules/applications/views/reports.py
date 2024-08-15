@@ -626,3 +626,50 @@ class DocReviewApplicationsSurveyorView(LoginRequiredMixin, ListView):
             f'Перечень выполненных заявок по рассмотрению документации инспектором {self.request.user.username} c {start_date} по {datetime.date.today().strftime("%d.%m.%Y")}'  # type: ignore # noqa: E501
         )
         return context
+
+
+class ShipsInServiceApplicationsSurveyorView(LoginRequiredMixin, ListView):
+    """Представление для вывода списка заявок инспектора
+    по судам в эксплуатации за определённый период."""
+
+    model = Application
+    template_name = (
+        "applications/reports/ships_in_service_applications_surveyor.html"  # noqa: E501
+    )
+    login_url = "login"
+    context_object_name = "applications"
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        user = self.request.user
+        current_year = datetime.date.today().year
+        current_month = datetime.date.today().month
+        return (
+            queryset.exclude(completion_date__isnull=True)
+            .filter(
+                survey_code__in=[
+                    Application.SurveyCode.C00001,
+                ]
+            )
+            .filter(
+                vesselextrainfo__assigned_surveyors__pk__in=[user.id]  # type: ignore # noqa: E501
+            )  # noqa: E501
+            .filter(
+                completion_date__range=(
+                    datetime.date(current_year, current_month, 1),
+                    datetime.date.today(),
+                )
+            )
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        current_year = datetime.date.today().year
+        current_month = datetime.date.today().month
+        start_date = datetime.date(current_year, current_month, 1).strftime(
+            "%d.%m.%Y"
+        )  # noqa: E501
+        context["title"] = (
+            f'Перечень выполненных заявок по судам в эксплуатации инспектором {self.request.user.username} c {start_date} по {datetime.date.today().strftime("%d.%m.%Y")}'  # type: ignore # noqa: E501
+        )
+        return context

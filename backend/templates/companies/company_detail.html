@@ -107,7 +107,7 @@
             {% if company.applications.count == 0 %}
               Показать заявки
             {% elif company.applications.all|unclosed_app_count_filter == 0 %}
-              Показать заявки ({{ company.applications.count }})
+              Показать заявки (-/{{ company.applications.count }})
             {% else %}
               Показать заявки ({{ company.applications.all|unclosed_app_count_filter }}/{{ company.applications.count }})
             {% endif %}

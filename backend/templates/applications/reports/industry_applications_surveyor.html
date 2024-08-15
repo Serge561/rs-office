@@ -60,10 +60,20 @@
           >
             {{ forloop.counter }}
           </td>
-          <td
-            class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
-          >
-            {{ application.number }}
+          <td class="px-4 py-4 border-b border-gray-500">
+            <div class="flex items-center">
+              <div>
+                <div class="text-sm leading-5 text-blue-500">
+                  <a
+                    href="{{ application.get_absolute_url }}"
+                    type="button"
+                    class="list-none hover:text-blue-900 hover:underline underline-offset-2"
+                  >
+                    {{ application.number }}
+                  </a>
+                </div>
+              </div>
+            </div>
           </td>
           <td
             class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"

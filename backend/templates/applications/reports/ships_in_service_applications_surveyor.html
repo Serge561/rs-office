@@ -48,12 +48,12 @@
           <th
             class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
           >
-            Название и номер рассмотренной документация
+            Название судна
           </th>
           <th
             class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
           >
-            Номер письма об одобрении
+            Вид освидетельствования
           </th>
         </tr>
       </thead>
@@ -93,12 +93,12 @@
           <td
             class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
           >
-            {{ application|cut_en_part_filter }}
+            {{ application.vessel.name }}
           </td>
           <td
             class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
           >
-            {{ application.documents.first }}
+            {{ application|cut_en_part_filter }}
           </td>
         </tr>
         {% endfor %}
