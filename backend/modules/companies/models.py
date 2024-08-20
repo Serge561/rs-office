@@ -380,8 +380,8 @@ class Address(PlaceMixin, UpdaterMixin):
 
     def __str__(self):
         """Возвращение строки."""
-        city_ru = str(self.city).split("/", maxsplit=1)[0]
-        city_en = str(self.city).split("/", maxsplit=1)[1]
+        city_ru = str(self.city).split(" / ", maxsplit=1)[0]
+        city_en = str(self.city).split(" / ", maxsplit=1)[1]
         if self.address_line_en == "":
             return f"{self.address_line}, {city_ru} {self.postal_code}"  # noqa: E501
         if self.address_line == "" and self.address_line_en != "":

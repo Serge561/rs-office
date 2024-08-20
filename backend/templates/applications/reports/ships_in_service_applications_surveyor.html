@@ -53,6 +53,11 @@
           <th
             class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
           >
+            Наличие<br />конвенц.<br />докум-в
+          </th>
+          <th
+            class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+          >
             Вид освидетельствования
           </th>
         </tr>
@@ -94,6 +99,15 @@
             class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
           >
             {{ application.vessel.name }}
+          </td>
+          <td
+            class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
+          >
+            {% if application.vessel.is_international_voyage == True %}
+            <p><input type="checkbox" checked disabled /></p>
+            {% else %}
+            <p><input type="checkbox" disabled /></p>
+            {% endif %}
           </td>
           <td
             class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"

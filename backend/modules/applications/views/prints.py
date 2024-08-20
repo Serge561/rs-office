@@ -271,7 +271,7 @@ def get_genitive_case_proxy(
             power_of_attoney_gen = proxy_label
     if rs_branch not in RS_RU_BRANCHES:
         return power_of_attoney_gen
-    return power_of_attoney_gen.split("/", maxsplit=1)[0]
+    return power_of_attoney_gen.split(" / ", maxsplit=1)[0]
 
 
 def is_none(value):
@@ -350,7 +350,7 @@ def is_product_survey(app, rs_branch, report_type):
             ):
                 return f'{app} т/х {app.vessel} / m/v "{app.vessel.name_en}"'
             return app
-        return str(app).split("/", maxsplit=1)[0]
+        return str(app).split(" / ", maxsplit=1)[0]
     if app.documents is None:
         return ""
     if app.documents.count() == 1:
@@ -652,7 +652,7 @@ def get_port_or_address(port_or_address, rs_branch=None):
     if port_or_address is not None:
         if rs_branch not in RS_RU_BRANCHES:
             return port_or_address
-        return str(port_or_address).split("/", maxsplit=1)[0]
+        return str(port_or_address).split(" / ", maxsplit=1)[0]
     return "--"
 
 
@@ -866,7 +866,7 @@ def print_docs(request, **kwargs):
         # for bilingual forms
         "month_en": get_month_en(application.date),
         "city_ru": get_port_or_address(application.city, "121"),
-        "city_en": str(application.city).split("/", maxsplit=1)[1],
+        "city_en": str(application.city).split(" / ", maxsplit=1)[1],
     }  # noqa: E501
 
     doc.render(context)

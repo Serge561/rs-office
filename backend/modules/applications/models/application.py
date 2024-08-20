@@ -97,9 +97,9 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
         BOTTOM = "D", "Подводной части судна"
         OCCASL = "O", "Внеочередное"  # noqa: E741
         CONTIN = "C", "Непрерывное"
-        INTERI = "INT", "Временное (МКУБ, ОСПС, КТМС)"
+        INTERI = "INT", "Временное (МКУБ, ОСПС)"
         ADDITL = "ADD", "Дополнительное (МКУБ, ОСПС, КТМС)"  # noqa: E501
-        PRIMAR = "PR", "Первичное (СОДС, СОТПС)"
+        PRIMAR = "PR", "Первичное (СОДС, СОТПС, КТМС)"
         PERIOD = "PL", "Периодическое (СОДС, СОТПС)"
 
     class SurveyObject(models.TextChoices):
@@ -288,9 +288,9 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
             case SURVEY_CODES.C00003:
                 result = f"{self.get_survey_code_display()} / Services on survey of a ship in repair"  # type: ignore # noqa: E501
             case SURVEY_CODES.C00006:
-                result = f'{self.get_survey_code_display()} "{self.occasional_cause}" на тх {self.vessel} / Review of technical documentation "{self.occasional_cause_en}" on mv {self.vessel.name_en}'  # type: ignore # noqa: E501
+                result = f'{self.get_survey_code_display()} "{self.occasional_cause}" на т/х {self.vessel} / Review of technical documentation "{self.occasional_cause_en}" on m/v {self.vessel.name_en}'  # type: ignore # noqa: E501
             case SURVEY_CODES.C00011:
-                if self.survey_scope not in [SURVEY_SCOPES.ADDITL, SURVEY_SCOPES.INTERI]:  # noqa: E501
+                if self.survey_scope not in [SURVEY_SCOPES.ADDITL, SURVEY_SCOPES.INTERI, SURVEY_SCOPES.PRIMAR]:  # noqa: E501
                     if self.survey_type != SURVEY_TYPES.DII:  # noqa: E501
                         try:
                             result = f"{self.get_survey_scope_display()} {SURVEY} {self.get_survey_type_display()[0].lower()}{self.get_survey_type_display()[1:]} / {survey_scope_en} {SURVEY_EN} {survey_type_en[0].lower()}{survey_type_en[1:]}"  # type: ignore # noqa: E501
