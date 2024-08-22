@@ -4,7 +4,6 @@
 import datetime
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
-
 from django.db.models import Q
 
 # from django.contrib.messages.views import SuccessMessageMixin
@@ -540,6 +539,10 @@ class IndustryApplicationsSurveyorView(LoginRequiredMixin, ListView):
         user = self.request.user
         current_year = datetime.date.today().year
         current_month = datetime.date.today().month
+        if not self.request.GET["start_date"]:
+            first_date = datetime.date(current_year, current_month, 1)
+        else:
+            first_date = self.request.GET["start_date"]
         return (
             queryset.exclude(completion_date__isnull=True)
             .filter(
@@ -562,7 +565,7 @@ class IndustryApplicationsSurveyorView(LoginRequiredMixin, ListView):
             )  # noqa: E501
             .filter(
                 completion_date__range=(
-                    datetime.date(current_year, current_month, 1),
+                    first_date,
                     datetime.date.today(),
                 )
             )
@@ -572,11 +575,21 @@ class IndustryApplicationsSurveyorView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         current_year = datetime.date.today().year
         current_month = datetime.date.today().month
-        start_date = datetime.date(current_year, current_month, 1).strftime(
-            "%d.%m.%Y"
-        )  # noqa: E501
+        if not self.request.GET["start_date"]:
+            first_date = datetime.date(
+                current_year, current_month, 1
+            ).strftime(  # noqa: E501
+                "%d.%m.%Y"
+            )
+        else:
+            start_date = self.request.GET["start_date"]
+            first_date = datetime.datetime.strptime(
+                start_date, "%Y-%m-%d"
+            ).strftime(  # noqa: E501
+                "%d.%m.%Y"
+            )
         context["title"] = (
-            f'Перечень выполненных заявок в промышленности инспектором {self.request.user.username} c {start_date} по {datetime.date.today().strftime("%d.%m.%Y")}'  # type: ignore # noqa: E501
+            f'Перечень выполненных заявок в промышленности инспектором {self.request.user.username} c {first_date} по {datetime.date.today().strftime("%d.%m.%Y")}'  # type: ignore # noqa: E501
         )
         return context
 
@@ -597,6 +610,10 @@ class DocReviewApplicationsSurveyorView(LoginRequiredMixin, ListView):
         user = self.request.user
         current_year = datetime.date.today().year
         current_month = datetime.date.today().month
+        if not self.request.GET["start_date"]:
+            first_date = datetime.date(current_year, current_month, 1)
+        else:
+            first_date = self.request.GET["start_date"]
         return (
             queryset.exclude(completion_date__isnull=True)
             .filter(
@@ -609,7 +626,7 @@ class DocReviewApplicationsSurveyorView(LoginRequiredMixin, ListView):
             )  # noqa: E501
             .filter(
                 completion_date__range=(
-                    datetime.date(current_year, current_month, 1),
+                    first_date,
                     datetime.date.today(),
                 )
             )
@@ -619,11 +636,21 @@ class DocReviewApplicationsSurveyorView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         current_year = datetime.date.today().year
         current_month = datetime.date.today().month
-        start_date = datetime.date(current_year, current_month, 1).strftime(
-            "%d.%m.%Y"
-        )  # noqa: E501
+        if not self.request.GET["start_date"]:
+            first_date = datetime.date(
+                current_year, current_month, 1
+            ).strftime(  # noqa: E501
+                "%d.%m.%Y"
+            )
+        else:
+            start_date = self.request.GET["start_date"]
+            first_date = datetime.datetime.strptime(
+                start_date, "%Y-%m-%d"
+            ).strftime(  # noqa: E501
+                "%d.%m.%Y"
+            )
         context["title"] = (
-            f'Перечень выполненных заявок по рассмотрению документации инспектором {self.request.user.username} c {start_date} по {datetime.date.today().strftime("%d.%m.%Y")}'  # type: ignore # noqa: E501
+            f'Перечень выполненных заявок по рассмотрению документации инспектором {self.request.user.username} c {first_date} по {datetime.date.today().strftime("%d.%m.%Y")}'  # type: ignore # noqa: E501
         )
         return context
 
@@ -644,6 +671,10 @@ class ShipsInServiceApplicationsSurveyorView(LoginRequiredMixin, ListView):
         user = self.request.user
         current_year = datetime.date.today().year
         current_month = datetime.date.today().month
+        if not self.request.GET["start_date"]:
+            first_date = datetime.date(current_year, current_month, 1)
+        else:
+            first_date = self.request.GET["start_date"]
         return (
             queryset.exclude(completion_date__isnull=True)
             .filter(
@@ -656,7 +687,7 @@ class ShipsInServiceApplicationsSurveyorView(LoginRequiredMixin, ListView):
             )  # noqa: E501
             .filter(
                 completion_date__range=(
-                    datetime.date(current_year, current_month, 1),
+                    first_date,
                     datetime.date.today(),
                 )
             )
@@ -666,10 +697,59 @@ class ShipsInServiceApplicationsSurveyorView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         current_year = datetime.date.today().year
         current_month = datetime.date.today().month
-        start_date = datetime.date(current_year, current_month, 1).strftime(
-            "%d.%m.%Y"
-        )  # noqa: E501
+        if not self.request.GET["start_date"]:
+            first_date = datetime.date(
+                current_year, current_month, 1
+            ).strftime(  # noqa: E501
+                "%d.%m.%Y"
+            )
+        else:
+            start_date = self.request.GET["start_date"]
+            first_date = datetime.datetime.strptime(
+                start_date, "%Y-%m-%d"
+            ).strftime(  # noqa: E501
+                "%d.%m.%Y"
+            )
         context["title"] = (
-            f'Перечень выполненных заявок по судам в эксплуатации инспектором {self.request.user.username} c {start_date} по {datetime.date.today().strftime("%d.%m.%Y")}'  # type: ignore # noqa: E501
+            f'Перечень выполненных заявок по судам в эксплуатации инспектором {self.request.user.username} c {first_date} по {datetime.date.today().strftime("%d.%m.%Y")}'  # type: ignore # noqa: E501
         )
+        return context
+
+
+class InputDateSiSView(LoginRequiredMixin, TemplateView):
+    """Представление для вывода модального окна для
+    ввода начальной даты отчёта по заявкам по судам в экспл."""
+
+    login_url = "login"
+    template_name = "applications/reports/input_date_modal_sis.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "Введите начальную дату отчётного периода"
+        return context
+
+
+class InputDateIndustryView(LoginRequiredMixin, TemplateView):
+    """Представление для вывода модального окна для
+    ввода начальной даты отчёта по заявкам в промышленности."""
+
+    login_url = "login"
+    template_name = "applications/reports/input_date_modal_industry.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "Введите начальную дату отчётного периода"
+        return context
+
+
+class InputDateDocReviewView(LoginRequiredMixin, TemplateView):
+    """Представление для вывода модального окна для
+    ввода начальной даты отчёта по заявкам по рассмотрению техдокум."""
+
+    login_url = "login"
+    template_name = "applications/reports/input_date_modal_doc_review.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "Введите начальную дату отчётного периода"
         return context
