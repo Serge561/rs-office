@@ -23,16 +23,16 @@
     <div class="max-h-full col-span-1">
       <div class="bg-white rounded-md">
         <h1
-          class="text-center text-xl my-4 bg-gray-100 py-6 rounded-md border-b-2 text-gray-600"
+          class="text-center text-xl bg-gray-100 py-6 rounded-md border-b-2 text-gray-600"
         >
           <a href="{% url "current_applications" %}" type="button" class="list-none hover:text-indigo-600">
               Показать текущие заявки подразделения</a
           >
         </h1>
         <div class="bg-white rounded-md list-none text-center">
-          <li class= "py-3 bg-gray-100 rounded-md border-b-2 text-gray-300">
-            <a href="{% url "home" %}" type="button" class="list-none hover:text-gray-300"
-              >Отправить еженедельный отчёт</a
+          <li class= "py-3 mt-2 bg-gray-100 rounded-md border-b-2 text-gray-600">
+            <a href="{% url "sis_by_office_dashboard" %}" type="button" class="list-none hover:text-indigo-600"
+              >Показать текущие заявки филиала</a
             >
           </li>
           <li class="py-3 mt-1 bg-gray-100 rounded-md border-b-2 text-gray-600">
@@ -40,7 +40,7 @@
               >Показать годовой отчёт</a
             >
           </li>
-          <li class="py-3 mt-1 bg-gray-100 rounded-md border-b-2 text-gray-600">
+          <li class="py-3 mt-3 bg-gray-100 rounded-md border-b-2 text-gray-600">
             <a href="{% url "current_applications_surveyor" %}" type="button" class="list-none hover:text-indigo-600"
               >Показать текущие заявки инспектора</a
             >

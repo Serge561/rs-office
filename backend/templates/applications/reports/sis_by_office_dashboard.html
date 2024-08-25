@@ -1,0 +1,75 @@
+{% extends 'main.html' %}
+<!-- prettier-ignore -->
+{% block content %}
+<!-- breadcrumbs -->
+{% block breadcrumbs %}
+<div>
+  <a href="{% url 'home' %}" class="breadcrumbs font-medium">Главная</a>
+  <a href="{% url 'dashboard_report' %}" class="breadcrumbs font-medium">
+    &rsaquo; Панель управления отчётами &rsaquo;</a
+  >
+  {% block crumbs %}
+  <span class="breadcrumbs">
+    <!-- prettier-ignore -->
+    {% if title %} {{ title }} {% endif %}
+  </span>
+  <!-- prettier-ignore -->
+  {% endblock%}
+</div>
+{% endblock %}
+<!-- end of breadcrumbs -->
+<div class="flex min-h-screen items-start justify-center">
+  <!-- table block -->
+  <div class="overflow-x-auto">
+    <table class="min-w-full mt-6 bg-white shadow-md rounded-xl">
+      <thead>
+        <tr>
+          <th
+            class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+          >
+            № участка
+          </th>
+          <th
+            class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+          >
+            Название участка
+          </th>
+        </tr>
+      </thead>
+      <tbody class="bg-white">
+        {% for office_number in office_numbers %}
+        <form action="{% url 'current_applications_by_office' %}">
+          {% csrf_token %}
+          <tr>
+            <td
+              class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
+            >
+              <span
+                class="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight"
+              >
+                <span
+                  aria-hidden
+                  class="absolute inset-0 bg-green-200 opacity-50 rounded-full"
+                ></span>
+                <input
+                  class="relative text-xs"
+                  name="office_No"
+                  type="hidden"
+                  value="{{office_number.number}}"
+                />
+                <p>{{office_number.number}}</p>
+              </span>
+            </td>
+            <td
+              class="px-6 py-4 whitespace-no-wrap border-b border-gray-500 leading-5 breadcrumbs font-medium"
+            >
+              <button type="submit">{{ office_number.name }}</button>
+            </td>
+          </tr>
+        </form>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endblock %}
+</div>

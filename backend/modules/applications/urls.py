@@ -28,11 +28,13 @@ from .views import (
     VesselSearchResultView,
     DashboardView,
     CurrentApplicationsView,
+    SISByOfficeDashboardView,
+    CurrentApplicationsByOfficeView,
+    AnnualReportView,
     CurrentApplicationsSurveyorView,
     ShipsInServiceApplicationsSurveyorView,
     IndustryApplicationsSurveyorView,
     DocReviewApplicationsSurveyorView,
-    AnnualReportView,
     InputDateSiSView,
     InputDateIndustryView,
     InputDateDocReviewView,
@@ -165,6 +167,21 @@ urlpatterns = [
         name="current_applications",
     ),
     path(
+        "dashboard_report/sis_by_office_dashboard/",
+        SISByOfficeDashboardView.as_view(),
+        name="sis_by_office_dashboard",
+    ),
+    path(
+        "dashboard_report/sis_by_office_dashboard/current_applications_by_office",  # noqa: E501
+        CurrentApplicationsByOfficeView.as_view(),
+        name="current_applications_by_office",
+    ),
+    path(
+        "dashboard_report/annual_report/",
+        AnnualReportView.as_view(),
+        name="annual_report",
+    ),
+    path(
         "dashboard_report/current_applications_surveyor/",
         CurrentApplicationsSurveyorView.as_view(),
         name="current_applications_surveyor",
@@ -198,10 +215,5 @@ urlpatterns = [
         "dashboard_report/doc_review_applications_surveyor/",
         DocReviewApplicationsSurveyorView.as_view(),
         name="doc_review_applications_surveyor",
-    ),
-    path(
-        "dashboard_report/annual_report/",
-        AnnualReportView.as_view(),
-        name="annual_report",
     ),
 ]

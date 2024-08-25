@@ -61,6 +61,7 @@ class StaffQuerySet(models.QuerySet):
                 | Q(position=6)
                 | Q(position=7)
                 | Q(position=8)
+                | Q(position=15)
             )  # noqa: E501
             .filter(office_number=office_number)
             .exclude(is_active=False)

@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long, too-many-ancestors, no-member, too-many-function-args, too-many-statements, too-many-locals  # noqa: E501
+# pylint: disable=line-too-long, too-many-ancestors, no-member, too-many-function-args, too-many-statements, too-many-locals, import-error  # noqa: E501
 """Представления для модели applications."""
 
 import datetime
@@ -6,11 +6,12 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 
-# from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic import (
     TemplateView,
     ListView,
 )
+
+from modules.system.models import OfficeNumber
 from ..models import Application, Vessel
 
 User = get_user_model()
@@ -752,4 +753,62 @@ class InputDateDocReviewView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["title"] = "Введите начальную дату отчётного периода"
+        return context
+
+
+class SISByOfficeDashboardView(LoginRequiredMixin, ListView):
+    """Представление для вывода списка филиалов подразделения."""
+
+    model = OfficeNumber
+    template_name = "applications/reports/sis_by_office_dashboard.html"
+    login_url = "login"
+    context_object_name = "office_numbers"
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        user = self.request.user
+        branch_number = user.office_number.number[0:3]  # type: ignore
+        return queryset.filter(number__icontains=branch_number)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = (
+            "Перечень участков филиала со ссылками на отчёты по текущим заявкам по судам в эксплуатации"  # noqa: E501
+        )
+        return context
+
+
+class CurrentApplicationsByOfficeView(LoginRequiredMixin, ListView):
+    """Представление для вывода списка текущих
+    заявок подразделения по участкам."""
+
+    model = Application
+    template_name = "applications/reports/current_applications_by_office.html"
+    login_url = "login"
+    context_object_name = "applications"
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        office_number = self.request.GET["office_No"]
+        return (
+            queryset.exclude(completion_date__isnull=False)
+            .filter(
+                survey_code__in=[
+                    Application.SurveyCode.C00001,
+                    Application.SurveyCode.C00002,
+                    Application.SurveyCode.C00121,
+                ]
+            )
+            .filter(
+                vesselextrainfo__assigned_surveyors__office_number__number__icontains=office_number  # noqa: E501
+            )
+            .distinct()  # noqa: E501
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        office_number = self.request.GET["office_No"]
+        context["title"] = (
+            f'Перечень судов в ремонте и постройке в зоне деятельности подразделения "{office_number}" по состоянию на {datetime.date.today().strftime("%d.%m.%Y")}'  # type: ignore # noqa: E501
+        )
         return context

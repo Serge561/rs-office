@@ -1,0 +1,173 @@
+{% extends 'main.html' %}
+<!-- prettier-ignore -->
+{% load cut_en_part_in_apps %}
+<!-- prettier-ignore -->
+{% block content %}
+<!-- breadcrumbs -->
+{% block breadcrumbs %}
+<div>
+  <a href="{% url 'home' %}" class="breadcrumbs font-medium">Главная</a>
+  <a href="{% url 'dashboard_report' %}" class="breadcrumbs font-medium">
+    &rsaquo; Панель управления отчётами &rsaquo;</a
+  >
+  <a href="{% url 'sis_by_office_dashboard' %}" class="breadcrumbs font-medium">
+    Перечень участков филиала со ссылками на отчёты по текущим заявкам по судам
+    в эксплуатации &rsaquo;</a
+  >
+  {% block crumbs %}
+  <div class="breadcrumbs">
+    <!-- prettier-ignore -->
+    {% if title %} {{ title }} {% endif %}
+  </div>
+  <!-- prettier-ignore -->
+  {% endblock%}
+</div>
+{% endblock %}
+<!-- end of breadcrumbs -->
+<div class="my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 pr-10 lg:px-8">
+  <div class="align-middle inline-block min-w-full overflow-hidden bg-white">
+    <table class="min-w-full">
+      <thead>
+        <tr>
+          <th
+            class="px-4 py-3 border-b-2 border-gray-300 text-left leading-4 text-blue-500 tracking-wider"
+          >
+            №<br />п/п
+          </th>
+          <th
+            class="px-4 py-3 border-b-2 border-gray-300 text-left leading-4 text-blue-500 tracking-wider"
+          >
+            Название судна
+          </th>
+          <th
+            class="px-4 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+          >
+            Судовладелец
+          </th>
+          <th
+            class="px-4 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+          >
+            РС, ИМО,<br />
+            флаг
+          </th>
+          <th
+            class="px-4 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+          >
+            Тип и год постройки
+          </th>
+          <th
+            class="px-4 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+          >
+            Сост. класса и срок осв./вып. треб.
+          </th>
+          <th
+            class="px-4 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+          >
+            Объём и место<br />освид.
+          </th>
+          <th
+            class="px-4 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+          >
+            Иcполнители<br />заявки
+          </th>
+          <th
+            class="px-4 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+          >
+            Дата оконч.<br />рем./строит.
+          </th>
+          <th
+            class="px-4 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+          >
+            Стоим. услуги<br />(предв.)
+          </th>
+        </tr>
+      </thead>
+      <tbody class="bg-white">
+        {% for application in applications %}
+        <tr>
+          <td
+            class="px-4 py-4 whitespace-nowrap border-b text-blue-900 border-gray-500 text-sm leading-5"
+          >
+            {{ forloop.counter }}
+          </td>
+          <td class="px-4 py-4 border-b border-gray-500">
+            <div class="flex items-center">
+              <div>
+                <div class="text-sm leading-5 text-gray-800">
+                  <a
+                    href="{{ application.get_absolute_url }}"
+                    type="button"
+                    class="list-none hover:text-indigo-600 font-medium"
+                  >
+                    {{ application.vessel.name }}
+                  </a>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td
+            class="px-4 py-4 border-b text-blue-900 border-gray-500 text-sm leading-5"
+          >
+            <!-- prettier-ignore -->
+            {{ application.company.name|truncatechars:50 }}
+          </td>
+          <td
+            class="px-4 py-4 border-b text-blue-900 border-gray-500 text-sm leading-5"
+          >
+            <p>{{ application.vessel.rs_number|default_if_none:'--' }}</p>
+            <p>{{ application.vessel.imo_number|default_if_none:'--' }}</p>
+            {% if application.vessel.flag == "RU" %}
+            <p>Россия</p>
+            {% else %}
+            <p>{{ application.vessel.get_flag_display }}</p>
+            {% endif %}
+          </td>
+          <td
+            class="px-4 py-4 border-b text-blue-900 border-gray-500 text-sm leading-5"
+          >
+            <p>{{ application.vessel.get_vessel_stat_group_display }}</p>
+            <p>{{ application.vessel.build_date|date:"Y" }}</p>
+          </td>
+          <td
+            class="px-4 py-4 border-b text-blue-900 border-gray-500 text-sm leading-5"
+          >
+            <!-- prettier-ignore -->
+            {{ application.vesselextrainfo.get_class_status_display|truncatechars:21|lower }}
+            <!-- prettier-ignore -->
+            <p>{{ application.vesselextrainfo.due_date|date:'SHORT_DATE_FORMAT'}}</p>
+          </td>
+          <td
+            class="px-4 py-4 border-b text-blue-900 border-gray-500 text-sm leading-5"
+          >
+            <p>{{ application|cut_en_part_filter }}</p>
+            <p>{{ application.city|cut_en_part_filter }}</p>
+          </td>
+          <td
+            class="px-4 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
+          >
+            <!-- prettier-ignore -->
+            {% for assigned_surveyor in application.vesselextrainfo.assigned_surveyors.all %}
+            <!-- prettier-ignore -->
+            <p class="whitespace-nowrap">{{ assigned_surveyor.last_name }} {{ assigned_surveyor.first_name|slice:"1" }}. {{ assigned_surveyor.patronymic_name|slice:"1" }}.</p>
+            <!-- prettier-ignore -->
+            {% endfor %}
+          </td>
+          <td
+            class="px-4 py-4 whitespace-nowrap border-b text-blue-900 border-gray-500 text-sm leading-5"
+          >
+            <!-- prettier-ignore -->
+            {{ application.vesselextrainfo.completion_expected_date|date:'SHORT_DATE_FORMAT' }}
+          </td>
+          <td
+            class="px-4 py-2 whitespace-nowrap border-b text-blue-900 border-gray-500 text-sm leading-5"
+          >
+            {{ application.account.service_cost }}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% include 'pagination.html' %}
+  </div>
+</div>
+{% endblock %}
