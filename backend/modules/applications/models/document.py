@@ -89,7 +89,7 @@ class Document(models.Model):
     )
     number = models.CharField(
         verbose_name="Номер документа или письма об одобрении ТД",
-        max_length=20,  # , blank=True
+        max_length=30,  # , blank=True
     )  # noqa: E501
     form = models.ForeignKey(
         to=Form,

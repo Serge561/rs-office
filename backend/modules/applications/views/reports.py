@@ -1,5 +1,5 @@
 # pylint: disable=line-too-long, too-many-ancestors, no-member, too-many-function-args, too-many-statements, too-many-locals, import-error  # noqa: E501
-"""Представления для модели applications."""
+"""Представления для модели applications-отчёты."""
 
 import datetime
 from django.contrib.auth import get_user_model

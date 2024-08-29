@@ -81,6 +81,8 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
         ISS = "ISS", "На соответствие требованиям МК ОСПС"
         MLC = "MLC", "На соответствие требованиям КТМС-2006"
         DII = "DII", "Рассмотрение II части Декларации о соответствии трудовым нормам в морском судоходстве"  # noqa: E501
+        OCR = "OSC", "Оффшорных контейнеров на соответствие требованиям Сборника правил РС по контейнерам/КБК"  # noqa: E501
+        TCR = "TCR", "Контейнеров-цистерн на соответствие требованиям Сборника правил РС по контейнерам/КБК"  # noqa: E501
         EXP = "EXP", "Расширение сферы деятельности"
         CHA = "CHA", "Изменение содержания свидетельства"
         WAC = "WAC", "Квалификационные испытания сварщиков"
@@ -213,6 +215,10 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
                 result = "Changing content of the certificate"
             case self.SurveyType.DII:
                 result = "Review of Declaration of Maritime Labour Compliance part II"  # noqa: E501
+            case self.SurveyType.OCR:
+                result = "The offshore containers on compliance with the requirements of the set of the RS Rules on containers/CSC"  # noqa: E501
+            case self.SurveyType.TCR:
+                result = "The tank-containers on compliance with the requirements of of the set of the RS Rules on containers/CSC"  # noqa: E501
             case self.SurveyType.EXP:
                 result = "Expanding field of activity"
             case self.SurveyType.ISM:
@@ -265,8 +271,12 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
         """Возвращение строки."""
         SURVEY = "освидетельствование"
         SURVEY_EN = "survey"
+        COMPANY = "компании"
+        COMPANY_EN = "of the company"
         QUALIFICATION = "аттестация"
         QUALIFICATION_EN = "qualification"
+        INTERIM_DOCS = "с целью выдачи временных документов"
+        INTERIM_DOCS_EN = "with the of issuing interim documents"
         SURVEY_CODES = self.SurveyCode
         SURVEY_TYPES = self.SurveyType
         SURVEY_SCOPES = self.SurveyScope
@@ -289,6 +299,11 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
                 result = f"{self.get_survey_code_display()} / Services on survey of a ship in repair"  # type: ignore # noqa: E501
             case SURVEY_CODES.C00006:
                 result = f'{self.get_survey_code_display()} "{self.occasional_cause}" на т/х {self.vessel} / Review of technical documentation "{self.occasional_cause_en}" on m/v {self.vessel.name_en}'  # type: ignore # noqa: E501
+            case SURVEY_CODES.C00009:
+                try:
+                    result = f"{self.get_survey_scope_display().split()[0]} {SURVEY} {self.get_survey_type_display()[0].lower()}{self.get_survey_type_display()[1:]} - {self.occasional_cause} шт. / {survey_scope_en.split()[0]} {SURVEY_EN} {survey_type_en[0].lower()}{survey_type_en[1:]} - {self.occasional_cause} pcs"  # type: ignore # noqa: E501
+                except IndexError:
+                    result = f"{self.get_survey_scope_display().split()[0]} {SURVEY} (выберите вид освидетельствования) / {survey_scope_en.split()[0]} {SURVEY_EN} (choose type of survey)"  # type: ignore # noqa: E501
             case SURVEY_CODES.C00011:
                 if self.survey_scope not in [SURVEY_SCOPES.ADDITL, SURVEY_SCOPES.INTERI, SURVEY_SCOPES.PRIMAR]:  # noqa: E501
                     if self.survey_type != SURVEY_TYPES.DII:  # noqa: E501
@@ -298,11 +313,23 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
                             result = f"{self.get_survey_scope_display()} {SURVEY} (выберите вид освидетельствования) / {survey_scope_en} {SURVEY_EN} (choose type of survey)"  # type: ignore # noqa: E501
                     else:
                         result = f"{self.get_survey_type_display()} / {survey_type_en}"  # type: ignore # noqa: E501
-                else:
+                elif self.survey_scope == SURVEY_SCOPES.ADDITL:
                     try:
                         result = f"{self.get_survey_scope_display().split()[0]} {SURVEY} {self.get_survey_type_display()[0].lower()}{self.get_survey_type_display()[1:]} / {survey_scope_en.split()[0]} {SURVEY_EN} {survey_type_en[0].lower()}{survey_type_en[1:]}"  # type: ignore # noqa: E501
                     except IndexError:
                         result = f"{self.get_survey_scope_display().split()[0]} {SURVEY} (выберите вид освидетельствования) / {survey_scope_en.split()[0]} {SURVEY_EN} (choose type of survey)"  # type: ignore # noqa: E501
+                else:
+                    try:
+                        result = f"{SURVEY.capitalize()} {self.get_survey_type_display()[0].lower()}{self.get_survey_type_display()[1:]} {INTERIM_DOCS} / {SURVEY_EN.capitalize()} {survey_type_en[0].lower()}{survey_type_en[1:]} {INTERIM_DOCS_EN}"  # type: ignore # noqa: E501
+                    except IndexError:
+                        result = f"{SURVEY.capitalize()} (выберите вид освидетельствования) / {SURVEY_EN.capitalize()} (choose type of survey)"  # type: ignore # noqa: E501
+            case SURVEY_CODES.C00014:
+                if self.survey_scope not in [SURVEY_SCOPES.ADDITL, SURVEY_SCOPES.INTERI]:  # noqa: E501
+                    result = f"{self.get_survey_scope_display()} {SURVEY} {COMPANY} на соответствие требованиям МКУБ / {survey_scope_en} {SURVEY_EN} {COMPANY_EN} on compliance with the requirements of the ISMC"  # type: ignore # noqa: E501
+                elif self.survey_scope == SURVEY_SCOPES.ADDITL:
+                    result = f"{self.get_survey_scope_display().split()[0]} {SURVEY} {COMPANY} по МКУБ / {survey_scope_en.split()[0]} {SURVEY_EN} {COMPANY_EN} on ISMC"  # type: ignore # noqa: E501
+                else:
+                    result = f"{SURVEY.capitalize()} {COMPANY} по МКУБ {INTERIM_DOCS} / {SURVEY_EN.capitalize()} {COMPANY_EN} on ISMC {INTERIM_DOCS_EN}"  # type: ignore # noqa: E501
             case SURVEY_CODES.C00015:
                 result = f"{SURVEY.capitalize()} / {SURVEY_EN.capitalize()} of"  # noqa: E501
             case SURVEY_CODES.C00101:

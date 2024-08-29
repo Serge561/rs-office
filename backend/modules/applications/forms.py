@@ -58,7 +58,7 @@ class ApplicationCreateForm(forms.ModelForm):
         self.fields["occasional_cause"].widget.attrs.update(
             {
                 "rows": 6,
-                "placeholder": "указать причину ВНО (в связи с ...)\r\nуказать вид существующего св-ва (ССП/СП/СПЛ) и № для его подтверждения или возобновления\r\nуказать название и № ТД\r\nуказать количество сварщиков или СОТПС\r\nуказать этап строительства",  # noqa: E501
+                "placeholder": "указать причину ВНО (в связи с ...)\r\nуказать вид существующего св-ва (ССП/СП/СПЛ) и № для его подтверждения или возобновления\r\nуказать название и № ТД\r\nуказать количество сварщиков/СОТПС или контeйн.\r\nуказать этап строительства",  # noqa: E501
             }
         )
         self.fields["occasional_cause_en"].widget.attrs.update(
@@ -313,9 +313,6 @@ class FormCreateForm(forms.ModelForm):
             "form_type",
             "description",
         )
-        # widgets = {
-        #     "flag": autocomplete.ListSelect2(url="country-autocomplete"),  # noqa: E501
-        # }
 
     def __init__(self, *args, **kwargs):
         """Обновление стилей формы под Tailwind."""

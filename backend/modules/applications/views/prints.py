@@ -1,5 +1,5 @@
 # pylint: disable=line-too-long, unused-variable, redefined-builtin, invalid-name, too-many-arguments, too-many-branches, too-many-locals, too-many-statements, too-many-return-statements,  # noqa: E501
-"""Представления для модели applications."""
+"""Представления для модели applications-печать."""
 
 import io
 import datetime
@@ -98,12 +98,12 @@ def get_docx_template(
                     template = TEMPLATES["T81012PE"]
                 else:
                     template = TEMPLATES["T43035"]
-            case Application.SurveyCode.C00101:
+            case Application.SurveyCode.C00101 | Application.SurveyCode.C00009:
                 if report_type == AGREEMENT_APPLICATION:
                     template = TEMPLATES["T81012WE"]
                 else:
                     template = TEMPLATES["T43035"]
-            case Application.SurveyCode.C00104:
+            case Application.SurveyCode.C00104 | Application.SurveyCode.C00014:
                 if report_type == AGREEMENT_APPLICATION:
                     template = TEMPLATES["T81012SE"]
                 else:
@@ -135,12 +135,16 @@ def get_docx_template(
                 template = TEMPLATES["T81012P"]
             else:
                 template = TEMPLATES["T43033"]
-        case Application.SurveyCode.C00101:  # noqa: E501
+        case (
+            Application.SurveyCode.C00101 | Application.SurveyCode.C00009
+        ):  # noqa: E501
             if report_type == AGREEMENT_APPLICATION:
                 template = TEMPLATES["T81012W"]
             else:
                 template = TEMPLATES["T43031"]
-        case Application.SurveyCode.C00103:  # noqa: E501
+        case (
+            Application.SurveyCode.C00103 | Application.SurveyCode.C00014
+        ):  # noqa: E501
             if report_type == AGREEMENT_APPLICATION:
                 template = TEMPLATES["T81012S"]
             else:
@@ -445,7 +449,9 @@ def get_issued_docs(
         case (
             Application.SurveyCode.C00001
             | Application.SurveyCode.C00003
+            | Application.SurveyCode.C00009
             | Application.SurveyCode.C00011
+            | Application.SurveyCode.C00014
             | Application.SurveyCode.C00015
             | Application.SurveyCode.C00101
             | Application.SurveyCode.C00103
