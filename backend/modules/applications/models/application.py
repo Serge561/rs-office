@@ -75,21 +75,21 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
         C00121 = "00121", "Классификация и освидетельствование маломерного судна"  # noqa: E501
 
     class SurveyType(models.TextChoices):
-        """Выбор вида освидетельствования."""
+        """Выбор объёма освидетельствования."""
 
         ISM = "ISM", "На соответствие требованиям МКУБ"
         ISS = "ISS", "На соответствие требованиям МК ОСПС"
         MLC = "MLC", "На соответствие требованиям КТМС-2006"
         DII = "DII", "Рассмотрение II части Декларации о соответствии трудовым нормам в морском судоходстве"  # noqa: E501
-        OCR = "OSC", "Оффшорных контейнеров на соответствие требованиям Сборника правил РС по контейнерам/КБК"  # noqa: E501
-        TCR = "TCR", "Контейнеров-цистерн на соответствие требованиям Сборника правил РС по контейнерам/КБК"  # noqa: E501
+        OCR = "OSC", "Оффшорных контейнеров"
+        TCR = "TCR", "Контейнеров-цистерн"
         EXP = "EXP", "Расширение сферы деятельности"
         CHA = "CHA", "Изменение содержания свидетельства"
         WAC = "WAC", "Квалификационные испытания сварщиков"
         WPS = "WPS", "Технологические процессы сварки"
 
     class SurveyScope(models.TextChoices):
-        """Выбор объёма освидетельствования."""
+        """Выбор вида освидетельствования."""
 
         INITIL = "I", "Первоначальное"  # noqa: E741
         ANNUAL = "A", "Ежегодное"
@@ -135,13 +135,13 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
         default=SurveyCode.C00001,
     )
     survey_type = models.CharField(
-        "Вид освидетельствования",
+        "Объём освидетельствования",
         max_length=3,
         choices=SurveyType.choices,
         blank=True,
     )
     survey_scope = models.CharField(
-        "Объём освидетельствования",
+        "Вид освидетельствования",
         max_length=3,
         choices=SurveyScope.choices,
         blank=True,
@@ -216,9 +216,9 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
             case self.SurveyType.DII:
                 result = "Review of Declaration of Maritime Labour Compliance part II"  # noqa: E501
             case self.SurveyType.OCR:
-                result = "The offshore containers on compliance with the requirements of the set of the RS Rules on containers/CSC"  # noqa: E501
+                result = "The offshore containers"
             case self.SurveyType.TCR:
-                result = "The tank-containers on compliance with the requirements of of the set of the RS Rules on containers/CSC"  # noqa: E501
+                result = "The tank-containers"
             case self.SurveyType.EXP:
                 result = "Expanding field of activity"
             case self.SurveyType.ISM:
@@ -236,7 +236,7 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
         return result
 
     def get_survey_scope_en(self, survey_scope_value):
-        """Получить перевод объёма освидетельствования
+        """Получить перевод вида освидетельствования
         на английский язык."""
         match survey_scope_value:
             case self.SurveyScope.INITIL:
@@ -256,11 +256,11 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
             case self.SurveyScope.CONTIN:
                 result = "Continuous"
             case self.SurveyScope.INTERI:
-                result = "Interim (ISM ISPS MLC)"
+                result = "Interim (ISM ISPS)"
             case self.SurveyScope.ADDITL:
                 result = "Additional (ISM ISPS MLC)"
             case self.SurveyScope.PRIMAR:
-                result = "Primary (WAC WPSAC)"
+                result = "Primary (WAC WPSAC MLC)"
             case self.SurveyScope.PERIOD:
                 result = "Periodical (WAC WPSAC)"
             case _:
@@ -277,6 +277,8 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
         QUALIFICATION_EN = "qualification"
         INTERIM_DOCS = "с целью выдачи временных документов"
         INTERIM_DOCS_EN = "with the of issuing interim documents"
+        CONT_RULES = "на соответствие требованиям Сборника правил РС по контейнерам/КБК"  # noqa: E501
+        CONT_RULES_EN = "on compliance with the requirements of the set of the RS Rules on containers/CSC"  # noqa: E501
         SURVEY_CODES = self.SurveyCode
         SURVEY_TYPES = self.SurveyType
         SURVEY_SCOPES = self.SurveyScope
@@ -301,7 +303,7 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
                 result = f'{self.get_survey_code_display()} "{self.occasional_cause}" на т/х {self.vessel} / Review of technical documentation "{self.occasional_cause_en}" on m/v {self.vessel.name_en}'  # type: ignore # noqa: E501
             case SURVEY_CODES.C00009:
                 try:
-                    result = f"{self.get_survey_scope_display().split()[0]} {SURVEY} {self.get_survey_type_display()[0].lower()}{self.get_survey_type_display()[1:]} - {self.occasional_cause} шт. / {survey_scope_en.split()[0]} {SURVEY_EN} {survey_type_en[0].lower()}{survey_type_en[1:]} - {self.occasional_cause} pcs"  # type: ignore # noqa: E501
+                    result = f"{self.get_survey_scope_display().split()[0]} {SURVEY} {self.get_survey_type_display()[0].lower()}{self.get_survey_type_display()[1:]} {CONT_RULES} - {self.occasional_cause} шт. / {survey_scope_en.split()[0]} {SURVEY_EN} {survey_type_en[0].lower()}{survey_type_en[1:]} {CONT_RULES_EN} - {self.occasional_cause} pcs"  # type: ignore # noqa: E501
                 except IndexError:
                     result = f"{self.get_survey_scope_display().split()[0]} {SURVEY} (выберите вид освидетельствования) / {survey_scope_en.split()[0]} {SURVEY_EN} (choose type of survey)"  # type: ignore # noqa: E501
             case SURVEY_CODES.C00011:
