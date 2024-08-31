@@ -1,4 +1,5 @@
 {% extends 'main.html' %}
+{% load phone_view %}
 <!-- prettier-ignore -->
 {% block content %}
 <!-- breadcrumbs -->
@@ -33,7 +34,7 @@
     <div class="max-w-4xl bg-white rounded-lg shadow-xl">
         <div class="p-4 border-b">
             <h2 class="text-2xl ">
-                {{ employee }}
+              {{ employee.second_name|default_if_none:'' }} {{ employee.first_name|default_if_none:'' }} {{ employee.patronymic_name|default_if_none:'' }}
             </h2>
         </div>
         <div>
@@ -59,7 +60,7 @@
                         Телефон
                     </p>
                     <p>
-                        {{ employee.phone_number }}
+                        {{ employee.phone_number|phone_number_view_filter }}
                     </p>
                 </div>
                 <div class="md:grid md:grid-cols-2 hover:bg-gray-50 md:space-y-0 space-y-2 p-4 border-b">

@@ -1,5 +1,7 @@
 {% extends 'main.html' %}
 <!-- prettier-ignore -->
+{% load phone_view %}
+<!-- prettier-ignore -->
 {% block content %}
 <!-- data section -->
 <section>
@@ -72,7 +74,7 @@
                 <td
                   class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"
                 >
-                  {{ employee.phone_number }}
+                  {{ employee.phone_number|phone_number_view_filter }}
                 </td>
                 <td
                   class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"

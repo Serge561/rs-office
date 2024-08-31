@@ -74,7 +74,6 @@ class CompanyDetailView(LoginRequiredMixin, DetailView):
 
     model = Company
     template_name = "companies/company_detail.html"
-    # form_class = CompanyDetailViewForm
     context_object_name = "company"
     login_url = "login"
 
