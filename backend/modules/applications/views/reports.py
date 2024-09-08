@@ -12,12 +12,13 @@ from django.views.generic import (
 )
 
 from modules.system.models import OfficeNumber
+from modules.services.mixins import RSUserOnlyMixin
 from ..models import Application, Vessel
 
 User = get_user_model()
 
 
-class DashboardView(LoginRequiredMixin, TemplateView):
+class DashboardView(RSUserOnlyMixin, TemplateView):
     """Представление для вывода кнопочной формы управления отчётами."""
 
     login_url = "login"
@@ -52,7 +53,6 @@ class CurrentApplicationsView(LoginRequiredMixin, ListView):
                 ]
             )
             .filter(
-                # company__responsible_offices__number__icontains=office_number
                 vesselextrainfo__assigned_surveyors__office_number__number__icontains=office_number  # noqa: E501
             )
             .distinct()  # noqa: E501

@@ -10,7 +10,7 @@ from django.views.generic import (
     UpdateView,
     DeleteView,
 )
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin  # noqa: E501
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.postgres.search import (
     SearchVector,
@@ -30,7 +30,7 @@ from .models import (
     Employee,
     RussianRegions,
 )  # noqa: E501
-from ..services.mixins import AdminRequiredMixin
+from ..services.mixins import AdminRequiredMixin, RSUserOnlyMixin
 from .forms import (
     AddressCreateForm,
     AddressUpdateForm,
@@ -57,7 +57,6 @@ class CompanyListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         queryset = super().get_queryset()
         user = self.request.user
-        # if user.is_anonymous | user.is_staff:  # type: ignore
         if user.is_superuser:  # type: ignore
             return queryset
         user_office_id = user.office_number.id  # type: ignore
@@ -83,7 +82,7 @@ class CompanyDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class CompanyCreateView(LoginRequiredMixin, CreateView):
+class CompanyCreateView(RSUserOnlyMixin, CreateView):
     """Представление создания карточки компании на сайте."""
 
     model = Company
@@ -102,7 +101,7 @@ class CompanyCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class CompanyUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+class CompanyUpdateView(RSUserOnlyMixin, SuccessMessageMixin, UpdateView):
     """Представление обновления карточки на сайте."""
 
     model = Company
@@ -168,16 +167,6 @@ class CompanySearchResultView(LoginRequiredMixin, ListView):
         return context
 
 
-# def autosuggest(request):
-#     """sdasdasdasd."""
-#     print(request.GET)
-#     query_original = request.GET.get("term")
-#     queryset = Company.objects.filter(name__icontains=query_original)
-#     mylist = []
-#     mylist += [x.name for x in queryset]
-#     return JsonResponse(mylist, safe=False)
-
-
 # ======================== Функционал address ==============================
 
 
@@ -215,7 +204,7 @@ class AddressListView(LoginRequiredMixin, ListView):
         return context
 
 
-class AddressCreateView(LoginRequiredMixin, CreateView):
+class AddressCreateView(RSUserOnlyMixin, CreateView):
     """Представление добавления адреса компании."""
 
     model = Address
@@ -242,7 +231,7 @@ class AddressCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class AddressUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+class AddressUpdateView(RSUserOnlyMixin, SuccessMessageMixin, UpdateView):
     """Представление обновления адреса."""
 
     model = Address
@@ -269,7 +258,7 @@ class AddressUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
         return super().form_valid(form)
 
 
-class AddressDeleteView(LoginRequiredMixin, DeleteView):
+class AddressDeleteView(RSUserOnlyMixin, DeleteView):
     """Представление удаления адреса компании."""
 
     model = Address
@@ -314,7 +303,7 @@ class RegionAutocomplete(autocomplete.Select2ListView):
         return ru_region_list
 
 
-class CityCreateView(LoginRequiredMixin, CreateView):
+class CityCreateView(RSUserOnlyMixin, CreateView):
     """Представление добавления города."""
 
     model = City
@@ -383,7 +372,7 @@ class BankAccountListView(LoginRequiredMixin, ListView):
         return context
 
 
-class BankAccountCreateView(LoginRequiredMixin, CreateView):
+class BankAccountCreateView(RSUserOnlyMixin, CreateView):
     """Представление добавления расчётного счёта компании."""
 
     model = Bank
@@ -411,7 +400,7 @@ class BankAccountCreateView(LoginRequiredMixin, CreateView):
 
 
 class BankAccountUpdateView(
-    LoginRequiredMixin, SuccessMessageMixin, UpdateView
+    RSUserOnlyMixin, SuccessMessageMixin, UpdateView
 ):  # noqa: E501
     """Представление обновления расчётного счёта."""
 
@@ -439,7 +428,7 @@ class BankAccountUpdateView(
         return super().form_valid(form)
 
 
-class BankAccountDeleteView(LoginRequiredMixin, DeleteView):
+class BankAccountDeleteView(RSUserOnlyMixin, DeleteView):
     """Представление удаления счёта в банке."""
 
     model = BankAccount
@@ -481,7 +470,7 @@ class BankDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class BankCreateView(LoginRequiredMixin, CreateView):
+class BankCreateView(RSUserOnlyMixin, CreateView):
     """Представление добавления банка."""
 
     model = Bank

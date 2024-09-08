@@ -23,7 +23,7 @@ class AdminRequiredMixin(AccessMixin):
                     request,
                     "Удаление этого объекта доступно только администратору.",  # noqa: E501
                 )  # noqa: E501
-                return redirect("home")
+                raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)  # type: ignore
 
 
@@ -45,6 +45,24 @@ class UserIsNotAuthenticated(UserPassesTestMixin):
         if self.request.user.is_authenticated:  # type: ignore
             return redirect("home")
         return redirect("login")
+
+
+class RSUserOnlyMixin(AccessMixin):
+    """Миксин для предотвращения посещения страницы гостевыми пользователями."""  # noqa: E501
+
+    def dispatch(self, request, *args, **kwargs):
+        """Функция определения прав доступа для открытия страницы."""
+        if not request.user.is_authenticated:
+            return self.handle_no_permission()
+        if request.user.is_authenticated:
+            if request.user.groups.filter(name="Guest").exists():  # noqa: E501
+                messages.info(
+                    request,
+                    "Просмотр этой страницы доступен только корпоративным пользователям.",  # noqa: E501
+                )
+                # return redirect("home")
+                raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)  # type: ignore
 
 
 class CreatorMixin(models.Model):

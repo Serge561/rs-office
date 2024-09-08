@@ -1,9 +1,9 @@
-# pylint: disable=line-too-long, unused-argument, too-many-ancestors, import-error # noqa: E501
+# pylint: disable=line-too-long, unused-argument, too-many-ancestors, import-error  # noqa: E501
 """Представления для модели applications."""
 
 from dal import autocomplete
 from django.contrib.auth import get_user_model
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin  # noqa: E501
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.postgres.search import (
     SearchVector,
@@ -20,7 +20,7 @@ from django.views.generic import (
     UpdateView,
     DeleteView,
 )
-from modules.services.mixins import AdminRequiredMixin
+from modules.services.mixins import AdminRequiredMixin, RSUserOnlyMixin
 from ..forms import (
     AccountUpdateForm,
     ApplicationCreateForm,
@@ -55,7 +55,7 @@ class VesselAutocomplete(autocomplete.Select2QuerySetView):
         return qs
 
 
-class ApplicationListView(LoginRequiredMixin, ListView):
+class ApplicationListView(RSUserOnlyMixin, ListView):
     """Представления для вывода списка заявок."""
 
     model = Application
@@ -279,9 +279,7 @@ class VesselDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class VesselUpdateView(
-    LoginRequiredMixin, SuccessMessageMixin, UpdateView
-):  # noqa: E501
+class VesselUpdateView(RSUserOnlyMixin, SuccessMessageMixin, UpdateView):  # noqa: E501
     """Представление обновления параметров судна."""
 
     model = Vessel

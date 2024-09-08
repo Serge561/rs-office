@@ -68,12 +68,20 @@ class UserUpdateForm(forms.ModelForm):
                     "autocomplete": "off",
                 }
             )
-            self.fields["username"].widget = forms.HiddenInput()
-            self.fields["proxy_date"].widget.attrs.update(
-                {
-                    "id": "datepicker",
-                }
-            )
+        self.fields["username"].widget = forms.HiddenInput()
+        self.fields["proxy_date"].widget.attrs.update(
+            {
+                "id": "datepicker",
+            }
+        )
+        current_user = self.instance
+        if current_user.groups.filter(name__iexact="guest").exists():  # noqa: E501
+            self.fields["position"].widget = forms.HiddenInput()
+            self.fields["first_name_en"].widget = forms.HiddenInput()
+            self.fields["last_name_en"].widget = forms.HiddenInput()
+            self.fields["office_number"].widget = forms.HiddenInput()
+            self.fields["proxy_number"].widget = forms.HiddenInput()
+            self.fields["proxy_date"].widget = forms.HiddenInput()
 
     def clean_email(self):
         """Проверка email на уникальность."""
