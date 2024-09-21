@@ -681,6 +681,7 @@ class ShipsInServiceApplicationsSurveyorView(LoginRequiredMixin, ListView):
             .filter(
                 survey_code__in=[
                     Application.SurveyCode.C00001,
+                    Application.SurveyCode.C00121,
                 ]
             )
             .filter(
