@@ -21,6 +21,7 @@ from django.views.generic import (
     DeleteView,
 )
 from modules.services.mixins import AdminRequiredMixin, RSUserOnlyMixin
+from .prints import RS_RU_BRANCHES
 from ..forms import (
     AccountUpdateForm,
     ApplicationCreateForm,
@@ -86,9 +87,20 @@ class ApplicationDetailView(LoginRequiredMixin, DetailView):
     login_url = "login"
     context_object_name = "application"
 
+    def get_initial(self):
+        """Определить код филиала пользователя."""
+        user = self.request.user
+        branch_number = user.office_number.number[0:3]  # type: ignore
+        is_foreign_office = False
+        if branch_number not in RS_RU_BRANCHES:
+            is_foreign_office = True
+        initial = {"is_foreign_office": is_foreign_office}
+        return initial
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["title"] = f"Заявка № {self.object.number} от {self.object.date:%d.%m.%Y}"  # type: ignore # noqa: E501
+        context["is_foreign_office"] = self.get_initial()["is_foreign_office"]
         return context
 
 

@@ -135,7 +135,7 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
         default=SurveyCode.C00001,
     )
     survey_type = models.CharField(
-        "Объём освидетельствования",
+        "Код услуги детально (если применимо)",
         max_length=3,
         choices=SurveyType.choices,
         blank=True,
@@ -278,7 +278,7 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
         INTERIM_DOCS = "с целью выдачи временных документов"
         INTERIM_DOCS_EN = "with the of issuing interim documents"
         CONT_RULES = "на соответствие требованиям Сборника правил РС по контейнерам/КБК"  # noqa: E501
-        CONT_RULES_EN = "on compliance with the requirements of the set of the RS Rules on containers/CSC"  # noqa: E501
+        CONT_RULES_EN = "on compliance with the requirements of the RS Rule set on containers/CSC"  # noqa: E501
         SURVEY_CODES = self.SurveyCode
         SURVEY_TYPES = self.SurveyType
         SURVEY_SCOPES = self.SurveyScope
