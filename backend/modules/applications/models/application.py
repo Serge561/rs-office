@@ -114,6 +114,7 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
         ELECPART = "ELEC", "Судно по электромеханической части"
         HULLMECH = "HUME", "Судно по корпусной и механической частям"
         MECHELEC = "MEEL", "Судно по механической и электромеханической частям"  # noqa: E501
+        RADIPART = "RADI", "Судно по радиочасти"
 
     company = models.ForeignKey(
         Company,

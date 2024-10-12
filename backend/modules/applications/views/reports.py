@@ -498,7 +498,6 @@ class AnnualReportView(LoginRequiredMixin, ListView):
             survey_scope=Application.SurveyScope.OCCASL
         ).count()
         context["occasional"] = occasional_sur_count
-
         # Количество освидетельствований судов
         # без учёта заявок только на освидетельствование
         # подводной части.

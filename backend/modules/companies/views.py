@@ -2,7 +2,7 @@
 """Представления для модели companies."""
 # from django.http import JsonResponse
 from dal import autocomplete
-from django.shortcuts import get_object_or_404  # , redirect, render
+from django.shortcuts import get_object_or_404, redirect  # render
 from django.views.generic import (
     ListView,
     DetailView,
@@ -10,6 +10,8 @@ from django.views.generic import (
     UpdateView,
     DeleteView,
 )
+
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin  # noqa: E501
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.postgres.search import (
@@ -19,6 +21,7 @@ from django.contrib.postgres.search import (
 )  # noqa: E501
 from django.urls import reverse_lazy
 from django.db.models import Q
+from django.db import IntegrityError
 
 # from localflavor.ru.ru_regions import RU_REGIONS_CHOICES
 from .models import (
@@ -391,12 +394,20 @@ class BankAccountCreateView(RSUserOnlyMixin, CreateView):
     def form_valid(self, form):
         """Автосохранение поля company."""
         instance = form.save(commit=False)
-        # form.instance.created_by = self.request.user
         form.instance.company = get_object_or_404(
             Company, slug=self.kwargs["slug"]
         )  # noqa: E501
-        instance.save()
-        return super().form_valid(form)
+        try:
+            instance.save()
+            return super().form_valid(form)
+        except IntegrityError:
+            messages.error(
+                self.request,
+                "Счёт с таким кодом валюты уже имеется. Создайте новый счёт с другим кодом вылюты или отредактируйте старый.",  # noqa: E501
+            )  # noqa: E501
+            return redirect(
+                "company_bankaccount_list", slug=self.kwargs["slug"]
+            )  # noqa: E501
 
 
 class BankAccountUpdateView(

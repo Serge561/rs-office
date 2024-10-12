@@ -525,7 +525,7 @@ class DocumentUpdateView(
 
 
 class DocumentDeleteView(LoginRequiredMixin, DeleteView):
-    """Представление удаления счёта в банке."""
+    """Представление удаления документа."""
 
     model = Document
     slug_url_kwarg = "pk"

@@ -1,6 +1,7 @@
 # pylint: disable=too-few-public-methods, line-too-long, import-error
 """Формы приложения companies."""
 # import gettext
+# from django.core.exceptions import NON_FIELD_ERRORS
 from django import forms
 from dal import autocomplete
 from phonenumber_field.formfields import PhoneNumberField
@@ -241,6 +242,11 @@ class BankAccountUpdateForm(BankAccountCreateForm):
         widgets = {
             "bank": autocomplete.ModelSelect2(url="bank-autocomplete")  # noqa: E501
         }
+        # error_messages = {
+        #     NON_FIELD_ERRORS: {
+        #         "unique_together": "%(model_name)s's %(field_labels)s are not unique.",  # noqa: E501
+        #     }
+        # }
 
     def __init__(self, *args, **kwargs):
         """Обновление стилей формы под Tailwind."""

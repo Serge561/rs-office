@@ -289,6 +289,7 @@ def is_none(value):
 
 def is_vessel_none(vessel=None, argument=None, rs_branch=None):
     """Проверка судна на None для заявок в промышленности."""
+    vessel_attribute = ""
     if vessel is not None:
         match argument:
             case "name":
@@ -754,6 +755,8 @@ def get_survey_object_en(survey_object_value):
             result = (
                 "The ship on the mechanical and electric-mechanical parts"  # noqa: E501
             )
+        case Application.SurveyObject.RADIPART:
+            result = "The ship on the radio part"  # noqa: E501
         case _:
             return ""
     return result
@@ -793,7 +796,6 @@ def print_docs(request, **kwargs):
         application.survey_scope,
     )
     doc = DocxTemplate(f"templates/docx/{docx_template}")
-
     context = {
         # for agreement-applications
         "application": application.number,

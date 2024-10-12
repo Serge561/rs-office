@@ -121,7 +121,6 @@ class UserLoginView(SuccessMessageMixin, LoginView):
     form_class = UserLoginForm
     template_name = "system/registration/user_login.html"
     next_page = "home"
-    # success_message = "Добро пожаловать на сайт, %(username)s!"
     success_message = "Добро пожаловать на сайт, %(calculated_field)s."
 
     def get_success_message(self, cleaned_data):
@@ -139,8 +138,6 @@ class UserLoginView(SuccessMessageMixin, LoginView):
 def logout_view(request):
     """Выход с сайта."""
     logout(request)
-    # Redirect to a success page.
-    # return redirect("projects")
     return HttpResponseRedirect("/login/")
 
 
@@ -303,6 +300,7 @@ class FeedbackCreateView(SuccessMessageMixin, CreateView):
         if form.is_valid():
             feedback = form.save(commit=False)  # type: ignore
             feedback.ip_address = get_client_ip(self.request)
+            email = ""
             if self.request.user.is_authenticated:
                 feedback.user = self.request.user
                 email = self.request.user.email  # type: ignore
