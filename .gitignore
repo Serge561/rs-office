@@ -276,7 +276,9 @@ ipython_config.py
 __pypackages__/
 
 # Celery stuff
-celerybeat-schedule
+celerybeat-schedule.dat
+celerybeat-schedule.bak
+celerybeat-schedule.dir
 celerybeat.pid
 
 # SageMath parsed files
@@ -324,4 +326,8 @@ cython_debug/
 
 docker-compose.yml
 
+# Saved docx files
 saved/
+
+# Database dumbs
+database*.json

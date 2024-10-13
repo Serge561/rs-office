@@ -149,6 +149,32 @@ class AnnualReportView(LoginRequiredMixin, ListView):
             .distinct()  # noqa: E501
         )
 
+    def get_survey_number(self, statistical_group, is_bottom):
+        """Получить количество освидетельствований по
+        статистическим группам судов."""
+        qs = self.object_list  # type: ignore
+        stat_group_filter = qs.filter(
+            vessel__vessel_stat_group=statistical_group  # noqa: E501
+        )
+        if not is_bottom:
+            return stat_group_filter.count()
+        if statistical_group == "SMC":
+            return stat_group_filter.filter(
+                survey_scope__in=[
+                    Application.SurveyScope.SPECIL,
+                    Application.SurveyScope.RENEWL,
+                    Application.SurveyScope.INITIL,
+                ]
+            ).count()
+        return stat_group_filter.filter(
+            survey_scope__in=HIGHLY_LIKELY_BOTTOM_SURVEY
+        ).count()
+
+    def get_survey_number_by_type(self, survey_type):
+        """Получить количество освидетельствований по виду."""
+        qs = self.object_list  # type: ignore
+        return qs.filter(survey_scope=survey_type).count()
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["title"] = (
@@ -156,306 +182,12 @@ class AnnualReportView(LoginRequiredMixin, ListView):
         )
         qs = self.object_list  # type: ignore
 
-        oiltanker_sur_count = qs.filter(
-            vessel__vessel_stat_group=Vessel.VesselStatGroup.OILTANKER  # noqa: E501
-        ).count()
-        context["oiltanker"] = oiltanker_sur_count
-        oiltanker_bottom_count = (
-            qs.filter(
-                vessel__vessel_stat_group=Vessel.VesselStatGroup.OILTANKER  # noqa: E501
-            )
-            .filter(survey_scope__in=HIGHLY_LIKELY_BOTTOM_SURVEY)
-            .count()
-        )
-        context["oiltanker_b"] = oiltanker_bottom_count
+        for st_gr in Vessel.VesselStatGroup:
+            context[f"{st_gr}"] = self.get_survey_number(st_gr, False)
+            context[f"{st_gr}_b"] = self.get_survey_number(st_gr, True)
 
-        oilchemicaltanker_sur_count = qs.filter(
-            vessel__vessel_stat_group=Vessel.VesselStatGroup.OILCHEMTANKER  # noqa: E501
-        ).count()
-        context["oilchemicaltanker"] = oilchemicaltanker_sur_count
-        oilchemicaltanker_bottom_count = (
-            qs.filter(
-                vessel__vessel_stat_group=Vessel.VesselStatGroup.OILCHEMTANKER  # noqa: E501
-            )
-            .filter(survey_scope__in=HIGHLY_LIKELY_BOTTOM_SURVEY)
-            .count()
-        )
-        context["oilchemicaltanker_b"] = oilchemicaltanker_bottom_count
-
-        chemicaltanker_sur_count = qs.filter(
-            vessel__vessel_stat_group=Vessel.VesselStatGroup.CHEMTANKER  # noqa: E501
-        ).count()
-        context["chemicaltanker"] = chemicaltanker_sur_count
-        chemicaltanker_bottom_count = (
-            qs.filter(
-                vessel__vessel_stat_group=Vessel.VesselStatGroup.CHEMTANKER  # noqa: E501
-            )
-            .filter(survey_scope__in=HIGHLY_LIKELY_BOTTOM_SURVEY)
-            .count()
-        )
-        context["chemicaltanker_b"] = chemicaltanker_bottom_count
-
-        gascarrier_sur_count = qs.filter(
-            vessel__vessel_stat_group=Vessel.VesselStatGroup.GASCARRIER  # noqa: E501
-        ).count()
-        context["gascarrier"] = gascarrier_sur_count
-        gascarrier_bottom_count = (
-            qs.filter(
-                vessel__vessel_stat_group=Vessel.VesselStatGroup.GASCARRIER  # noqa: E501
-            )
-            .filter(survey_scope__in=HIGHLY_LIKELY_BOTTOM_SURVEY)
-            .count()
-        )
-        context["gascarrier_b"] = gascarrier_bottom_count
-
-        othertanker_sur_count = qs.filter(
-            vessel__vessel_stat_group=Vessel.VesselStatGroup.OTHERTANKER  # noqa: E501
-        ).count()
-        context["othertanker"] = othertanker_sur_count
-        othertanker_bottom_count = (
-            qs.filter(
-                vessel__vessel_stat_group=Vessel.VesselStatGroup.OTHERTANKER  # noqa: E501
-            )
-            .filter(survey_scope__in=HIGHLY_LIKELY_BOTTOM_SURVEY)
-            .count()
-        )
-        context["othertanker_b"] = othertanker_bottom_count
-
-        oilorecarrier_sur_count = qs.filter(
-            vessel__vessel_stat_group=Vessel.VesselStatGroup.OILORECARRIER  # noqa: E501
-        ).count()
-        context["oilorecarrier"] = oilorecarrier_sur_count
-        oilorecarrier_bottom_count = (
-            qs.filter(
-                vessel__vessel_stat_group=Vessel.VesselStatGroup.OILORECARRIER  # noqa: E501
-            )
-            .filter(survey_scope__in=HIGHLY_LIKELY_BOTTOM_SURVEY)
-            .count()
-        )
-        context["oilorecarrier_b"] = oilorecarrier_bottom_count
-
-        oilcarrierbulker_sur_count = qs.filter(
-            vessel__vessel_stat_group=Vessel.VesselStatGroup.ORECARRBULKER  # noqa: E501
-        ).count()
-        context["oilcarrierbulker"] = oilcarrierbulker_sur_count
-        oilcarrierbulker_bottom_count = (
-            qs.filter(
-                vessel__vessel_stat_group=Vessel.VesselStatGroup.ORECARRBULKER  # noqa: E501
-            )
-            .filter(survey_scope__in=HIGHLY_LIKELY_BOTTOM_SURVEY)
-            .count()
-        )
-        context["oilcarrierbulker_b"] = oilcarrierbulker_bottom_count
-
-        generalcargo_sur_count = qs.filter(
-            vessel__vessel_stat_group=Vessel.VesselStatGroup.GENERALCARGO  # noqa: E501
-        ).count()
-        context["generalcargo"] = generalcargo_sur_count
-        generalcargo_bottom_count = (
-            qs.filter(
-                vessel__vessel_stat_group=Vessel.VesselStatGroup.GENERALCARGO  # noqa: E501
-            )
-            .filter(survey_scope__in=HIGHLY_LIKELY_BOTTOM_SURVEY)
-            .count()
-        )
-        context["generalcargo_b"] = generalcargo_bottom_count
-
-        cargopassanger_sur_count = qs.filter(
-            vessel__vessel_stat_group=Vessel.VesselStatGroup.CARGOPASSANGER  # noqa: E501
-        ).count()
-        context["cargopassanger"] = cargopassanger_sur_count
-        cargopassanger_bottom_count = (
-            qs.filter(
-                vessel__vessel_stat_group=Vessel.VesselStatGroup.CARGOPASSANGER  # noqa: E501
-            )
-            .filter(survey_scope__in=HIGHLY_LIKELY_BOTTOM_SURVEY)
-            .count()
-        )
-        context["cargopassanger_b"] = cargopassanger_bottom_count
-
-        containership_sur_count = qs.filter(
-            vessel__vessel_stat_group=Vessel.VesselStatGroup.CONTAINERSHIP  # noqa: E501
-        ).count()
-        context["containership"] = containership_sur_count
-        containership_bottom_count = (
-            qs.filter(
-                vessel__vessel_stat_group=Vessel.VesselStatGroup.CONTAINERSHIP  # noqa: E501
-            )
-            .filter(survey_scope__in=HIGHLY_LIKELY_BOTTOM_SURVEY)
-            .count()
-        )
-        context["containership_b"] = containership_bottom_count
-
-        carcarrier_sur_count = qs.filter(
-            vessel__vessel_stat_group=Vessel.VesselStatGroup.CARCARRIER  # noqa: E501
-        ).count()
-        context["carcarrier"] = carcarrier_sur_count
-        carcarrier_bottom_count = (
-            qs.filter(
-                vessel__vessel_stat_group=Vessel.VesselStatGroup.CARCARRIER  # noqa: E501
-            )
-            .filter(survey_scope__in=HIGHLY_LIKELY_BOTTOM_SURVEY)
-            .count()
-        )
-        context["carcarrier_b"] = carcarrier_bottom_count
-
-        fishtransport_sur_count = qs.filter(
-            vessel__vessel_stat_group=Vessel.VesselStatGroup.FISHTRANSPORT  # noqa: E501
-        ).count()
-        context["fishtransport"] = fishtransport_sur_count
-        fishtransport_bottom_count = (
-            qs.filter(
-                vessel__vessel_stat_group=Vessel.VesselStatGroup.FISHTRANSPORT  # noqa: E501
-            )
-            .filter(survey_scope__in=HIGHLY_LIKELY_BOTTOM_SURVEY)
-            .count()
-        )
-        context["fishtransport_b"] = fishtransport_bottom_count
-
-        fishingvessel_sur_count = qs.filter(
-            vessel__vessel_stat_group=Vessel.VesselStatGroup.FISHINGVESSEL  # noqa: E501
-        ).count()
-        context["fishingvessel"] = fishingvessel_sur_count
-        fishingvessel_bottom_count = (
-            qs.filter(
-                vessel__vessel_stat_group=Vessel.VesselStatGroup.FISHINGVESSEL  # noqa: E501
-            )
-            .filter(survey_scope__in=HIGHLY_LIKELY_BOTTOM_SURVEY)
-            .count()
-        )
-        context["fishingvessel_b"] = fishingvessel_bottom_count
-
-        passangership_sur_count = qs.filter(
-            vessel__vessel_stat_group=Vessel.VesselStatGroup.PASSANGERSHIP  # noqa: E501
-        ).count()
-        context["passangership"] = passangership_sur_count
-        passangership_bottom_count = (
-            qs.filter(
-                vessel__vessel_stat_group=Vessel.VesselStatGroup.PASSANGERSHIP  # noqa: E501
-            )
-            .filter(survey_scope__in=HIGHLY_LIKELY_BOTTOM_SURVEY)
-            .count()
-        )
-        context["passangership_b"] = passangership_bottom_count
-
-        supplier_sur_count = qs.filter(
-            vessel__vessel_stat_group=Vessel.VesselStatGroup.SUPPLER  # noqa: E501
-        ).count()
-        context["supplier"] = supplier_sur_count
-        supplier_bottom_count = (
-            qs.filter(
-                vessel__vessel_stat_group=Vessel.VesselStatGroup.SUPPLER  # noqa: E501
-            )
-            .filter(survey_scope__in=HIGHLY_LIKELY_BOTTOM_SURVEY)
-            .count()
-        )
-        context["supplier_b"] = supplier_bottom_count
-
-        tug_sur_count = qs.filter(
-            vessel__vessel_stat_group=Vessel.VesselStatGroup.TUG  # noqa: E501
-        ).count()  # noqa: E501
-        context["tug"] = tug_sur_count
-        tug_bottom_count = (
-            qs.filter(
-                vessel__vessel_stat_group=Vessel.VesselStatGroup.TUG  # noqa: E501
-            )
-            .filter(survey_scope__in=HIGHLY_LIKELY_BOTTOM_SURVEY)
-            .count()
-        )  # noqa: E501
-        context["tug_b"] = tug_bottom_count
-
-        dradger_sur_count = qs.filter(
-            vessel__vessel_stat_group=Vessel.VesselStatGroup.DRADGER  # noqa: E501
-        ).count()  # noqa: E501
-        context["dradger"] = dradger_sur_count
-        dradger_bottom_count = (
-            qs.filter(
-                vessel__vessel_stat_group=Vessel.VesselStatGroup.DRADGER  # noqa: E501
-            )
-            .filter(survey_scope__in=HIGHLY_LIKELY_BOTTOM_SURVEY)
-            .count()
-        )  # noqa: E501
-        context["dradger_b"] = dradger_bottom_count
-
-        reefer_sur_count = qs.filter(
-            vessel__vessel_stat_group=Vessel.VesselStatGroup.REEFER  # noqa: E501
-        ).count()  # noqa: E501
-        context["reefer"] = reefer_sur_count
-        reefer_bottom_count = (
-            qs.filter(
-                vessel__vessel_stat_group=Vessel.VesselStatGroup.REEFER  # noqa: E501
-            )
-            .filter(survey_scope__in=HIGHLY_LIKELY_BOTTOM_SURVEY)
-            .count()
-        )  # noqa: E501
-        context["reefer_b"] = reefer_bottom_count
-
-        icebreaker_sur_count = qs.filter(
-            vessel__vessel_stat_group=Vessel.VesselStatGroup.ICEBRAKER  # noqa: E501
-        ).count()  # noqa: E501
-        context["icebreaker"] = icebreaker_sur_count
-        icebreaker_bottom_count = (
-            qs.filter(
-                vessel__vessel_stat_group=Vessel.VesselStatGroup.ICEBRAKER  # noqa: E501
-            )
-            .filter(survey_scope__in=HIGHLY_LIKELY_BOTTOM_SURVEY)
-            .count()
-        )  # noqa: E501
-        context["icebreaker_b"] = icebreaker_bottom_count
-
-        researchship_sur_count = qs.filter(
-            vessel__vessel_stat_group=Vessel.VesselStatGroup.RESEARCHSHIP  # noqa: E501
-        ).count()  # noqa: E501
-        context["researchship"] = researchship_sur_count
-        researchship_bottom_count = (
-            qs.filter(
-                vessel__vessel_stat_group=Vessel.VesselStatGroup.RESEARCHSHIP  # noqa: E501
-            )
-            .filter(survey_scope__in=HIGHLY_LIKELY_BOTTOM_SURVEY)
-            .count()
-        )  # noqa: E501
-        context["researchship_b"] = researchship_bottom_count
-
-        othership_sur_count = qs.filter(
-            vessel__vessel_stat_group=Vessel.VesselStatGroup.OTHERSHIP  # noqa: E501
-        ).count()  # noqa: E501
-        context["othership"] = othership_sur_count
-        othership_bottom_count = (
-            qs.filter(
-                vessel__vessel_stat_group=Vessel.VesselStatGroup.OTHERSHIP  # noqa: E501
-            )
-            .filter(survey_scope__in=HIGHLY_LIKELY_BOTTOM_SURVEY)
-            .count()
-        )  # noqa: E501
-        context["othership_b"] = othership_bottom_count
-
-        smallcraft_sur_count = qs.filter(
-            vessel__vessel_stat_group=Vessel.VesselStatGroup.SMALLCRAFT  # noqa: E501
-        ).count()  # noqa: E501
-        context["smallcraft"] = smallcraft_sur_count
-        smallcraft_bottom_count = (
-            qs.filter(
-                vessel__vessel_stat_group=Vessel.VesselStatGroup.SMALLCRAFT  # noqa: E501
-            )
-            .filter(
-                survey_scope__in=[
-                    Application.SurveyScope.SPECIL,
-                    Application.SurveyScope.RENEWL,
-                    Application.SurveyScope.INITIL,
-                ]
-            )
-            .count()
-        )  # noqa: E501
-        context["smallcraft_b"] = smallcraft_bottom_count
-
-        pipeline_sur_count = qs.filter(
-            vessel__vessel_stat_group=Vessel.VesselStatGroup.PIPELINE  # noqa: E501
-        ).count()  # noqa: E501
-        context["pipeline"] = pipeline_sur_count
-
-        total_apps = qs.count()
-        context["total"] = total_apps
-        total_bottom = (
+        context["total"] = qs.count()
+        context["total_b"] = (
             qs.filter(survey_scope__in=HIGHLY_LIKELY_BOTTOM_SURVEY)
             .exclude(
                 Q(vessel__vessel_stat_group=Vessel.VesselStatGroup.SMALLCRAFT)
@@ -463,23 +195,11 @@ class AnnualReportView(LoginRequiredMixin, ListView):
             )  # noqa: E501
             .count()
         )
-        context["total_b"] = total_bottom
 
-        initial_sur_count = qs.filter(
-            survey_scope=Application.SurveyScope.INITIL
-        ).count()
-        context["initial"] = initial_sur_count
+        for survey in Application.SurveyScope:
+            context[f"{survey}"] = self.get_survey_number_by_type(survey)
 
-        special_sur_count = qs.filter(
-            survey_scope=Application.SurveyScope.SPECIL
-        ).count()
-        context["special"] = special_sur_count
-
-        intermediate_sur_count = qs.filter(
-            survey_scope=Application.SurveyScope.INTERM
-        ).count()
-        context["intermediate"] = intermediate_sur_count
-        intermediate_bottom_count = (
+        context["intermediate_b"] = (
             qs.filter(survey_scope=Application.SurveyScope.INTERM)
             .exclude(
                 Q(vessel__vessel_stat_group=Vessel.VesselStatGroup.SMALLCRAFT)
@@ -487,17 +207,7 @@ class AnnualReportView(LoginRequiredMixin, ListView):
             )
             .count()
         )
-        context["intermediate_b"] = intermediate_bottom_count
 
-        annual_sur_count = qs.filter(
-            survey_scope=Application.SurveyScope.ANNUAL
-        ).count()
-        context["annual"] = annual_sur_count
-
-        occasional_sur_count = qs.filter(
-            survey_scope=Application.SurveyScope.OCCASL
-        ).count()
-        context["occasional"] = occasional_sur_count
         # Количество освидетельствований судов
         # без учёта заявок только на освидетельствование
         # подводной части.
@@ -505,6 +215,7 @@ class AnnualReportView(LoginRequiredMixin, ListView):
             survey_scope=Application.SurveyScope.BOTTOM
         ).count()
         context["total_without_only_bottom"] = total_sur_without_only_bottom
+
         # Количество освидетельствований подводной части
         # при первоначальных, очередных и промежуточных
         # освидетельствованиях (без учёта заявок только
