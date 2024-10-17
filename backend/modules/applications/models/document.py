@@ -24,19 +24,20 @@ class Form(CreatorMixin, UpdaterMixin):
     class FormType(models.TextChoices):
         """Выбор типа формы."""
 
+        ATL = "ATL", "Согласно перечню"
+        RPT = "RPT", "Отчёт"
         CER = "CER", "Свидетельство"
         STA = "STA", "Удостоверение"
         REP = "REP", "Акт"
+        LET = "LET", "Письмо об одобрении"
+        AGT = "AGN", "Договор"
         CHE = "CHE", "Чек-лист"
         ANN = "ANN", "Приложение"
         AGR = "AGR", "Соглашение"
         REG = "REG", "Регистровая книга"
         REC = "REC", "Журнал"
-        RPT = "RPT", "Отчёт"
-        LET = "LET", "Письмо об одобрении"
         MIN = "MIN", "Протокол"
         QUR = "QUR", "Сообщение"
-        ATL = "ATL", "Согласно перечню"
 
     number = models.CharField(
         verbose_name="Номер формы", max_length=20, blank=True
@@ -60,9 +61,9 @@ class Form(CreatorMixin, UpdaterMixin):
         verbose_name_plural = "Формы документов"
 
     def __str__(self):
-        if self.form_type != "LET":
+        if self.form_type not in [self.FormType.LET, self.FormType.AGT]:
             return f"{self.get_form_type_display()} ф. {self.number}"  # type: ignore # noqa: E501
-        return f"{self.get_form_type_display()} {self.number}"  # type: ignore # noqa: E501
+        return f"{self.number} №"  # type: ignore # noqa: E501
 
 
 class Document(models.Model):
@@ -88,7 +89,7 @@ class Document(models.Model):
         null=True,
     )
     number = models.CharField(
-        verbose_name="Номер документа или письма об одобрении ТД",
+        verbose_name="Номер документа, письма об одобрении ТД или договора",
         max_length=30,  # , blank=True
     )  # noqa: E501
     form = models.ForeignKey(

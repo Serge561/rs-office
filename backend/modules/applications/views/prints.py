@@ -37,7 +37,7 @@ RS_RU_BRANCHES = (
     "174",
     "184",
     "190",
-)  # noqa: E501
+)
 
 AGREEMENT_APPLICATION = "agreement"
 ACCEPTANCE = "acceptance"
@@ -50,7 +50,9 @@ TEMPLATES = {
     "T43031": "430_3_1.docx",
     "T43033": "430_3_3.docx",
     "T43034": "430_3_4.docx",
+    "T43034B": "430_3_4_b.docx",
     "T43035": "430_3_5.docx",
+    "T43035B": "430_3_5_b.docx",
     "T81011": "810_1_1.docx",
     "T81011E": "810_1_1_en.docx",
     "T81012P": "810_1_2_p.docx",
@@ -74,8 +76,7 @@ def get_docx_template(
      - report_type is certificate on AGREEMENT-application or,
      - ACCEPTANCE of delivery service report,
      - SHEET is document check sheet."""
-    # print(rs_branch)
-    if rs_branch not in RS_RU_BRANCHES:  # noqa: E501
+    if rs_branch not in RS_RU_BRANCHES:
         match survey_code:
             case (
                 Application.SurveyCode.C00001
@@ -86,6 +87,13 @@ def get_docx_template(
                     template = TEMPLATES["T81011E"]
                 elif report_type == ACCEPTANCE:
                     template = TEMPLATES["T43035"]
+                else:
+                    template = TEMPLATES["LISTREGI"]
+            case Application.SurveyCode.C00002:
+                if report_type == AGREEMENT_APPLICATION:
+                    template = TEMPLATES["T81011E"]
+                elif report_type == ACCEPTANCE:
+                    template = TEMPLATES["T43035B"]
                 else:
                     template = TEMPLATES["LISTREGI"]
             case Application.SurveyCode.C00006:
@@ -125,12 +133,19 @@ def get_docx_template(
                 template = TEMPLATES["T43034"]
             else:
                 template = TEMPLATES["LISTREGI"]
+        case Application.SurveyCode.C00002:
+            if report_type == AGREEMENT_APPLICATION:
+                template = TEMPLATES["T81011"]
+            elif report_type == ACCEPTANCE:
+                template = TEMPLATES["T43034B"]
+            else:
+                template = TEMPLATES["LISTREGI"]
         case Application.SurveyCode.C00006:
             if report_type == AGREEMENT_APPLICATION:
                 template = TEMPLATES["T810111"]
             else:
                 template = TEMPLATES["T43031"]
-        case Application.SurveyCode.C00015:  # noqa: E501
+        case Application.SurveyCode.C00015:
             if report_type == AGREEMENT_APPLICATION:
                 template = TEMPLATES["T81012P"]
             else:
@@ -318,7 +333,6 @@ def get_surveyor_or_none(surveyors_qs, specialty=None):
     """Получить инспектора из списка назначенных инспекторов по заявке."""
     if not surveyors_qs.exists():
         return ""
-    # surveyors = surveyors_qs.all()
     surveyors = surveyors_qs.order_by("last_name").all()
     match specialty:
         case "hull":
@@ -410,7 +424,7 @@ def get_form_type_en(f_type):
     """Получить название формы документа на
     английском языке для двуязычных форм."""
     match f_type:
-        case Form.FormType.AGR:
+        case Form.FormType.AGR | Form.FormType.AGT:
             result = "Aggrement"
         case Form.FormType.ANN:
             result = "Annex"
@@ -468,6 +482,11 @@ def get_issued_docs(
                     documents = f"{document_qs.first().form} № {document_qs.first()} от {is_none(document_date)}"  # noqa: E501
                 else:
                     documents = f"{document_qs.first().form.get_form_type_display()} ф. / {get_form_type_en(document_qs.first().form.form_type)} of f. {document_qs.first().form.number} № {document_qs.first()} от/dd {is_none(document_date)}"  # noqa: E501
+        case Application.SurveyCode.C00002:
+            if rs_branch in RS_RU_BRANCHES:
+                documents = f"({document_qs.first().form} {document_qs.first()})"  # type: ignore # noqa: E501
+            else:
+                documents = f"{document_qs.first().form.get_form_type_display()} № / {get_form_type_en(document_qs.first().form.form_type)} No. {document_qs.first()}"  # noqa: E501
         case Application.SurveyCode.C00006:
             if rs_branch in RS_RU_BRANCHES:
                 documents = f"{document_qs.first().form} {document_qs.first()} от {is_none(document_date)}"  # type: ignore # noqa: E501
