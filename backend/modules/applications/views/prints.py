@@ -23,6 +23,7 @@ User = get_user_model()
 RS_RU_BRANCHES = (
     "110",
     "112",
+    "114",
     "120",
     "121",
     "125",
@@ -470,6 +471,7 @@ def get_issued_docs(
             | Application.SurveyCode.C00015
             | Application.SurveyCode.C00101
             | Application.SurveyCode.C00103
+            | Application.SurveyCode.C00104
             | Application.SurveyCode.C00121
         ):  # noqa: E501
             if document_qs.count() > 1:
@@ -599,10 +601,10 @@ def get_sum_in_words(netto: Decimal, currency_code, tax=None):
                 result = f"{brutto_formatted} p. ({num2words(brutto, lang='ru', to='currency', separator='', cents=False, currency='RUB')})"  # noqa: E501
         case BankAccount.Currency.EUR:
             netto_formatted = moneyfmt(netto, curr="€", sep=" ", dp=",")
-            result = f"€{netto_formatted} ({num2words(netto, lang='ru', to='currency', separator='', cents=False)} / {num2words(netto, to='currency', separator=' and', cents=False)})"  # noqa: E501
+            result = f"{netto_formatted} ({num2words(netto, lang='ru', to='currency', separator='', cents=False)} / {num2words(netto, to='currency', separator=' and', cents=False)})"  # noqa: E501
         case BankAccount.Currency.USD:
             netto_formatted = moneyfmt(netto, curr="$", sep=" ")
-            result = f"${netto_formatted} ({num2words(netto, lang='ru', to='currency', separator='', cents=False, currency='USD')} / {num2words(netto, lang='en', to='currency', separator=' and', cents=False, currency='USD')})"  # noqa: E501
+            result = f"{netto_formatted} ({num2words(netto, lang='ru', to='currency', separator='', cents=False, currency='USD')} / {num2words(netto, lang='en', to='currency', separator=' and', cents=False, currency='USD')})"  # noqa: E501
         # noqa: E501
         case BankAccount.Currency.CNY:
             netto_formatted = moneyfmt(netto, curr="¥", sep=" ")

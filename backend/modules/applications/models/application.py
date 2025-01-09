@@ -49,30 +49,69 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
     class SurveyCode(models.TextChoices):
         """Выбор кода услуги."""
 
-        C00001 = "00001", "Классификационные освидетельствования судов в эксплуатации"  # noqa: E501
+        C00001 = (
+            "00001",
+            "Классификационные освидетельствования судов в эксплуатации",
+        )  # noqa: E501
         C00002 = "00002", "Техническое наблюдение за постройкой судна"
         C00003 = "00003", "Услуги по освидетельствованию судна в ремонте"
-        C00004 = "00004", "Техническое наблюдение за изготовлением материалов и изделий не судового назначения"  # noqa: E501
+        C00004 = (
+            "00004",
+            "Техническое наблюдение за изготовлением материалов и изделий не судового назначения",
+        )  # noqa: E501
         C00005 = "00005", "Техническое наблюдение за изготовлением стали"
         C00006 = "00006", "Рассмотрение технической документации"
         C00007 = "00007", "Обмер судов"
         C00008 = "00008", "Замещение ИКО"
         C00009 = "00009", "Техническое наблюдение за контейнерами"
         C00010 = "00010", "Прочие виды деятельности"
-        C00011 = "00011", "Освидетельствование на соответствие МКУБ, ОСПС, КТМС судов"  # noqa: E501
-        C00012 = "00012", "Освидетельствование на соответствие другим МК судов в эксплуатации"  # noqa: E501
+        C00011 = (
+            "00011",
+            "Освидетельствование на соответствие МКУБ, ОСПС, КТМС судов",
+        )  # noqa: E501
+        C00012 = (
+            "00012",
+            "Освидетельствование на соответствие другим МК судов в эксплуатации",
+        )  # noqa: E501
         C00013 = "00013", "Добровольная сертификация"
-        C00014 = "00014", "Освидетельствование на соответствие МКУБ судовых компаний"  # noqa: E501
-        C00015 = "00015", "Техническое наблюдение за изготовлением материалов и изделий для судов"  # noqa: E501
-        C00016 = "00016", "Техническое наблюдение за постройкой МСП и трубопроводов"  # noqa: E501
+        C00014 = (
+            "00014",
+            "Освидетельствование на соответствие МКУБ судовых компаний",
+        )  # noqa: E501
+        C00015 = (
+            "00015",
+            "Техническое наблюдение за изготовлением материалов и изделий для судов",
+        )  # noqa: E501
+        C00016 = (
+            "00016",
+            "Техническое наблюдение за постройкой МСП и трубопроводов",
+        )  # noqa: E501
         C00100 = "00100", "Сертификация систем менеджмента качества"
-        C00101 = "00101", "Квалификационные испытания сварщиков и одобрение технологических процессов сварки (СОДС, СОТПС)"  # noqa: E501
+        C00101 = (
+            "00101",
+            "Квалификационные испытания сварщиков и одобрение технологических процессов сварки (СОДС, СОТПС)",
+        )  # noqa: E501
         C00102 = "00102", "Сертификация продукции в системе ГОСТ Р"
-        C00103 = "00103", "Освидетельствование предприятий, лабораторий на территории России (СП, ССП, СПИ, СПЛ)"  # noqa: E501
-        C00104 = "00104", "Освидетельствование предприятий, лабораторий на территории других стран (не Россия)"  # noqa: E501
-        C00105 = "00105", "Услуги по декларированию и сертификации навалочных и опасных грузов, сертификация тары"  # noqa: E501
-        C00120 = "00120", "Техническое наблюдение согласно отчёту предприятия (с НДС)"  # noqa: E501
-        C00121 = "00121", "Классификация и освидетельствование маломерного судна"  # noqa: E501
+        C00103 = (
+            "00103",
+            "Освидетельствование предприятий, лабораторий на территории России (СП, ССП, СПИ, СПЛ)",
+        )  # noqa: E501
+        C00104 = (
+            "00104",
+            "Освидетельствование предприятий, лабораторий на территории других стран (не Россия)",
+        )  # noqa: E501
+        C00105 = (
+            "00105",
+            "Услуги по декларированию и сертификации навалочных и опасных грузов, сертификация тары",
+        )  # noqa: E501
+        C00120 = (
+            "00120",
+            "Техническое наблюдение согласно отчёту предприятия (с НДС)",
+        )  # noqa: E501
+        C00121 = (
+            "00121",
+            "Классификация и освидетельствование маломерного судна",
+        )  # noqa: E501
 
     class SurveyType(models.TextChoices):
         """Выбор объёма освидетельствования."""
@@ -80,7 +119,10 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
         ISM = "ISM", "На соответствие требованиям МКУБ"
         ISS = "ISS", "На соответствие требованиям МК ОСПС"
         MLC = "MLC", "На соответствие требованиям КТМС-2006"
-        DII = "DII", "Рассмотрение II части Декларации о соответствии трудовым нормам в морском судоходстве"  # noqa: E501
+        DII = (
+            "DII",
+            "Рассмотрение II части Декларации о соответствии трудовым нормам в морском судоходстве",
+        )  # noqa: E501
         OCR = "OSC", "Оффшорных контейнеров"
         TCR = "TCR", "Контейнеров-цистерн"
         EXP = "EXP", "Расширение сферы деятельности"
@@ -113,7 +155,10 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
         MECHPART = "MECH", "Судно по механической части"
         ELECPART = "ELEC", "Судно по электромеханической части"
         HULLMECH = "HUME", "Судно по корпусной и механической частям"
-        MECHELEC = "MEEL", "Судно по механической и электромеханической частям"  # noqa: E501
+        MECHELEC = (
+            "MEEL",
+            "Судно по механической и электромеханической частям",
+        )  # noqa: E501
         RADIPART = "RADI", "Судно по радиочасти"
 
     company = models.ForeignKey(
@@ -122,7 +167,7 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
         on_delete=models.CASCADE,
         related_name="applications",
     )
-    number = models.CharField("Номер заявки", max_length=7, unique=True)
+    number = models.CharField("Номер заявки", max_length=15, unique=True)
     date = models.DateField("Дата заявки")
     completion_date = models.DateField(
         "Дата завершения заявки",
@@ -287,7 +332,11 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
         survey_scope_en = self.get_survey_scope_en(self.survey_scope)
         match self.survey_code:
             case SURVEY_CODES.C00001:
-                if self.survey_scope not in [SURVEY_SCOPES.OCCASL, SURVEY_SCOPES.CONTIN, SURVEY_SCOPES.BOTTOM]:  # noqa: E501
+                if self.survey_scope not in [
+                    SURVEY_SCOPES.OCCASL,
+                    SURVEY_SCOPES.CONTIN,
+                    SURVEY_SCOPES.BOTTOM,
+                ]:  # noqa: E501
                     result = f"{self.get_survey_scope_display()} {SURVEY} / {survey_scope_en} {SURVEY_EN}"  # type: ignore # noqa: E501
                 elif self.survey_scope == SURVEY_SCOPES.BOTTOM:
                     result = f"{SURVEY.capitalize()} {self.get_survey_scope_display().lower()} / {survey_scope_en} {SURVEY_EN}"  # type: ignore # noqa: E501
@@ -308,7 +357,11 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
                 except IndexError:
                     result = f"{self.get_survey_scope_display().split()[0]} {SURVEY} (выберите вид освидетельствования) / {survey_scope_en.split()[0]} {SURVEY_EN} (choose type of survey)"  # type: ignore # noqa: E501
             case SURVEY_CODES.C00011:
-                if self.survey_scope not in [SURVEY_SCOPES.ADDITL, SURVEY_SCOPES.INTERI, SURVEY_SCOPES.PRIMAR]:  # noqa: E501
+                if self.survey_scope not in [
+                    SURVEY_SCOPES.ADDITL,
+                    SURVEY_SCOPES.INTERI,
+                    SURVEY_SCOPES.PRIMAR,
+                ]:  # noqa: E501
                     if self.survey_type != SURVEY_TYPES.DII:  # noqa: E501
                         try:
                             result = f"{self.get_survey_scope_display()} {SURVEY} {self.get_survey_type_display()[0].lower()}{self.get_survey_type_display()[1:]} / {survey_scope_en} {SURVEY_EN} {survey_type_en[0].lower()}{survey_type_en[1:]}"  # type: ignore # noqa: E501
@@ -327,14 +380,19 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
                     except IndexError:
                         result = f"{SURVEY.capitalize()} (выберите вид освидетельствования) / {SURVEY_EN.capitalize()} (choose type of survey)"  # type: ignore # noqa: E501
             case SURVEY_CODES.C00014:
-                if self.survey_scope not in [SURVEY_SCOPES.ADDITL, SURVEY_SCOPES.INTERI]:  # noqa: E501
+                if self.survey_scope not in [
+                    SURVEY_SCOPES.ADDITL,
+                    SURVEY_SCOPES.INTERI,
+                ]:  # noqa: E501
                     result = f"{self.get_survey_scope_display()} {SURVEY} {COMPANY} на соответствие требованиям МКУБ / {survey_scope_en} {SURVEY_EN} {COMPANY_EN} on compliance with the requirements of the ISMC"  # type: ignore # noqa: E501
                 elif self.survey_scope == SURVEY_SCOPES.ADDITL:
                     result = f"{self.get_survey_scope_display().split()[0]} {SURVEY} {COMPANY} по МКУБ / {survey_scope_en.split()[0]} {SURVEY_EN} {COMPANY_EN} on ISMC"  # type: ignore # noqa: E501
                 else:
                     result = f"{SURVEY.capitalize()} {COMPANY} по МКУБ {INTERIM_DOCS} / {SURVEY_EN.capitalize()} {COMPANY_EN} on ISMC {INTERIM_DOCS_EN}"  # type: ignore # noqa: E501
             case SURVEY_CODES.C00015:
-                result = f"{SURVEY.capitalize()} / {SURVEY_EN.capitalize()} of"  # noqa: E501
+                result = (
+                    f"{SURVEY.capitalize()} / {SURVEY_EN.capitalize()} of"  # noqa: E501
+                )
             case SURVEY_CODES.C00101:
                 if self.survey_type == SURVEY_TYPES.WAC:
                     if self.survey_scope == SURVEY_SCOPES.PRIMAR:
@@ -347,7 +405,10 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
                     else:
                         result = f"Подтверждение Свидетельства об одобрении технологического процесса сварки (без испытаний) - {self.occasional_cause} шт. / Endorsing Welding procedure approval test certificate (without tests) - {self.occasional_cause} pcs"  # noqa: E501
             case SURVEY_CODES.C00103 | SURVEY_CODES.C00104:
-                if self.survey_type not in [SURVEY_TYPES.EXP, SURVEY_TYPES.CHA]:  # noqa: E501
+                if self.survey_type not in [
+                    SURVEY_TYPES.EXP,
+                    SURVEY_TYPES.CHA,
+                ]:  # noqa: E501
                     result = f"{self.get_survey_scope_display()} {SURVEY} {self.occasional_cause} / {survey_scope_en} {SURVEY_EN} {self.occasional_cause}"  # type: ignore # noqa: E501
                 else:
                     try:
@@ -453,15 +514,24 @@ class VesselExtraInfo(PlaceMixin):
             "32",
             "32 - Класс снят (истекли 6 месяцев после приостановки класса)",
         )
-        WDRANRULES = "33", "33 - Класс снят (невыполнение требований Правил РС)"  # noqa: E501
-        WDRANOTHER = "34", "34 - Класс снят (причины, не связаные с безопасностью)"  # noqa: E501
+        WDRANRULES = (
+            "33",
+            "33 - Класс снят (невыполнение требований Правил РС)",
+        )  # noqa: E501
+        WDRANOTHER = (
+            "34",
+            "34 - Класс снят (причины, не связаные с безопасностью)",
+        )  # noqa: E501
         WDRANSCAPD = (
             "41",
             "41 - Класс снят (разделано или продано для разделки на металлолом)",  # noqa: E501
         )
         WDRANWRECK = "42", "42 - Класс снят (гибель)"
         WDRANDAMAG = "43", "43 - Класс снят (аварийный случай)"
-        INSREINSTD = "51", "51 - Класс действует (восстановлен после приостановки)"  # noqa: E501
+        INSREINSTD = (
+            "51",
+            "51 - Класс действует (восстановлен после приостановки)",
+        )  # noqa: E501
         INSREASSIG = "52", "52 - Класс действует (переназначен после снятия)"
         INSTRANSIA = (
             "61",
@@ -480,7 +550,10 @@ class VesselExtraInfo(PlaceMixin):
             "72 - Класс снят (переход из класса РС в класс общества-не члена МАКО)",  # noqa: E501
         )
         SMCRINSERV = "80", "80 - Маломерное прогулочное судно в эксплуатации"
-        SMCRNOTINS = "90", "90 - Маломерное прогулочное судно не в эксплуатации"  # noqa: E501
+        SMCRNOTINS = (
+            "90",
+            "90 - Маломерное прогулочное судно не в эксплуатации",
+        )  # noqa: E501
         IACSCLASS = "99", "99 - Класс ИКО"
 
     class_status = models.CharField(
