@@ -1,6 +1,7 @@
 # pylint: disable=too-few-public-methods, invalid-str-returned, import-error, too-many-ancestors, no-member, line-too-long, unsubscriptable-object # noqa: E501
 """ОРМ модели companies."""
 import gettext
+import re
 from django.db import models
 from django.urls import reverse
 
@@ -220,15 +221,7 @@ class City(CreatorMixin, UpdaterMixin):
 
     def __str__(self):
         """Возвращение строки."""
-        # if self.region and not self.district:
-        #     return f"{self.name}, {self.get_region_display()} / {self.name_en}, {self.region}"  # type: ignore # noqa: E501
-        # if self.region and self.district:
-        #     return f"{self.name}, {self.district}, {self.get_region_display()} / {self.name_en}, {self.district_en}, {self.region}"  # type: ignore # noqa: E501
-        # if not self.region and self.country == "RU":  # type: ignore
-        #     return f"{self.name} / {self.name_en}"
-        # if self.district:
-        #     return f"{self.name}, {self.district}, {self.get_country_display()} / {self.name_en}, {self.district_en}, {self.get_country_en_display()}"  # type: ignore # noqa: E501
-        # return f"{self.name}, {self.get_country_display()} / {self.name_en}, {self.get_country_en_display()}"  # type: ignore # noqa: E501
+
         if self.region and not self.district:
             return f"{self.name}, {self.get_region_display()}, {RUSSIA_RU} / {self.name_en}, {self.region}, {RUSSIA_EN}"  # type: ignore # noqa: E501
         if self.region and self.district:
@@ -530,7 +523,9 @@ class BankAccount(UpdaterMixin):
                 commerce_account_str = f"р/с {self.bank_account}, {self.bank}, БИК {self.bank.bic} к/с {self.bank.correspondent_account}"  # type: ignore # noqa: E501
                 return commerce_account_str
             return f"IBAN {self.bank_account}, {self.bank}, BIC {self.bank.bic}"  # type: ignore # noqa: E501
-        treasury_account_str = f"сч.№ {self.bank.regional_treasury_account}, {self.bank} ({self.company}, л/с {self.bank_account}), БИК {self.bank.bic} к/с {self.bank.correspondent_account}"  # type: ignore # noqa: E501
+        if str(self.company)[:2] != "РС":
+            return f"сч.№ {self.bank.regional_treasury_account}, {self.bank} ({self.company}, л/с {self.bank_account}), БИК {self.bank.bic} к/с {self.bank.correspondent_account}"  # type: ignore # noqa: E501
+        treasury_account_str = f"Получатель: {re.split(' / | г. ', str(self.bank))[1]} ({str(self.company)[4:]} РМРС, л/с {self.bank_account}). Номер счёта: {self.bank.regional_treasury_account}. Наименование банка: {self.bank}. БИК: {self.bank.bic}. Кор. cчёт: {self.bank.correspondent_account}."  # type: ignore # noqa: E501
         return treasury_account_str
 
     def get_absolute_url(self):

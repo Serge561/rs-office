@@ -328,6 +328,8 @@ docker-compose.yml
 
 # Saved docx files
 saved/
+# Archived docx files
+archived/
 
 # Database dumbs
 database*.json
