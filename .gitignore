@@ -333,3 +333,6 @@ archived/
 
 # Database dumbs
 database*.json
+
+# Redis dumbs
+dump.rdb
