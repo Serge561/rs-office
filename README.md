@@ -4,7 +4,7 @@
 
 ### Назначение / Purpose
 
-Приложение предназначено для оформления инспекторами РС договоров-заявок и актов сдачи-приёмок на двух языках. Вначале создаётся карточка компании, включая персонал, банковские реквизиты, юридический и почтовый адреса. К карточке компании привязаны заявки.
+Приложение предназначено для оформления инспекторами РС договоров-заявок и актов сдачи-приёмок на двух языках. Вначале создаётся карточка компании, включая персонал, банковские реквизиты, юридический и почтовый адреса. К карточке компании привязаны заявки.  
 The app is intended for prepairing agreement-applications and acceptance-delivery service reports in bilingua.
 At the beginning a card of a company is created including a staff, bank-accounts, legal and postal addresses. Applications are related with the cards of companies.
 
