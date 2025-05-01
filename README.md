@@ -23,3 +23,7 @@ Django, Tailwind, Celery, Redis, Docker.
 ### Интеграция фреймворка Tailwind в проект Django / Integration of the Tailwind framework into a Django project
 
 [Cloud With Django](https://www.youtube.com/watch?v=76n7sqZocSk)
+
+### Веб-сайт / Website
+
+[24rs-office.ru](https://www.24rs-office.ru)

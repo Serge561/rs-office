@@ -141,9 +141,9 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
         BOTTOM = "D", "Подводной части судна"
         OCCASL = "O", "Внеочередное"  # noqa: E741
         CONTIN = "C", "Непрерывное"
-        INTERI = "INT", "Временное (МКУБ, ОСПС)"
+        INTERI = "INT", "Временное (МКУБ, ОСПС, КТМС)"
         ADDITL = "ADD", "Дополнительное (МКУБ, ОСПС, КТМС)"  # noqa: E501
-        PRIMAR = "PR", "Первичное (СОДС, СОТПС, КТМС)"
+        PRIMAR = "PR", "Первичное (СОДС, СОТПС)"
         PERIOD = "PL", "Периодическое (СОДС, СОТПС)"
 
     class SurveyObject(models.TextChoices):
@@ -302,11 +302,11 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
             case self.SurveyScope.CONTIN:
                 result = "Continuous"
             case self.SurveyScope.INTERI:
-                result = "Interim (ISM ISPS)"
+                result = "Interim (ISM ISPS MLC)"
             case self.SurveyScope.ADDITL:
                 result = "Additional (ISM ISPS MLC)"
             case self.SurveyScope.PRIMAR:
-                result = "Primary (WAC WPSAC MLC)"
+                result = "Primary (WAC WPSAC)"
             case self.SurveyScope.PERIOD:
                 result = "Periodical (WAC WPSAC)"
             case _:
@@ -314,14 +314,16 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
         return result
 
     def __str__(self):
-        """Возвращение строки."""
+        """Человекочитаемое представление объекта."""
         SURVEY = "освидетельствование"
         SURVEY_EN = "survey"
         COMPANY = "компании"
         COMPANY_EN = "of the company"
         QUALIFICATION = "аттестация"
         QUALIFICATION_EN = "qualification"
-        INTERIM_DOCS = "с целью выдачи временных документов"
+        INTERIM_DOCS = (
+            "для выдачи Временного Свидетельства"  # с целью выдачи врем. докум
+        )
         INTERIM_DOCS_EN = "with the of issuing interim documents"
         CONT_RULES = "на соответствие требованиям Сборника правил РС по контейнерам/КБК"  # noqa: E501
         CONT_RULES_EN = "on compliance with the requirements of the RS Rule set on containers/CSC"  # noqa: E501
@@ -357,10 +359,10 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
                 except IndexError:
                     result = f"{self.get_survey_scope_display().split()[0]} {SURVEY} (выберите вид освидетельствования) / {survey_scope_en.split()[0]} {SURVEY_EN} (choose type of survey)"  # type: ignore # noqa: E501
             case SURVEY_CODES.C00011:
+                # SURVEY_SCOPES.PRIMAR excluded
                 if self.survey_scope not in [
                     SURVEY_SCOPES.ADDITL,
                     SURVEY_SCOPES.INTERI,
-                    SURVEY_SCOPES.PRIMAR,
                 ]:  # noqa: E501
                     if self.survey_type != SURVEY_TYPES.DII:  # noqa: E501
                         try:
