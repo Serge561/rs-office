@@ -123,7 +123,7 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
             "DII",
             "Рассмотрение II части Декларации о соответствии трудовым нормам в морском судоходстве",  # noqa: E501
         )  # noqa: E501
-        OCR = "OSC", "Оффшорных контейнеров"
+        OCR = "OSC", "Офшорных контейнеров"
         TCR = "TCR", "Контейнеров-цистерн"
         EXP = "EXP", "Расширение сферы деятельности"
         CHA = "CHA", "Изменение содержания свидетельства"
@@ -150,11 +150,15 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
         """Выбор объекта освидетельствования."""
 
         SHIPPART = "SHIP", "Судно"
-        ALLPARTS = "ALL", "Судно по всем частям"
+        ALLPARTS = "ALLP", "Судно по всем частям"
         HULLPART = "HULL", "Судно по корпусной части"
         MECHPART = "MECH", "Судно по механической части"
         ELECPART = "ELEC", "Судно по электромеханической части"
         HULLMECH = "HUME", "Судно по корпусной и механической частям"
+        HULLELEC = (
+            "HUEL",
+            "Судно по корпусной и электромеханической частям",
+        )  # noqa: E501
         MECHELEC = (
             "MEEL",
             "Судно по механической и электромеханической частям",
@@ -324,7 +328,7 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
         INTERIM_DOCS = (
             "для выдачи Временного Свидетельства"  # с целью выдачи врем. докум
         )
-        INTERIM_DOCS_EN = "with the of issuing interim documents"
+        INTERIM_DOCS_EN = "with the aim of issuing interim documents"
         CONT_RULES = "на соответствие требованиям Сборника правил РС по контейнерам/КБК"  # noqa: E501
         CONT_RULES_EN = "on compliance with the requirements of the RS Rule set on containers/CSC"  # noqa: E501
         SURVEY_CODES = self.SurveyCode
