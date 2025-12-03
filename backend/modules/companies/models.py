@@ -526,8 +526,8 @@ class BankAccount(UpdaterMixin):
         if str(self.company)[:2] != "РС":
             if str(self.company)[:5] != "БГАРФ":
                 return f"сч.№ {self.bank.regional_treasury_account}, {self.bank} ({self.company}, л/с {self.bank_account}), БИК {self.bank.bic} к/с {self.bank.correspondent_account}"  # type: ignore # noqa: E501
-            return f"{re.split(' / | г. ', str(self.bank))[1]} ({self.company}),\nБанк: {re.split(' / ', str(self.bank))[0]} // {re.split(' / ', str(self.bank))[1]},\nр/с. № {self.bank.regional_treasury_account},\nЕКС {self.bank.correspondent_account}\nБИК {self.bank.bic}\nОКТМО 27701000"  # type: ignore # noqa: E501
-        treasury_account_str = f"Получатель: {re.split(' / | г. ', str(self.bank))[1]} ({str(self.company)[4:]} РМРС, л/с {self.bank_account}). Номер счёта: {self.bank.regional_treasury_account}. Наименование банка: {self.bank}. БИК: {self.bank.bic}. Кор. cчёт: {self.bank.correspondent_account}."  # type: ignore # noqa: E501
+            return f"{re.split('//| г. ', str(self.bank))[1]} ({self.company}), л/с {self.bank_account}\nБанк: {re.split('//', str(self.bank))[0]}//{re.split('//', str(self.bank))[1]}\nР/с {self.bank.regional_treasury_account}\nЕКС {self.bank.correspondent_account}\nБИК {self.bank.bic}, ОКПО 012748051, ОКТМО 27701000"  # type: ignore # noqa: E501
+        treasury_account_str = f"Получатель: {re.split('//| г. ', str(self.bank))[1]} ({str(self.company)[4:]} РМРС, л/с {self.bank_account}). Номер счёта: {self.bank.regional_treasury_account}. Наименование банка: {self.bank}. БИК: {self.bank.bic}. Кор. cчёт: {self.bank.correspondent_account}."  # type: ignore # noqa: E501
         return treasury_account_str
 
     def get_absolute_url(self):
