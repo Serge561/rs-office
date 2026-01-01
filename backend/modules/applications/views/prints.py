@@ -585,7 +585,7 @@ def replace_dollar_by_rnb(curr_in_words_input):
 def get_sum_in_words(netto: Decimal, currency_code, tax=None):
     """Сумма прописью: российский рубль, евро, доллар США,
     китайский юань, белорусский рубль."""
-    VAT_RATE = 0.2
+    VAT_RATE = 0.22
     vat = round(netto * Decimal(VAT_RATE), 2)
     brutto = round(netto + vat, 2)
     match currency_code:
