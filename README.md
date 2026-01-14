@@ -5,8 +5,8 @@
 ### Назначение / Purpose
 
 Приложение предназначено для оформления инспекторами РС договоров-заявок и актов сдачи-приёмок на двух языках. Вначале создаётся карточка компании, включая персонал, банковские реквизиты, юридический и почтовый адреса. К карточке компании привязаны заявки.  
-The app is intended for prepairing agreement-applications and acceptance-delivery service reports in bilingua.
-At the beginning a card of a company is created including a staff, bank-accounts, legal and postal addresses. Applications are related with the cards of companies.
+The app is intended for surveyors of the Russian Maritime Register of Shipping to draw up agreement-applications and acceptance-delivery service reports in bilingua.
+First, a company card is created including a staff, bank details, legal and postal addresses. Applications are related to the company cards.
 
 ### Стек технологий / Stack of the technologies
 
