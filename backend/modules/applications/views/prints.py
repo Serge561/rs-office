@@ -48,7 +48,7 @@ GONORATIVE = "Mr/Mrs"
 TEMPLATES = {
     "LISTREGI": "List_registratsii_proverki_dokumentov.docx",
     "PAGE404R": "404_page.docx",
-    "T43031": "430_3_1.docx",
+    "T43031": "810_3_1.docx",
     "T43033": "430_3_3.docx",
     "T43034": "430_3_4.docx",
     "T43034B": "430_3_4_b.docx",
