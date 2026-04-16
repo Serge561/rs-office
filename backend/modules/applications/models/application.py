@@ -112,6 +112,7 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
             "00121",
             "Классификация и освидетельствование маломерного судна",
         )  # noqa: E501
+        C13100 = "13100", "Разработка технической документации"
 
     class SurveyType(models.TextChoices):
         """Выбор объёма освидетельствования."""
@@ -426,6 +427,8 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
                     result = f"{self.get_survey_scope_display()} {SURVEY} маломерного судна"  # type: ignore # noqa: E501
                 else:
                     result = f"{self.get_survey_scope_display()} {SURVEY} маломерного судна {self.occasional_cause}"  # type: ignore # noqa: E501
+            case SURVEY_CODES.C13100:
+                result = f'{self.get_survey_code_display()} "{self.occasional_cause}" на т/х {self.vessel} / Development of technical documentation "{self.occasional_cause_en}" on m/v {self.vessel.name_en} RS {self.vessel.rs_number}'  # type: ignore # noqa: E501
             case _:
                 result = f"Функционал '{self.get_survey_code_display()}' в разработке"  # type: ignore # noqa: E501
         return result

@@ -66,6 +66,7 @@ TEMPLATES = {
     "T810110": "810_1_10.docx",
     "T810111E": "810_1_11_en.docx",
     "T810111": "810_1_11.docx",
+    "T810113": "810_1_13.docx",
 }
 
 
@@ -175,6 +176,11 @@ def get_docx_template(
                 template = TEMPLATES["T43034"]
             else:
                 template = TEMPLATES["LISTREGI"]
+        case Application.SurveyCode.C13100:
+            if report_type == AGREEMENT_APPLICATION:
+                template = TEMPLATES["T810113"]
+            else:
+                template = TEMPLATES["T43031"]
         case _:
             # создать логику вывода сообщения на
             # экран или все шаблоны сделать
@@ -437,6 +443,8 @@ def get_form_type_en(f_type):
             result = "Check-list"
         case Form.FormType.LET:
             result = "Letter of approval"
+        case Form.FormType.LAD:
+            result = "Letter of development"
         case Form.FormType.MIN:
             result = "Minutes"
         case Form.FormType.QUR:
@@ -489,7 +497,7 @@ def get_issued_docs(
                 documents = f"({document_qs.first().form} {document_qs.first()})"  # type: ignore # noqa: E501
             else:
                 documents = f"{document_qs.first().form.get_form_type_display()} № / {get_form_type_en(document_qs.first().form.form_type)} No. {document_qs.first()}"  # noqa: E501
-        case Application.SurveyCode.C00006:
+        case Application.SurveyCode.C00006 | Application.SurveyCode.C13100:
             if rs_branch in RS_RU_BRANCHES:
                 documents = f"{document_qs.first().form} {document_qs.first()} от {is_none(document_date)}"  # type: ignore # noqa: E501
             else:

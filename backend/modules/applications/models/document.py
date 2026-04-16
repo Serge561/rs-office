@@ -29,7 +29,8 @@ class Form(CreatorMixin, UpdaterMixin):
         CER = "CER", "Свидетельство"
         STA = "STA", "Удостоверение"
         REP = "REP", "Акт"
-        LET = "LET", "Письмо об одобрении"
+        LET = "LET", "Письмо об одобрении ТД"
+        LAD = "LAD", "Письмо о разработке ТД"
         AGT = "AGN", "Договор"
         CHE = "CHE", "Чек-лист"
         ANN = "ANN", "Приложение"
@@ -61,7 +62,11 @@ class Form(CreatorMixin, UpdaterMixin):
         verbose_name_plural = "Формы документов"
 
     def __str__(self):
-        if self.form_type not in [self.FormType.LET, self.FormType.AGT]:
+        if self.form_type not in [
+            self.FormType.LET,
+            self.FormType.LAD,
+            self.FormType.AGT,
+        ]:
             return f"{self.get_form_type_display()} ф. {self.number}"  # type: ignore # noqa: E501
         return f"{self.number} №"  # type: ignore # noqa: E501
 
@@ -89,7 +94,7 @@ class Document(models.Model):
         null=True,
     )
     number = models.CharField(
-        verbose_name="Номер документа, письма об одобрении ТД или договора",
+        verbose_name="Номер документа, письма об одобрении/разработке ТД или договора",  # noqa: E501
         max_length=30,  # , blank=True
     )  # noqa: E501
     form = models.ForeignKey(
