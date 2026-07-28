@@ -605,6 +605,10 @@ def get_sum_in_words(netto: Decimal, currency_code, tax=None):
                 result = f"{netto_formatted} p. ({num2words(netto, lang='ru', to='currency', separator='', cents=False, currency='RUB')})"  # noqa: E501
             elif tax == "vat":
                 result = f"{vat_formatted} p. ({num2words(vat, lang='ru', to='currency', separator='', cents=False, currency='RUB')})"  # noqa: E501
+            elif tax == "short_vat":
+                result = f"{vat_formatted} p"
+            elif tax == "short_brutto":
+                result = f"{brutto_formatted} p."
             else:
                 result = f"{brutto_formatted} p. ({num2words(brutto, lang='ru', to='currency', separator='', cents=False, currency='RUB')})"  # noqa: E501
         case BankAccount.Currency.EUR:
@@ -891,6 +895,8 @@ def print_docs(request, **kwargs):
         "service_cost": get_sum_in_words(application.account.service_cost, company.bank_accounts.filter(current_bankaccount=True).first().account_currency),  # type: ignore # noqa: E501
         "tax": get_sum_in_words(application.account.service_cost, company.bank_accounts.filter(current_bankaccount=True).first().account_currency, "vat"),  # type: ignore # noqa: E501
         "total": get_sum_in_words(application.account.service_cost, company.bank_accounts.filter(current_bankaccount=True).first().account_currency, "total"),  # type: ignore # noqa: E501
+        "short_tax": get_sum_in_words(application.account.service_cost, company.bank_accounts.filter(current_bankaccount=True).first().account_currency, "short_vat"),  # type: ignore # noqa: E501
+        "short_total": get_sum_in_words(application.account.service_cost, company.bank_accounts.filter(current_bankaccount=True).first().account_currency, "short_brutto"),  # type: ignore # noqa: E501
         # "surveyor_signer": f"{request.user.first_name[0]}. {request.user.patronymic_name[0]}. {request.user.last_name}",  # type: ignore # noqa: E501
         "surveyor_signer": get_signer(request.user.first_name, request.user.last_name, branch_number, True, request.user.patronymic_name, request.user.first_name_en, request.user.last_name_en),  # type: ignore # noqa: E501
         # for document checking sheet
