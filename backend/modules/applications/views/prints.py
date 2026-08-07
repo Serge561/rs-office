@@ -62,6 +62,8 @@ TEMPLATES = {
     "T81012SE": "810_1_2_s_en.docx",
     "T81012W": "810_1_2_w.docx",
     "T81012WE": "810_1_2_w_en.docx",
+    "T81012NSP": "810_1_2_nsp.docx",
+    "T81012NSPE": "810_1_2_nsp_en.docx",
     "T8101101": "810_1_10_1.docx",
     "T810110": "810_1_10.docx",
     "T810111E": "810_1_11_en.docx",
@@ -98,6 +100,11 @@ def get_docx_template(
                     template = TEMPLATES["T43035B"]
                 else:
                     template = TEMPLATES["LISTREGI"]
+            case Application.SurveyCode.C00004:
+                if report_type == AGREEMENT_APPLICATION:
+                    template = TEMPLATES["T81012NSPE"]
+                else:
+                    template = TEMPLATES["T43035"]
             case Application.SurveyCode.C00006:
                 if report_type == AGREEMENT_APPLICATION:
                     template = TEMPLATES["T810111E"]
@@ -142,6 +149,11 @@ def get_docx_template(
                 template = TEMPLATES["T43034B"]
             else:
                 template = TEMPLATES["LISTREGI"]
+        case Application.SurveyCode.C00004:
+            if report_type == AGREEMENT_APPLICATION:
+                template = TEMPLATES["T81012NSP"]
+            else:
+                template = TEMPLATES["T43031"]
         case Application.SurveyCode.C00006:
             if report_type == AGREEMENT_APPLICATION:
                 template = TEMPLATES["T810111"]
@@ -362,7 +374,10 @@ def get_surveyor_or_none(surveyors_qs, specialty=None):
 def is_product_survey(app, rs_branch, report_type):
     """Функция обработки поля document с параметрами материала или
     изделия при техническом наблюдении за их изготовлением."""
-    if app.survey_code != Application.SurveyCode.C00015:  # noqa: E501
+    if app.survey_code not in [
+        Application.SurveyCode.C00004,
+        Application.SurveyCode.C00015,
+    ]:  # noqa: E501
         if rs_branch not in RS_RU_BRANCHES:  # noqa: E501
             if (
                 app.survey_code
@@ -473,6 +488,7 @@ def get_issued_docs(
         case (
             Application.SurveyCode.C00001
             | Application.SurveyCode.C00003
+            | Application.SurveyCode.C00004
             | Application.SurveyCode.C00009
             | Application.SurveyCode.C00011
             | Application.SurveyCode.C00014

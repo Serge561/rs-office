@@ -9,7 +9,6 @@ from modules.companies.models import Company, Employee, PlaceMixin
 
 from .vessel import Vessel
 
-
 User = get_user_model()
 
 
@@ -396,7 +395,7 @@ class Application(PlaceMixin, CreatorMixin, UpdaterMixin):
                     result = f"{self.get_survey_scope_display().split()[0]} {SURVEY} {COMPANY} по МКУБ / {survey_scope_en.split()[0]} {SURVEY_EN} {COMPANY_EN} on ISMC"  # type: ignore # noqa: E501
                 else:
                     result = f"{SURVEY.capitalize()} {COMPANY} по МКУБ {INTERIM_DOCS} / {SURVEY_EN.capitalize()} {COMPANY_EN} on ISMC {INTERIM_DOCS_EN}"  # type: ignore # noqa: E501
-            case SURVEY_CODES.C00015:
+            case SURVEY_CODES.C00015 | SURVEY_CODES.C00004:
                 result = (
                     f"{SURVEY.capitalize()} / {SURVEY_EN.capitalize()} of"  # noqa: E501
                 )
