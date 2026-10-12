@@ -1,5 +1,6 @@
 # pylint: disable=too-few-public-methods, invalid-str-returned, import-error, too-many-ancestors, no-member, line-too-long, unsubscriptable-object # noqa: E501
 """ОРМ модели companies."""
+
 import gettext
 import re
 from django.db import models
@@ -504,12 +505,12 @@ class BankAccount(UpdaterMixin):
         ordering = [
             "id",
         ]
-        constraints = [
-            models.UniqueConstraint(
-                fields=["company_id", "account_currency"],
-                name="unique_bank_account",  # noqa: E501
-            )
-        ]
+        # constraints = [
+        #    models.UniqueConstraint(
+        #        fields=["company_id", "account_currency"],
+        #        name="unique_bank_account",  # noqa: E501
+        #    )
+        # ]
         verbose_name = "Реквизиты расчётного счёта компании"
         verbose_name_plural = (
             "Реквизиты банковских/казначейских счетов компаний"  # noqa: E501
@@ -522,9 +523,14 @@ class BankAccount(UpdaterMixin):
             if self.account_currency == self.Currency.RUB:
                 commerce_account_str = f"р/с {self.bank_account}, {self.bank}, БИК {self.bank.bic} к/с {self.bank.correspondent_account}"  # type: ignore # noqa: E501
                 return commerce_account_str
+            if self.account_currency == self.Currency.CNY:
+                china_account_str = f"{self.bank}\nAdd. bank: {self.bank.extra_info}\nSwift code: {self.bank.swift_code}\nAccount No.: {self.bank_account}\nCNAPS code: {self.bank.correspondent_account}"  # type: ignore # noqa: E501
+                return china_account_str
             return f"IBAN {self.bank_account}, {self.bank}, BIC {self.bank.bic}"  # type: ignore # noqa: E501
         if str(self.company)[:2] != "РС":
             if str(self.company)[:5] != "БГАРФ":
+                if str(self.bank)[-5:-1] == "счет" or str(self.bank)[-5:-1] == "счёт":  # type: ignore # noqa: E501
+                    return f"сч.№ {self.bank.regional_treasury_account}, {str(self.bank)[:-16]} ({self.company}, л/с {self.bank_account}), БИК {self.bank.bic} к/с {self.bank.correspondent_account}"  # type: ignore # noqa: E501
                 return f"сч.№ {self.bank.regional_treasury_account}, {self.bank} ({self.company}, л/с {self.bank_account}), БИК {self.bank.bic} к/с {self.bank.correspondent_account}"  # type: ignore # noqa: E501
             return f"{re.split('//| г. ', str(self.bank))[1]} ({self.company}), л/с {self.bank_account}\nБанк: {re.split('//', str(self.bank))[0]}//{re.split('//', str(self.bank))[1]}\nР/с {self.bank.regional_treasury_account}\nЕКС {self.bank.correspondent_account}\nБИК {self.bank.bic}, ОКПО 012748051, ОКТМО 27701000"  # type: ignore # noqa: E501
         treasury_account_str = f"Получатель: {re.split('//| г. ', str(self.bank))[1]} ({str(self.company)[4:]} РМРС, л/с {self.bank_account}). Номер счёта: {self.bank.regional_treasury_account}. Наименование банка: {self.bank}. БИК: {self.bank.bic}. Кор. cчёт: {self.bank.correspondent_account}."  # type: ignore # noqa: E501

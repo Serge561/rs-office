@@ -39,6 +39,8 @@ class Form(CreatorMixin, UpdaterMixin):
         REC = "REC", "Журнал"
         MIN = "MIN", "Протокол"
         QUR = "QUR", "Сообщение"
+        DOC = "DOC", "Документ"
+        CON = "CON", "Заключение"
 
     number = models.CharField(
         verbose_name="Номер формы", max_length=20, blank=True
@@ -66,6 +68,8 @@ class Form(CreatorMixin, UpdaterMixin):
             self.FormType.LET,
             self.FormType.LAD,
             self.FormType.AGT,
+            self.FormType.DOC,
+            self.FormType.CON,
         ]:
             return f"{self.get_form_type_display()} ф. {self.number}"  # type: ignore # noqa: E501
         return f"{self.number} №"  # type: ignore # noqa: E501

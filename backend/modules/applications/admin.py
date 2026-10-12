@@ -129,7 +129,7 @@ class DocumentAdmin(admin.ModelAdmin):
     model = Document
     list_display = [
         "id",
-        "application_number",
+        # "application_number",
         "application",
         "number",
         "form",
@@ -147,10 +147,10 @@ class DocumentAdmin(admin.ModelAdmin):
     )
     list_select_related = ["form", "application"]
 
-    @admin.display(description="№ заявки")
-    def application_number(self, obj):
-        """Переопределение отображеиня поля application."""
-        return obj.application.number
+    # @admin.display(description="№ заявки")
+    # def application_number(self, obj):
+    #    """Переопределение отображеиня поля application."""
+    #    return obj.application.number
 
 
 class AccountAdmin(admin.ModelAdmin):

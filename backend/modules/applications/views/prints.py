@@ -468,6 +468,10 @@ def get_form_type_en(f_type):
             result = "Record"
         case Form.FormType.REG:
             result = "Register"
+        case Form.FormType.DOC:
+            result = "Document"
+        case Form.FormType.CON:
+            result = "Conclusion"
         case Form.FormType.REP | Form.FormType.RPT:
             result = "Report"
         case _:
